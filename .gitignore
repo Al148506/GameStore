@@ -1,0 +1,42 @@
+﻿# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+bin/
+obj/
+out/
+publish/
+
+# Logs
+*.log
+
+# ASP.NET
+appsettings.Development.json
+appsettings.Local.json
+
+# Visual Studio Code
+.vscode/
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+*.nuspec
+
+# Test results
+TestResult*/
+*.coverage
+*.coveragexml
+
+# Frontend (React)
+node_modules/
+dist/
+build/
+
+# Others
+*.DS_Store
+Thumbs.db

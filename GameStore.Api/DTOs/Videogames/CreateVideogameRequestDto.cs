@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-namespace GameStore.Api.DTOs
+﻿using System.ComponentModel.DataAnnotations;
 
+namespace GameStore.Api.DTOs.Videogames
 {
-    public sealed class UpdateVideogameRequestDto
+    public sealed class CreateVideogameRequestDto
     {
-        // Usado para validar coincidencia con el id de la ruta en PUT
-        public int Id { get; set; }
 
         [Required]
         [StringLength(200)]

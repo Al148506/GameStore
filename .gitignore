@@ -36,6 +36,8 @@ TestResult*/
 node_modules/
 dist/
 build/
+angular-GameStore/
+
 
 # Others
 *.DS_Store

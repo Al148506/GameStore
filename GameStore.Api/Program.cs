@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using GameStore.Api.Helper;
+using GameStore.Api.AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,7 +62,20 @@ builder.Services.AddAuthorization(opt =>
     opt.AddPolicy("RequireAdmin", p => p.RequireRole("Admin"));
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173") // or use appsettings
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // si usas cookies / credenciales
+    });
+});
+
 builder.Services.AddControllers();
+
+builder.Services.AddAutoMapper(typeof(VideogameProfile));
 
 // Swagger + esquema Bearer
 builder.Services.AddEndpointsApiExplorer();
@@ -116,7 +130,7 @@ app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseCors("AllowFrontend");
 app.MapControllers();
 await app.PromoteAdminFromConfigAsync();
 app.Run();

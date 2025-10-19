@@ -5,6 +5,8 @@ const baseURL = "https://localhost:7250/";
 
 const api = axios.create({
   baseURL,
+  headers: { "Content-Type": "application/json" },
+  withCredentials: false, // JWT se manejará en frontend
   timeout: 10000, // 10s
 });
 

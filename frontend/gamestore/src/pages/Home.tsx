@@ -1,8 +1,11 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useVideogames } from "@hooks/useVideogames";
 import { Pagination } from "@components/pagination";
-import "./VideogameList.css";
+import "../styles/home.css";
 
-export function VideogamesList() {
+export function Home() {
+  const navigate = useNavigate();
   const pageSize = 6;
   const {
     videogames,
@@ -12,6 +15,14 @@ export function VideogamesList() {
     setCurrentPage,
     totalPages,
   } = useVideogames(pageSize);
+
+   // ✅ Validar si el usuario está autenticado
+  useEffect(() => {
+    const token = localStorage.getItem("token"); // o sessionStorage.getItem("token")
+    if (!token) {
+      navigate("/login"); // redirige al login si no hay token
+    }
+  }, [navigate]);
 
   if (loading) return <div className="loading">Cargando...</div>;
   if (error) return <div className="error">Error: {error}</div>;
@@ -68,4 +79,4 @@ export function VideogamesList() {
   );
 }
 
-export default VideogamesList;
+export default Home;

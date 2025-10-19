@@ -29,12 +29,12 @@ namespace GameStore.Api.Controllers
         {
             var user = new ApplicationUser
             {
-                UserName = req.Email,
-                Email = req.Email,
+                UserName = req.email,
+                Email = req.email,
                 EmailConfirmed = true
             };
 
-            var result = await _users.CreateAsync(user, req.Password);
+            var result = await _users.CreateAsync(user, req.password);
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
@@ -45,10 +45,10 @@ namespace GameStore.Api.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<AuthResponseDto>> Login(LoginRequestDto req)
         {
-            var user = await _users.FindByEmailAsync(req.Email);
+            var user = await _users.FindByEmailAsync(req.email);
             if (user is null) return Unauthorized();
 
-            var ok = await _users.CheckPasswordAsync(user, req.Password);
+            var ok = await _users.CheckPasswordAsync(user, req.password);
             if (!ok) return Unauthorized();
 
             var roles = await _users.GetRolesAsync(user);
@@ -56,9 +56,9 @@ namespace GameStore.Api.Controllers
 
             return new AuthResponseDto
             {
-                AccessToken = token,
-                Email = user.Email!,
-                Roles = roles
+                accessToken = token,
+                email = user.Email!,
+                roles = roles
             };
         }
 

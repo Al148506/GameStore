@@ -1,6 +1,17 @@
-import { useContext } from "react";
-import { AuthContext } from "./AuthContext";
+import { createContext } from "react";
 
-const useAuth = () => useContext(AuthContext);
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  // Add other user properties as needed
+}
 
-export default useAuth;
+export interface AuthContextType {
+  token: string | null;
+  user: User | null;
+  login: (token: string, user: User) => void;
+  logout: () => void;
+}
+
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);

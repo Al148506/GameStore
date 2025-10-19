@@ -2,8 +2,8 @@
 {
     public class AuthResponseDto
     {
-        public string AccessToken { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public IEnumerable<string> Roles { get; set; } = Enumerable.Empty<string>();
+        public string accessToken { get; set; } = string.Empty;
+        public string email { get; set; } = string.Empty;
+        public IEnumerable<string> roles { get; set; } = Enumerable.Empty<string>();
     }
 }

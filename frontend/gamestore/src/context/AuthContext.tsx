@@ -1,21 +1,5 @@
-import { createContext, useState, useContext, ReactNode } from "react";
-
-interface User {
-  id: string;
-  username: string;
-  email: string;
-  // Add other user properties as needed
-}
-
-interface AuthContextType {
-  token: string | null;
-  user: User | null;
-  login: (token: string, user: User) => void;
-  logout: () => void;
-}
-
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
+import { useState, type ReactNode } from "react";
+import { AuthContext, type User } from "./useAuth";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem("token"));
@@ -45,5 +29,3 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     </AuthContext.Provider>
   );
 }
-
-// Remove useAuth export from this file. Move it to a new file called useAuth.ts.

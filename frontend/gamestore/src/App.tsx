@@ -12,14 +12,16 @@ function App() {
   return (
     <>
       <Router>
-        <main className="App">
+        <main>
           <Routes>
             {/* Redirigir la raíz hacia /login */}
             <Route path="/" element={<Navigate to="/login" />} />
             {/* Login Route */}
-            <Route path="/login" element={<Login />} />
-            {/* Register Route */}
-            <Route path="/register" element={<Register />} />
+      
+              <Route path="/login" element={<Login />} />
+              {/* Register Route */}
+              <Route path="/register" element={<Register />} />
+         
             {/* Home Route */}
             <Route path="/home" element={<Home />} />
           </Routes>

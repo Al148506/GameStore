@@ -1,11 +1,15 @@
 import { useRef, useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCheck,
+  faTimes,
+  faInfoCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "../api/axios";
 import { isAxiosError } from "axios";
 import type { LoginRequestDto } from "../types/Auth/auth";
-import "../styles/register.css"; // reutilizamos los estilos de register
+import "../styles/auth.css"; // reutilizamos los estilos de register
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const LOGIN_URL = "/auth/login";
@@ -55,11 +59,11 @@ const Login = () => {
 
       // redirige al home o dashboard
       navigate("/home");
-
     } catch (err: unknown) {
       if (isAxiosError(err)) {
         if (!err.response) setErrMsg("No Server Response");
-        else if (err.response.status === 401) setErrMsg("Invalid email or password");
+        else if (err.response.status === 401)
+          setErrMsg("Invalid email or password");
         else setErrMsg("Login Failed");
       } else {
         setErrMsg("An unexpected error occurred");
@@ -69,8 +73,12 @@ const Login = () => {
   };
 
   return (
-    <section>
-      <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">
+    <section className="principal-container">
+      <p
+        ref={errRef}
+        className={errMsg ? "errmsg" : "offscreen"}
+        aria-live="assertive"
+      >
         {errMsg}
       </p>
 
@@ -99,7 +107,12 @@ const Login = () => {
           onFocus={() => setEmailFocus(true)}
           onBlur={() => setEmailFocus(false)}
         />
-        <p id="emailnote" className={emailFocus && email && !validEmail ? "instructions" : "offscreen"}>
+        <p
+          id="emailnote"
+          className={
+            emailFocus && email && !validEmail ? "instructions" : "offscreen"
+          }
+        >
           <FontAwesomeIcon icon={faInfoCircle} /> Must be a valid email address.
         </p>
 
@@ -123,14 +136,20 @@ const Login = () => {
           onFocus={() => setPasswordFocus(true)}
           onBlur={() => setPasswordFocus(false)}
         />
-        <p id="passwordnote" className={passwordFocus && !validPassword ? "instructions" : "offscreen"}>
+        <p
+          id="passwordnote"
+          className={
+            passwordFocus && !validPassword ? "instructions" : "offscreen"
+          }
+        >
           <FontAwesomeIcon icon={faInfoCircle} /> Must be at least 8 characters.
         </p>
 
         <button disabled={!validEmail || !validPassword}>Sign In</button>
 
         <p>
-          Need an account?<br />
+          Need an account?
+          <br />
           <span className="line">
             <Link to="/register">Sign Up</Link>
           </span>

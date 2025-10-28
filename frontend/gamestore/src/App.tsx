@@ -10,24 +10,20 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 function App() {
   return (
-    <>
-      <Router>
-        <main>
-          <Routes>
-            {/* Redirigir la raíz hacia /login */}
-            <Route path="/" element={<Navigate to="/login" />} />
-            {/* Login Route */}
-      
-              <Route path="/login" element={<Login />} />
-              {/* Register Route */}
-              <Route path="/register" element={<Register />} />
-         
-            {/* Home Route */}
-            <Route path="/home" element={<Home />} />
-          </Routes>
-        </main>
-      </Router>
-    </>
+    <Router>
+      <Routes>
+        {/* Redirigir la raíz hacia /login */}
+        <Route path="/" element={<Navigate to="/login" />} />
+        {/* Login Route */}
+
+        <Route path="/login" element={<Login />} />
+        {/* Register Route */}
+        <Route path="/register" element={<Register />} />
+
+        {/* Home Route */}
+        <Route path="/home" element={<Home />} />
+      </Routes>
+    </Router>
   );
 }
 

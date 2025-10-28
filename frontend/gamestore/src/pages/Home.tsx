@@ -25,7 +25,8 @@ export function Home() {
   const [sortBy, setSortBy] = useState<string>(""); // 👈 Estado para ordenamiento
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
     if (!token) navigate("/login");
   }, [navigate]);
 

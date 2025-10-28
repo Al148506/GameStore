@@ -1,5 +1,6 @@
 /* === HOME CONTAINER === */
 .videogames-list-container {
+  width: 100vw; /* ancho completo */
   min-height: 100vh;
   background-color: var(--color-background);
   padding: var(--space-32) var(--space-20);
@@ -12,7 +13,6 @@
   max-width: 1400px;
   margin: 0 auto;
 }
-
 
 /* === GRID DE VIDEOJUEGOS === */
 .videogames-grid {

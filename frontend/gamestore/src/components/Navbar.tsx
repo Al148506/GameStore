@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import "../styles/navbar.css";
 
 interface NavbarProps {
@@ -6,6 +7,7 @@ interface NavbarProps {
 }
 
 export function Navbar({ onSearch, onSort }: NavbarProps) {
+  const navigate = useNavigate();
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (onSearch) {
       onSearch(e.target.value);
@@ -20,7 +22,9 @@ export function Navbar({ onSearch, onSort }: NavbarProps) {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    sessionStorage.removeItem("token");
+    // Redirige sin recargar la página
+    navigate("/login");
   };
 
   return (

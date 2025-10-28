@@ -29,6 +29,8 @@ const Login = () => {
 
   const [errMsg, setErrMsg] = useState("");
 
+  const [rememberMe, setRememberMe] = useState(false);
+
   useEffect(() => {
     emailRef.current?.focus();
   }, []);
@@ -55,7 +57,11 @@ const Login = () => {
       const response = await axios.post(LOGIN_URL, payload);
 
       const { accessToken } = response.data;
-      localStorage.setItem("token", accessToken);
+      if (rememberMe) {
+        localStorage.setItem("token", accessToken);
+      } else {
+        sessionStorage.setItem("token", accessToken);
+      }
 
       // redirige al home o dashboard
       navigate("/home");
@@ -98,7 +104,7 @@ const Login = () => {
           type="text"
           id="email"
           ref={emailRef}
-          autoComplete="off"
+          autoComplete="email"
           onChange={(e) => setEmail(e.target.value)}
           value={email}
           required
@@ -144,6 +150,15 @@ const Login = () => {
         >
           <FontAwesomeIcon icon={faInfoCircle} /> Must be at least 8 characters.
         </p>
+        <div className="remember-me">
+          <input
+            type="checkbox"
+            id="rememberMe"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+          />
+          <label htmlFor="rememberMe">Remember me</label>
+        </div>
 
         <button disabled={!validEmail || !validPassword}>Sign In</button>
 

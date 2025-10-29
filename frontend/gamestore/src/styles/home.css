@@ -34,6 +34,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  position: relative;
 }
 
 .videogame-card:hover {
@@ -129,6 +130,23 @@
   font-weight: var(--font-weight-medium);
 }
 
+/* 🔘 Contenedor de botones oculto por defecto */
+.card-actions {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.2s ease;
+}
+
+/* 👀 Mostrar los botones solo al hacer hover */
+.videogame-card:hover .card-actions {
+  opacity: 1;
+   transform: translateY(-4px);
+}
+
 @keyframes pulse {
   0%,
   100% {
@@ -140,6 +158,8 @@
 }
 
 /* === RESPONSIVE === */
+
+
 @media (max-width: 768px) {
   .videogames-list-container {
     padding: var(--space-20) var(--space-16);

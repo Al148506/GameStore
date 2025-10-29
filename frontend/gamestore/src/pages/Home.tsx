@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useVideogames } from "@hooks/useVideogames";
 import { Pagination } from "@components/pagination";
 import type { VideogameDto } from "../types/videogame";
-import { Navbar } from "@components/Navbar"; // 👈 Importar
+import { Navbar } from "@components/Navbar";
+import Button from "@components/Button";
 import "../styles/home.css";
 import "../styles/modal.css";
 
@@ -17,6 +18,7 @@ export function Home() {
     currentPage,
     setCurrentPage,
     totalPages,
+    deleteVideogame,
   } = useVideogames(pageSize);
 
   const [selectedGame, setSelectedGame] = useState<VideogameDto | null>(null);
@@ -48,6 +50,17 @@ export function Home() {
   // 👇 Función para manejar ordenamiento
   const handleSort = (sortType: string) => {
     setSortBy(sortType);
+  };
+
+  const handleEdit = (game: VideogameDto) => {
+    console.log("Editar:", game);
+    // Aquí podrías navegar a una vista de edición, por ejemplo:
+    // navigate(`/videogames/edit/${game.id}`);
+  };
+
+  const handleDelete = (id: number) => {
+    console.log("Eliminar:", id);
+    // Aquí podrías abrir un modal de confirmación o hacer un DELETE a la API
   };
 
   // 👇 Filtrar y ordenar juegos
@@ -93,6 +106,23 @@ export function Home() {
               <div className="game-card-content">
                 <h2 className="game-title">{game.name}</h2>
                 <p className="game-price">${game.price.toFixed(2)}</p>
+              </div>
+              {/* 🔽 Botones que aparecen al hacer hover */}
+              <div className="card-actions">
+                <Button
+                  text={"Edit"}
+                  editButton={true}
+                  manejarClic={(e) => {
+                    e.stopPropagation();
+                    handleEdit(game);
+                  }}
+                ></Button>
+
+                <Button
+                  text={"Delete"}
+                  editButton={false}
+                  manejarClic={() => deleteVideogame(game.id)}
+                ></Button>
               </div>
             </div>
           ))}

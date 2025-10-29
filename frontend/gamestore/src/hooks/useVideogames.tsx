@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
-import { getVideogames } from "../features/videogames/services";
-import type { Videogame } from "../types/videogame";
+import {
+  getVideogames,
+  deleteVideogame as deleteVideogameApi,
+} from "../features/videogames/services";
+import type { VideogameDto } from "../types/videogame";
 
 export interface PaginatedResponse<T> {
   items: T[];
@@ -10,7 +13,7 @@ export interface PaginatedResponse<T> {
 }
 
 export function useVideogames(pageSize = 2) {
-  const [videogames, setVideogames] = useState<Videogame[]>([]);
+  const [videogames, setVideogames] = useState<VideogameDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
@@ -42,6 +45,22 @@ export function useVideogames(pageSize = 2) {
 
   const totalPages = Math.ceil(total / pageSize);
 
+  const deleteVideogame = async (id: number) => {
+    const confirmDelete = window.confirm(
+      "¿Seguro que deseas eliminar este videojuego?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await deleteVideogameApi(id);
+      // 🧠 Actualiza la lista local sin volver a pedir los datos
+      setVideogames((prev) => prev.filter((game) => game.id !== id));
+    } catch (err) {
+      console.error("Error al eliminar el videojuego:", err);
+      setError("No se pudo eliminar el videojuego.");
+    }
+  };
+
   return {
     videogames,
     loading,
@@ -49,5 +68,6 @@ export function useVideogames(pageSize = 2) {
     currentPage,
     setCurrentPage,
     totalPages,
+    deleteVideogame
   };
 }

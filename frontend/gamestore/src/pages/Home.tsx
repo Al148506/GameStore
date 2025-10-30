@@ -58,10 +58,10 @@ export function Home() {
     // navigate(`/videogames/edit/${game.id}`);
   };
 
-  const handleDelete = (id: number) => {
-    console.log("Eliminar:", id);
-    // Aquí podrías abrir un modal de confirmación o hacer un DELETE a la API
-  };
+  // const handleDelete = (id: number) => {
+  //   console.log("Eliminar:", id);
+  //   // Aquí podrías abrir un modal de confirmación o hacer un DELETE a la API
+  // };
 
   // 👇 Filtrar y ordenar juegos
   const filteredAndSortedGames = videogames
@@ -76,8 +76,8 @@ export function Home() {
           return a.price - b.price;
         case "price-desc":
           return b.price - a.price;
-        case "rating-desc":
-          return b.rating - a.rating;
+        // case "rating-desc":
+        //   return b.rating - a.rating;
         default:
           return 0;
       }

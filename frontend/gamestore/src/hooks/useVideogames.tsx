@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import {
   getVideogames,
   deleteVideogame as deleteVideogameApi,
+  updateVideogame as updateVideogameApi,
 } from "../features/videogames/services";
 import type { VideogameDto } from "../types/videogame";
-
+import Swal from "sweetalert2";
 export interface PaginatedResponse<T> {
   items: T[];
   total: number;
@@ -46,18 +47,25 @@ export function useVideogames(pageSize = 2) {
   const totalPages = Math.ceil(total / pageSize);
 
   const deleteVideogame = async (id: number) => {
-    const confirmDelete = window.confirm(
-      "¿Seguro que deseas eliminar este videojuego?"
-    );
-    if (!confirmDelete) return;
+    const result = await Swal.fire({
+      title: "¿Eliminar videojuego?",
+      text: "Esta acción no se puede deshacer",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       await deleteVideogameApi(id);
       // 🧠 Actualiza la lista local sin volver a pedir los datos
       setVideogames((prev) => prev.filter((game) => game.id !== id));
+      Swal.fire("Eliminado", "El videojuego ha sido eliminado", "success");
     } catch (err) {
-      console.error("Error al eliminar el videojuego:", err);
-      setError("No se pudo eliminar el videojuego.");
+      console.error("Error deleting videogame:", err);
+      Swal.fire("Error", "No se pudo eliminar el videojuego", "error");
     }
   };
 
@@ -68,6 +76,6 @@ export function useVideogames(pageSize = 2) {
     currentPage,
     setCurrentPage,
     totalPages,
-    deleteVideogame
+    deleteVideogame,
   };
 }

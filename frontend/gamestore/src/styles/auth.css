@@ -1,5 +1,31 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito&display=swap");
-
+.principal-container {
+  width: 100%;
+  max-width: 420px;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* centra el contenido dentro */
+  align-items: center; /* centra el contenido dentro */
+  padding: 1rem;
+  background-color: rgba(105, 78, 102, 0.7); /* fondo semi-transparente */
+  border-radius: 10px; /* opcional, solo estético */
+}
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* ocupa toda la altura de la pantalla */
+  margin: 0;
+  background-color: #121212; /* color de fondo oscuro */
+}
+.container-login {
+  min-height: 100vh;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
 * {
   margin: 0;
   padding: 0;
@@ -12,11 +38,6 @@ html {
   color: #fff;
 }
 
-body {
-  min-height: 100vh;
-  background-color: dodgerblue;
-}
-
 .App {
   display: flex;
   flex-direction: column;
@@ -24,17 +45,6 @@ body {
   align-items: center;
   min-height: 100vh;
   padding: 1rem 0.5rem;
-}
-
-section {
-  width: 100%;
-  max-width: 420px;
-  min-height: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding: 1rem;
-  background-color: rgba(0, 0, 0, 0.4);
 }
 
 form {

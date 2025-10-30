@@ -6,7 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
-import "../styles/register.css";
+import "../styles/auth.css";
 import axios from "../api/axios";
 import { isAxiosError } from "axios";
 import type { RegisterRequestDto } from "../types/Auth/auth";
@@ -92,7 +92,7 @@ const Register = () => {
           </p>
         </section>
       ) : (
-        <section>
+        <section className="principal-container">
           <p
             ref={errRef}
             className={errMsg ? "errmsg" : "offscreen"}

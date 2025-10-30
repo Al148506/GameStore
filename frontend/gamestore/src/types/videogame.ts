@@ -1,4 +1,4 @@
-export interface Videogame {
+export interface VideogameDto {
   id: number;
   name: string;
   description: string;

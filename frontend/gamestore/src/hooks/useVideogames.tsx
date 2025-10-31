@@ -69,6 +69,29 @@ export function useVideogames(pageSize = 2) {
     }
   };
 
+  const updateVideogame = async (
+    id: number,
+    updatedData: Partial<VideogameDto>
+  ) => {
+    try {
+      const updatedGame = await updateVideogameApi(id, updatedData);
+
+      // 🔄 Actualiza el estado local sin volver a hacer fetch completo
+      setVideogames((prev) =>
+        prev.map((game) => (game.id === id ? updatedGame : game))
+      );
+
+      Swal.fire(
+        "Actualizado",
+        "El videojuego ha sido actualizado correctamente",
+        "success"
+      );
+    } catch (err) {
+      console.error("Error updating videogame:", err);
+      Swal.fire("Error", "No se pudo actualizar el videojuego", "error");
+    }
+  };
+
   return {
     videogames,
     loading,
@@ -77,5 +100,6 @@ export function useVideogames(pageSize = 2) {
     setCurrentPage,
     totalPages,
     deleteVideogame,
+    updateVideogame, 
   };
 }

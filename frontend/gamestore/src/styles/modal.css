@@ -117,6 +117,37 @@
   border: 1px solid var(--color-card-border);
 }
 
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0px 20px;
+}
+
+.edit-form label {
+  font-weight: var(--font-weight-medium);
+}
+.edit-form input,
+.edit-form textarea,
+.edit-form select {
+  padding: 5px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-base);
+}
+.edit-title {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 50px;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
 /* Header del modal */
 .modal-header {
   position: relative;

@@ -4,11 +4,12 @@ import { useVideogames } from "@hooks/useVideogames";
 import { Pagination } from "@components/pagination";
 import type { VideogameDto } from "../types/videogame";
 import { Navbar } from "@components/Navbar";
-import Button from "@components/Button";
 import "../styles/home.css";
 import "../styles/modal.css";
 import { EditVideogameModal } from "@components/EditVideogameModal";
 import { VideogameDetailsModal } from "@components/VideogameDetailsModal";
+import { VideogamesGrid } from "@components/VideogamesGrid";
+import { CreateVideogameModal } from "@components/CreateVideogameModal";
 
 export function Home() {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ export function Home() {
     totalPages,
     deleteVideogame,
     updateVideogame,
+    createVideogame,
   } = useVideogames(pageSize);
 
   const [selectedGame, setSelectedGame] = useState<VideogameDto | null>(null);
@@ -29,6 +31,7 @@ export function Home() {
   const [searchTerm, setSearchTerm] = useState<string>(""); // 👈 Estado para búsqueda
   const [sortBy, setSortBy] = useState<string>(""); // 👈 Estado para ordenamiento
   const [editingGame, setEditingGame] = useState<VideogameDto | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
 
   useEffect(() => {
     const token =
@@ -84,39 +87,26 @@ export function Home() {
       {/* 👇 Navbar fuera del container */}
       <Navbar onSearch={handleSearch} onSort={handleSort} />
       <div className="videogames-list-container">
-        <div className="videogames-grid">
-          {filteredAndSortedGames.map((game) => (
-            <div
-              key={game.id}
-              className="videogame-card"
-              onClick={() => handleOpenModal(game)}
-            >
-              <img
-                src={game.imageUrl}
-                alt={game.name}
-                className="game-card-image"
-              />
-              <div className="game-card-content">
-                <h2 className="game-title">{game.name}</h2>
-                <p className="game-price">${game.price.toFixed(2)}</p>
-              </div>
-              {/* 🔽 Botones que aparecen al hacer hover */}
-              <div className="card-actions">
-                <Button
-                  text={"Edit"}
-                  editButton={true}
-                  manejarClic={() => setEditingGame(game)}
-                ></Button>
+        {/* ✅ Botón flotante para agregar */}
+        <button
+          className="fab-button"
+          onClick={() => setShowCreateModal(true)}
+          title="Agregar videojuego"
+        >
+          +
+        </button>
+        <VideogamesGrid
+          games={filteredAndSortedGames}
+          onCardClick={handleOpenModal}
+          onEdit={setEditingGame}
+          onDelete={deleteVideogame}
+        />
+         <CreateVideogameModal
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          onCreate={createVideogame}
+        />
 
-                <Button
-                  text={"Delete"}
-                  editButton={false}
-                  manejarClic={() => deleteVideogame(game.id)}
-                ></Button>
-              </div>
-            </div>
-          ))}
-        </div>
         {editingGame && (
           <EditVideogameModal
             game={editingGame}

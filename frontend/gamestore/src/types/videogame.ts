@@ -10,3 +10,12 @@ export interface VideogameDto {
   genres: string[];
   platforms: string[];
 }
+
+export interface Genre {
+  id: number;
+  name: string;
+}
+export interface Platform {
+  id: number;
+  name: string;
+}

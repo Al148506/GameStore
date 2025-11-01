@@ -19,6 +19,10 @@ namespace GameStore.Api.AutoMapper
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.Genres, opt => opt.Ignore())
             .ForMember(dest => dest.Platforms, opt => opt.Ignore());
+
+            CreateMap<Genre, GenreDTO>();
+
+            CreateMap<Platform,PlataformDto>();
         }
     }
 }

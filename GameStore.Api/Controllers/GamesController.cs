@@ -38,6 +38,26 @@ public class GamesController : ControllerBase
         return Ok(new { page, pageSize, total, items });
     }
 
+    [HttpGet("genres")]
+    public async Task<IActionResult> ListGenres()
+    {
+        var genres = await _db.Genres
+            .AsNoTracking()
+            .OrderBy(g => g.Name)
+            .ProjectTo<GenreDTO>(_mapper.ConfigurationProvider)
+            .ToListAsync();
+        return Ok(genres);
+    }
+    [HttpGet("platforms")]
+    public async Task<IActionResult> ListPlatforms()
+    {
+        var platforms = await _db.Platforms
+            .AsNoTracking()
+            .OrderBy(p => p.Name)
+            .ToListAsync();
+        return Ok(platforms);
+    }
+
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id, CancellationToken ct)
@@ -148,6 +168,8 @@ public class GamesController : ControllerBase
         await _db.SaveChangesAsync();
         return NoContent();
     }
+
+
 
 
 }

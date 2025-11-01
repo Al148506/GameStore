@@ -1,6 +1,5 @@
 import api from "../../api/axios";
-import type { VideogameDto } from "../../types/videogame";
-
+import type { VideogameDto, Genre, Platform } from "../../types/videogame";
 // Paginación opcional
 export interface PaginatedResponse<T> {
   items: T[];
@@ -23,6 +22,18 @@ export const getVideogame = async (id: number): Promise<VideogameDto> => {
   const res = await api.get<VideogameDto>(`/api/games/${id}`);
   return res.data;
 };
+
+// En services.tsx
+export const getGenres = async (): Promise<Genre[]> => {
+  const res = await api.get<Genre[]>("/api/games/genres"); // ✅ Ruta actualizada
+  return res.data;
+};
+
+export const getPlatforms = async (): Promise<Platform[]> => {
+  const res = await api.get<Platform[]>("/api/games/platforms"); // ✅ Ruta actualizada
+  return res.data;
+};
+
 
 export const createVideogame = async (
   payload: Partial<VideogameDto>

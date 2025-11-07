@@ -6,10 +6,11 @@ import type { VideogameDto } from "../types/videogame";
 import { Navbar } from "@components/Navbar";
 import "../styles/home.css";
 import "../styles/modal.css";
-import { EditVideogameModal } from "@components/EditVideogameModal";
+
 import { VideogameDetailsModal } from "@components/VideogameDetailsModal";
 import { VideogamesGrid } from "@components/VideogamesGrid";
-import { CreateVideogameModal } from "@components/CreateVideogameModal";
+
+import { VideogameFormModal } from "@components/VideogameFormModal";
 
 export function Home() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ export function Home() {
   const [searchTerm, setSearchTerm] = useState<string>(""); // 👈 Estado para búsqueda
   const [sortBy, setSortBy] = useState<string>(""); // 👈 Estado para ordenamiento
   const [editingGame, setEditingGame] = useState<VideogameDto | null>(null);
-  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const [showFormModal, setShowCreateModal] = useState<boolean>(false);
 
   useEffect(() => {
     const token =
@@ -101,15 +102,18 @@ export function Home() {
           onEdit={setEditingGame}
           onDelete={deleteVideogame}
         />
-         <CreateVideogameModal
-          isOpen={showCreateModal}
-          onClose={() => setShowCreateModal(false)}
+        <VideogameFormModal
+          isOpen={showFormModal}
+          mode="create"
           onCreate={createVideogame}
+          onClose={() => setShowCreateModal(false)}
         />
 
         {editingGame && (
-          <EditVideogameModal
-            game={editingGame}
+          <VideogameFormModal
+            isOpen={true}
+            mode="edit"
+            gameToEdit={editingGame}
             onClose={() => setEditingGame(null)}
             onSave={updateVideogame}
           />

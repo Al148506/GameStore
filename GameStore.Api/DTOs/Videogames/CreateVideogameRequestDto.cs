@@ -33,8 +33,9 @@ namespace GameStore.Api.DTOs.Videogames
         public string Rating { get; set; } = null!;
 
         // Relaciones many-to-many como listas de IDs
-        public List<int>? GenreIds { get; set; }
-
-        public List<int>? PlatformIds { get; set; }
+        [Required]
+        public required List<int> GenreIds { get; set; }
+        [Required]
+        public required List<int> PlatformIds { get; set; }
     }
 }

@@ -7,8 +7,10 @@ export interface VideogameDto {
   stock: number;
   imageUrl: string;
   rating: string;
-  genres: string[];
-  platforms: string[];
+  genreIds: number[];
+  platformIds: number[];
+  genres?: string[];
+  platforms?: string[];
 }
 
 export interface Genre {

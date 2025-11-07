@@ -75,7 +75,10 @@ public class GamesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateVideogameRequestDto createDto)
     {
-            var vg = new Videogame
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var vg = new Videogame
             {
                 Name = createDto.Name,
                 Description = createDto.Description,
@@ -85,27 +88,20 @@ public class GamesController : ControllerBase
                 ImageUrl = createDto.ImageUrl,
                 Rating = createDto.Rating
             };
-            // Asociar géneros si se proporcionan
-            if (createDto.GenreIds is not null)
-            {
+     
                 var genres = await _db.Genres
                     .Where(g => createDto.GenreIds.Contains(g.Id))
                     .ToListAsync();
                 vg.Genres = genres;
-            }
-            // Asociar plataformas si se proporcionan
-            if (createDto.PlatformIds is not null)
-            {
                 var platforms = await _db.Platforms
                     .Where(p => createDto.PlatformIds.Contains(p.Id))
                     .ToListAsync();
                 vg.Platforms = platforms;
-            }
             _db.Videogames.Add(vg);
             await _db.SaveChangesAsync();
-            return CreatedAtAction(nameof(Get), new { id = vg.Id }, vg);
+            return Ok(vg);
 
-        }
+    }
 
 
 

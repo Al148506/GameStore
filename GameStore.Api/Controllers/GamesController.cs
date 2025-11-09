@@ -71,7 +71,7 @@ public class GamesController : ControllerBase
         if (vdto is null) return NotFound();
         return Ok(vdto);
     }
-    [Authorize(Policy = "RequireAdmin")]
+   [Authorize(Policy = "RequireAdmin")]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateVideogameRequestDto createDto)
     {

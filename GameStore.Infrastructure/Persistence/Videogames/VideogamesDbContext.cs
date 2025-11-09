@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
+using GameStore.Infrastructure.Persistence.Videogames.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Infrastructure.Persistence.Videogames;
@@ -10,18 +10,6 @@ public partial class VideogamesDbContext : DbContext
         : base(options)
     {
     }
-
-    public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
-
-    public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; }
-
-    public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
-
-    public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
-
-    public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
-
-    public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; }
 
     public virtual DbSet<Genre> Genres { get; set; }
 
@@ -35,35 +23,12 @@ public partial class VideogamesDbContext : DbContext
 
     public virtual DbSet<Videogame> Videogames { get; set; }
 
+    public DbSet<Cart> Carts { get; set; }
+    public DbSet<CartItem> CartItems { get; set; }
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<AspNetRole>(entity =>
-        {
-            entity.HasIndex(e => e.NormalizedName, "RoleNameIndex")
-                .IsUnique()
-                .HasFilter("([NormalizedName] IS NOT NULL)");
-        });
-
-        modelBuilder.Entity<AspNetUser>(entity =>
-        {
-            entity.HasIndex(e => e.NormalizedUserName, "UserNameIndex")
-                .IsUnique()
-                .HasFilter("([NormalizedUserName] IS NOT NULL)");
-
-            entity.Property(e => e.Name).HasDefaultValue("");
-
-            entity.HasMany(d => d.Roles).WithMany(p => p.Users)
-                .UsingEntity<Dictionary<string, object>>(
-                    "AspNetUserRole",
-                    r => r.HasOne<AspNetRole>().WithMany().HasForeignKey("RoleId"),
-                    l => l.HasOne<AspNetUser>().WithMany().HasForeignKey("UserId"),
-                    j =>
-                    {
-                        j.HasKey("UserId", "RoleId");
-                        j.ToTable("AspNetUserRoles");
-                        j.HasIndex(new[] { "RoleId" }, "IX_AspNetUserRoles_RoleId");
-                    });
-        });
 
         modelBuilder.Entity<Genre>(entity =>
         {
@@ -94,6 +59,19 @@ public partial class VideogamesDbContext : DbContext
                         j.HasIndex(new[] { "VideogamesId" }, "IX_VideogamePlatforms_VideogamesId");
                     });
         });
+
+        modelBuilder.Entity<Cart>()
+        .HasMany(c => c.Items)
+        .WithOne(i => i.Cart)
+        .HasForeignKey(i => i.CartId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<CartItem>()
+            .HasOne(i => i.Videogame)
+            .WithMany() // Un videojuego puede estar en muchos carritos
+            .HasForeignKey(i => i.VideogameId)
+            .OnDelete(DeleteBehavior.Restrict);
+
 
         OnModelCreatingPartial(modelBuilder);
     }

@@ -26,7 +26,4 @@ public partial class Sale
     [InverseProperty("Sale")]
     public virtual ICollection<SaleDetail> SaleDetails { get; set; } = new List<SaleDetail>();
 
-    [ForeignKey("UserId")]
-    [InverseProperty("Sales")]
-    public virtual AspNetUser User { get; set; } = null!;
 }

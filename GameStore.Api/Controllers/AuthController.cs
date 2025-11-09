@@ -62,6 +62,16 @@ namespace GameStore.Api.Controllers
             };
         }
 
+        [HttpPost("GrantAdmin")]
+        public async Task<IActionResult> GrantAdmin(GrantAdminRequestDto req)
+        {
+            var user = await _users.FindByEmailAsync(req.email);
+            if (user is null) return NotFound();
+            var isAdmin = await _users.IsInRoleAsync(user, "Admin");
+            if (isAdmin) return BadRequest("User is already an admin.");
+            await _users.AddToRoleAsync(user, "Admin");
+            return Ok();
+        }
         private string CreateJwt(ApplicationUser user, IList<string> roles)
         {
             var claims = new List<Claim>

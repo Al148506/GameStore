@@ -2,15 +2,17 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useVideogames } from "@hooks/useVideogames";
 import { Pagination } from "@components/pagination";
-import type { VideogameDto } from "../types/videogame";
+import type { VideogameDto } from "../types/Videogame/videogame";
 import { Navbar } from "@components/Navbar";
+import { CartSidebar } from "@components/Cart/CartSidebar"; // 👈 Agrega esto
+
 import "../styles/home.css";
 import "../styles/modal.css";
 
-import { VideogameDetailsModal } from "@components/VideogameDetailsModal";
-import { VideogamesGrid } from "@components/VideogamesGrid";
+import { VideogameDetailsModal } from "@components/Videogame/VideogameDetailsModal";
+import { VideogamesGrid } from "@components/Videogame/VideogamesGrid";
 
-import { VideogameFormModal } from "@components/VideogameFormModal";
+import { VideogameFormModal } from "@components/Videogame/VideogameFormModal";
 
 export function Home() {
   const navigate = useNavigate();
@@ -33,6 +35,7 @@ export function Home() {
   const [sortBy, setSortBy] = useState<string>(""); // 👈 Estado para ordenamiento
   const [editingGame, setEditingGame] = useState<VideogameDto | null>(null);
   const [showFormModal, setShowCreateModal] = useState<boolean>(false);
+  const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const token =
@@ -86,7 +89,11 @@ export function Home() {
   return (
     <>
       {/* 👇 Navbar fuera del container */}
-      <Navbar onSearch={handleSearch} onSort={handleSort} />
+      <Navbar
+        onSearch={handleSearch}
+        onSort={handleSort}
+        onToggleCart={() => setIsCartOpen(!isCartOpen)}
+      />
       <div className="videogames-list-container">
         {/* ✅ Botón flotante para agregar */}
         <button
@@ -131,6 +138,8 @@ export function Home() {
           isOpen={showModal}
           onClose={handleCloseModal}
         />
+        {/* 🛒 Panel lateral del carrito */}
+        <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
       </div>
     </>
   );

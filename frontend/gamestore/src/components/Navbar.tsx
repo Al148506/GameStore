@@ -4,9 +4,10 @@ import "../styles/navbar.css";
 interface NavbarProps {
   onSearch?: (searchTerm: string) => void;
   onSort?: (sortBy: string) => void;
+  onToggleCart?: () => void; // 👈 nuevo prop
 }
 
-export function Navbar({ onSearch, onSort }: NavbarProps) {
+export function Navbar({ onSearch, onSort, onToggleCart  }: NavbarProps) {
   const navigate = useNavigate();
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (onSearch) {
@@ -62,6 +63,9 @@ export function Navbar({ onSearch, onSort }: NavbarProps) {
             <option value="price-desc">Precio: Mayor a Menor</option>
             <option value="rating-desc">Rating: Mayor a Menor</option>
           </select>
+          <button className="cart-button" onClick={onToggleCart}>
+            🛒
+          </button>
 
           {/* Botón de logout */}
           <button className="btn-logout" onClick={handleLogout}>

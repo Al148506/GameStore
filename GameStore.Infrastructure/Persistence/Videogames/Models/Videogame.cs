@@ -26,9 +26,6 @@ public partial class Videogame
 
     public string Rating { get; set; } = null!;
 
-    [InverseProperty("Videogame")]
-    public virtual ICollection<SaleDetail> SaleDetails { get; set; } = new List<SaleDetail>();
-
     [ForeignKey("VideogamesId")]
     [InverseProperty("Videogames")]
     public virtual ICollection<Genre> Genres { get; set; } = new List<Genre>();

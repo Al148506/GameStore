@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using GameStore.Api.DTOs.Videogames;
@@ -11,6 +10,7 @@ namespace GameStore.Api.Controllers;
 
 [ApiController]
 [Route("api/games")]
+
 public class GamesController : ControllerBase
 {
     private readonly VideogamesDbContext _db;
@@ -71,7 +71,7 @@ public class GamesController : ControllerBase
         if (vdto is null) return NotFound();
         return Ok(vdto);
     }
-    [Authorize(Policy = "RequireAdmin")]
+   [Authorize(Policy = "RequireAdmin")]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateVideogameRequestDto createDto)
     {

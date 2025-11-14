@@ -1,5 +1,9 @@
-import api from "../../api/axios";
-import type { VideogameDto, Genre, Platform } from "../../types/videogame";
+import api from "./axios";
+import type {
+  VideogameDto,
+  Genre,
+  Platform,
+} from "../types/Videogame/videogame";
 // Paginación opcional
 export interface PaginatedResponse<T> {
   items: T[];
@@ -33,7 +37,6 @@ export const getPlatforms = async (): Promise<Platform[]> => {
   const res = await api.get<Platform[]>("/api/games/platforms"); // ✅ Ruta actualizada
   return res.data;
 };
-
 
 export const createVideogame = async (
   payload: Partial<VideogameDto>

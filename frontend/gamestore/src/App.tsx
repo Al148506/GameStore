@@ -8,8 +8,14 @@ import {
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import { AuthProvider } from "./context/AuthProvider";
+import { CartProvider } from "./context/CartProvider";
+
+
 function App() {
   return (
+        <AuthProvider>
+      <CartProvider>
     <Router>
       <Routes>
         {/* Redirigir la raíz hacia /login */}
@@ -24,6 +30,9 @@ function App() {
         <Route path="/home" element={<Home />} />
       </Routes>
     </Router>
+     </CartProvider>
+    </AuthProvider>
+ 
   );
 }
 

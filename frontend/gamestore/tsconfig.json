@@ -5,10 +5,11 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "src",
     "paths": {
-      "@hooks/*": ["src/hooks/*"],
-      "@components/*": ["src/components/*"]
+      "@hooks/*": ["hooks/*"],
+      "@components/*": ["components/*"],
+      "@types/*": ["types/*"],
     }
   }
 }

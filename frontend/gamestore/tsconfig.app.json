@@ -11,7 +11,9 @@
     "baseUrl": "src",
     "paths": {
       "@hooks/*": ["hooks/*"],
-      "@components/*": ["components/*"]
+      "@components/*": ["components/*"],
+      "@types/*": ["types/*"],
+
     },
 
     /* Bundler mode */

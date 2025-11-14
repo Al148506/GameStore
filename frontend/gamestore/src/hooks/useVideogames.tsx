@@ -4,8 +4,8 @@ import {
   deleteVideogame as deleteVideogameApi,
   updateVideogame as updateVideogameApi,
   createVideogame as createVideogameApi,
-} from "../features/videogames/services";
-import type { VideogameDto } from "../types/videogame";
+} from "../api/videogameApi";
+import type { VideogameDto } from "../types/Videogame/videogame";
 import Swal from "sweetalert2";
 import axios from "axios";
 
@@ -72,32 +72,32 @@ export function useVideogames(pageSize = 2) {
     }
   };
 
-  const createVideogame = async (newGameData: Omit<VideogameDto, 'id'>) => {
-  try {
-    console.log('📤 Creando videojuego:', newGameData);
-    const createdGame = await createVideogameApi(newGameData);
+  const createVideogame = async (newGameData: Omit<VideogameDto, "id">) => {
+    try {
+      console.log("📤 Creando videojuego:", newGameData);
+      const createdGame = await createVideogameApi(newGameData);
 
-    // ✅ Agregar el nuevo juego al estado local
-    setVideogames((prev) => [createdGame, ...prev]);
-    
-    Swal.fire(
-      "Creado",
-      "El videojuego ha sido creado exitosamente",
-      "success"
-    );
-  } catch (err) {
-    console.error("Error creating videogame:", err);
-    if (axios.isAxiosError(err) && err.response) {
-      const errorMessage = 
-        err.response.data?.message || 
-        err.response.data?.error || 
-        "No se pudo crear el videojuego";
-      Swal.fire("Error", errorMessage, "error");
-    } else {
-      Swal.fire("Error", "No se pudo crear el videojuego", "error");
+      // ✅ Agregar el nuevo juego al estado local
+      setVideogames((prev) => [createdGame, ...prev]);
+
+      Swal.fire(
+        "Creado",
+        "El videojuego ha sido creado exitosamente",
+        "success"
+      );
+    } catch (err) {
+      console.error("Error creating videogame:", err);
+      if (axios.isAxiosError(err) && err.response) {
+        const errorMessage =
+          err.response.data?.message ||
+          err.response.data?.error ||
+          "No se pudo crear el videojuego";
+        Swal.fire("Error", errorMessage, "error");
+      } else {
+        Swal.fire("Error", "No se pudo crear el videojuego", "error");
+      }
     }
-  }
-};
+  };
 
   const updateVideogame = async (
     id: number,

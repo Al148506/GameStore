@@ -1,5 +1,5 @@
-import type { VideogameDto } from "../types/videogame";
-import "../styles/modal.css";
+import type { VideogameDto } from "../../types/Videogame/videogame";
+import "../../styles/modal.css";
 
 interface VideogameDetailsModalProps {
   game: VideogameDto | null;
@@ -7,10 +7,10 @@ interface VideogameDetailsModalProps {
   onClose: () => void;
 }
 
-export function VideogameDetailsModal({ 
-  game, 
-  isOpen, 
-  onClose 
+export function VideogameDetailsModal({
+  game,
+  isOpen,
+  onClose,
 }: VideogameDetailsModalProps) {
   if (!isOpen || !game) return null;
 
@@ -21,11 +21,7 @@ export function VideogameDetailsModal({
           <button className="modal-close" onClick={onClose}>
             ✖
           </button>
-          <img
-            src={game.imageUrl}
-            alt={game.name}
-            className="modal-image"
-          />
+          <img src={game.imageUrl} alt={game.name} className="modal-image" />
         </div>
         <div className="modal-body">
           <h2 className="modal-title">{game.name}</h2>
@@ -57,7 +53,7 @@ export function VideogameDetailsModal({
           <div className="modal-tags">
             <span className="tags-label">Géneros</span>
             <div className="tags-container">
-              {game.genres.map((genre, index) => (
+              {game.genres?.map((genre, index) => (
                 <span key={index} className="tag">
                   {genre}
                 </span>
@@ -67,7 +63,7 @@ export function VideogameDetailsModal({
           <div className="modal-tags">
             <span className="tags-label">Plataformas</span>
             <div className="tags-container">
-              {game.platforms.map((platform, index) => (
+              {game.platforms?.map((platform, index) => (
                 <span key={index} className="tag secondary">
                   {platform}
                 </span>
@@ -79,4 +75,3 @@ export function VideogameDetailsModal({
     </div>
   );
 }
-

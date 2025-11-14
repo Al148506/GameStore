@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GameStore.Infrastructure.Persistence.Videogames.Models;
+
 namespace GameStore.Infrastructure.Persistence.Videogames.Models
 {
-    public class CartItem
+    public class OrderItem
     {
         public int Id { get; set; }
-        public int CartId { get; set; }
-        public int VideogameId { get; set; }
+        public int OrderId { get; set; }
+        public Order Order { get; set; } = null!;
+
+        public int VideogameId { get; set; }     // o ProductId, según tu modelo
+        public Videogame? Videogame { get; set; } // navegación opcional
+
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
-        public decimal Total { get; set; }
-
-        public required Cart Cart { get; set; }
-        public required Videogame Videogame { get; set; }
     }
 }

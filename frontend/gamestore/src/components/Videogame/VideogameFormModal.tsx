@@ -2,9 +2,13 @@ import { useState, useEffect } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import Select from "react-select";
 import type { MultiValue, ActionMeta } from "react-select";
-import type { VideogameDto, Genre, Platform } from "../types/videogame";
-import { getGenres, getPlatforms } from "../features/videogames/services";
-import "../styles/modal.css";
+import type {
+  VideogameDto,
+  Genre,
+  Platform,
+} from "../../types/Videogame/videogame";
+import { getGenres, getPlatforms } from "../../api/videogameApi";
+import "../../styles/modal.css";
 
 interface VideogameModalProps {
   isOpen: boolean;

@@ -75,8 +75,12 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
-
-builder.Services.AddAutoMapper(typeof(VideogameProfile));
+// Sustituir la línea problemática por la forma correcta de registrar múltiples perfiles de AutoMapper
+builder.Services.AddAutoMapper(
+    typeof(VideogameProfile),
+    typeof(OrdersProfile),
+    typeof(CartProfile)
+);
 
 // Swagger + esquema Bearer
 builder.Services.AddEndpointsApiExplorer();
@@ -141,18 +145,6 @@ app.UseAuthorization();
 app.UseCors("AllowFrontend");
 app.MapControllers();
 await app.PromoteAdminFromConfigAsync();
-var scope = app.Services.CreateScope();
-var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-string[] roles = new[] { "Admin", "User" };
-foreach (var roleName in roles)
-{
-    var exists = await roleManager.RoleExistsAsync(roleName);
-    if (!exists)
-    {
-        await roleManager.CreateAsync(new IdentityRole(roleName));
-        Console.WriteLine($"Rol '{roleName}' creado.");
-    }
-}
 
 app.Run();
 

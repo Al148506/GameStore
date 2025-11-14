@@ -17,14 +17,12 @@ public partial class VideogamesDbContext : DbContext
 
     public virtual DbSet<Role> Roles { get; set; }
 
-    public virtual DbSet<Sale> Sales { get; set; }
-
-    public virtual DbSet<SaleDetail> SaleDetails { get; set; }
-
     public virtual DbSet<Videogame> Videogames { get; set; }
 
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -71,6 +69,29 @@ public partial class VideogamesDbContext : DbContext
             .WithMany() // Un videojuego puede estar en muchos carritos
             .HasForeignKey(i => i.VideogameId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.Property(o => o.TotalAmount)
+                  .HasColumnType("decimal(18,2)");
+
+            entity.Property(o => o.CreatedAt)
+                  .HasDefaultValueSql("GETUTCDATE()");
+
+            entity.HasIndex(o => o.UserId);
+            entity.HasIndex(o => o.CreatedAt);
+
+            entity.HasMany(o => o.Items)
+                  .WithOne(i => i.Order)
+                  .HasForeignKey(i => i.OrderId)
+                  .OnDelete(DeleteBehavior.Cascade); // elimina items al borrar order
+        });
+
+        modelBuilder.Entity<OrderItem>(entity =>
+        {
+            entity.Property(i => i.UnitPrice).HasColumnType("decimal(18,2)");
+            entity.HasIndex(i => i.VideogameId);
+        });
 
 
         OnModelCreatingPartial(modelBuilder);

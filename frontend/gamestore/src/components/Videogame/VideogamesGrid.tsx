@@ -1,5 +1,5 @@
 // VideogamesGrid.tsx
-import type { VideogameDto } from "../types/videogame";
+import type { VideogameDto } from "../../types/Videogame/videogame";
 import { VideogameCard } from "./VideogameCard";
 
 interface VideogamesGridProps {
@@ -9,11 +9,11 @@ interface VideogamesGridProps {
   onDelete: (id: number) => void;
 }
 
-export function VideogamesGrid({ 
-  games, 
-  onCardClick, 
-  onEdit, 
-  onDelete 
+export function VideogamesGrid({
+  games,
+  onCardClick,
+  onEdit,
+  onDelete,
 }: VideogamesGridProps) {
   return (
     <div className="videogames-grid">

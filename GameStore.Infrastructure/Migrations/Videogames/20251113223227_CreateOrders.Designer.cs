@@ -4,16 +4,19 @@ using GameStore.Infrastructure.Persistence.Videogames;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace GameStore.Infrastructure.Migrations
+namespace GameStore.Infrastructure.Migrations.Videogames
 {
     [DbContext(typeof(VideogamesDbContext))]
-    partial class VideogamesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251113223227_CreateOrders")]
+    partial class CreateOrders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -202,6 +205,68 @@ namespace GameStore.Infrastructure.Migrations
                     b.ToTable("Roles");
                 });
 
+            modelBuilder.Entity("GameStore.Infrastructure.Persistence.Videogames.Sale", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("SaleDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "UserId" }, "IX_Sales_UserId");
+
+                    b.ToTable("Sales");
+                });
+
+            modelBuilder.Entity("GameStore.Infrastructure.Persistence.Videogames.SaleDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SaleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VideogameId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "SaleId" }, "IX_SaleDetails_SaleId");
+
+                    b.HasIndex(new[] { "VideogameId" }, "IX_SaleDetails_VideogameId");
+
+                    b.ToTable("SaleDetails");
+                });
+
             modelBuilder.Entity("GameStore.Infrastructure.Persistence.Videogames.Videogame", b =>
                 {
                     b.Property<int>("Id")
@@ -308,6 +373,25 @@ namespace GameStore.Infrastructure.Migrations
                     b.Navigation("Videogame");
                 });
 
+            modelBuilder.Entity("GameStore.Infrastructure.Persistence.Videogames.SaleDetail", b =>
+                {
+                    b.HasOne("GameStore.Infrastructure.Persistence.Videogames.Sale", "Sale")
+                        .WithMany("SaleDetails")
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GameStore.Infrastructure.Persistence.Videogames.Videogame", "Videogame")
+                        .WithMany("SaleDetails")
+                        .HasForeignKey("VideogameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Sale");
+
+                    b.Navigation("Videogame");
+                });
+
             modelBuilder.Entity("VideogameGenre", b =>
                 {
                     b.HasOne("GameStore.Infrastructure.Persistence.Videogames.Genre", null)
@@ -346,6 +430,16 @@ namespace GameStore.Infrastructure.Migrations
             modelBuilder.Entity("GameStore.Infrastructure.Persistence.Videogames.Models.Order", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("GameStore.Infrastructure.Persistence.Videogames.Sale", b =>
+                {
+                    b.Navigation("SaleDetails");
+                });
+
+            modelBuilder.Entity("GameStore.Infrastructure.Persistence.Videogames.Videogame", b =>
+                {
+                    b.Navigation("SaleDetails");
                 });
 #pragma warning restore 612, 618
         }

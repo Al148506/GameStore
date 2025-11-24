@@ -1,25 +1,20 @@
 import React from "react";
 import "../styles/button.css";
-function Button({
-  text,
-  editButton,
-  manejarClic,
-}: {
+
+interface ButtonProps {
   text: React.ReactNode;
-  editButton: boolean;
-  manejarClic: React.MouseEventHandler<HTMLButtonElement>;
-}) {
+  variant?: "default" | "edit" | "delete" | "add";
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
+}
+ export default function Button({ text, variant = "default", onClick }: ButtonProps) {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation(); // 🧱 Detiene la propagación hacia la card
-    manejarClic(e);
+    e.stopPropagation();
+    onClick(e);
   };
-  return (
-    <button
-      className={`custom-btn ${editButton ? "edit-btn" : "delete-btn"}`}
-      onClick={handleClick}
-    >
+
+ return (
+    <button className={`custom-btn ${variant}`} onClick={handleClick}>
       {text}
     </button>
   );
 }
-export default Button;

@@ -1,76 +1,108 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { cartApi } from "../api/cartApi";
 import type { CartReadDto } from "../types/Cart/cart";
-import type { CartItemCreateDto, CartItemUpdateDto } from "../types/Cart/cartItem";
-import { useAuth } from "../hooks/useAuth";
+import type {
+  CartItemCreateDto,
+  CartItemUpdateDto,
+} from "../types/Cart/cartItem";
 import { CartContext } from "./CartContext";
+import { useAuth } from "@hooks/useAuth";
 
-export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const CART_STORAGE_KEY = "shopping-cart";
+
+export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [cart, setCart] = useState<CartReadDto | null>(() => {
+    // ✅ Inicializar desde localStorage
+    try {
+      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+      return savedCart ? JSON.parse(savedCart) : null;
+    } catch (error) {
+      console.error("Error loading cart from localStorage:", error);
+      return null;
+    }
+  });
+
+  const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
-  const [cart, setCart] = useState<CartReadDto | null>(null);
 
-  // Obtener el carrito activo del usuario
+  // ✅ Guardar en localStorage cada vez que cambie el carrito
+  useEffect(() => {
+    if (cart) {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+    } else {
+      localStorage.removeItem(CART_STORAGE_KEY);
+    }
+  }, [cart]);
+
   const fetchCart = useCallback(async () => {
-    if (!user?.id) return;
+    setIsLoading(true);
     try {
       const data = await cartApi.getCart();
       setCart(data);
-    } catch (error) {
-      console.error("Error fetching cart:", error);
-      setCart(null); // No hay carrito activo
+      console.log("Cart fetched from server:", data);
+    } catch (err) {
+      console.error("Error fetching cart", err);
+      // Mantener el carrito del localStorage si falla
+    } finally {
+      setIsLoading(false);
     }
-  }, [user?.id]);
+  }, [user]);
 
-  // Agregar un ítem al carrito activo
-  const addItem = async (item: CartItemCreateDto) => {
-    if (!user?.id) return;
+  // ✅ Sincronizar con servidor cuando cambie el usuario
+  useEffect(() => {
+    fetchCart();
+  }, [user]); // Solo cuando cambia el usuario
+
+  const addItem = useCallback(async (item: CartItemCreateDto) => {
     try {
       const updatedCart = await cartApi.addItem(item);
+      console.log("Item added, updated cart:", updatedCart);
       setCart(updatedCart);
     } catch (error) {
       console.error("Error adding item:", error);
     }
-  };
+  }, []);
 
-  // Actualizar cantidad de un ítem
-  const updateItem = async (itemId: number, item: CartItemUpdateDto) => {
-    try {
-      await cartApi.updateItem(itemId, item);
-      await fetchCart();
-    } catch (error) {
-      console.error("Error updating item:", error);
-    }
-  };
+  const updateItem = useCallback(
+    async (itemId: number, item: CartItemUpdateDto) => {
+      try {
+        await cartApi.updateItem(itemId, item);
+        await fetchCart();
+      } catch (error) {
+        console.error("Error updating item:", error);
+      }
+    },
+    [fetchCart]
+  );
 
-  // Eliminar un ítem
-  const removeItem = async (itemId: number) => {
-    try {
-      await cartApi.deleteItem(itemId);
-      await fetchCart();
-    } catch (error) {
-      console.error("Error removing item:", error);
-    }
-  };
+  const removeItem = useCallback(
+    async (itemId: number) => {
+      try {
+        await cartApi.deleteItem(itemId);
+        await fetchCart();
+      } catch (error) {
+        console.error("Error removing item:", error);
+      }
+    },
+    [fetchCart]
+  );
 
-  // Checkout del carrito
-  const checkoutCart = async () => {
-    if (!cart) return;
+  const checkoutCart = useCallback(async () => {
     try {
-      await cartApi.checkoutCart(cart.Id);
-      setCart(null); // El carrito ya fue finalizado
+      await cartApi.checkoutCart();
+      setCart(null);
     } catch (error) {
       console.error("Error during checkout:", error);
     }
-  };
-
-  useEffect(() => {
-    fetchCart();
-  }, [fetchCart]);
+  }, []);
 
   return (
     <CartContext.Provider
       value={{
         cart,
+        isLoading,
         fetchCart,
         addItem,
         updateItem,

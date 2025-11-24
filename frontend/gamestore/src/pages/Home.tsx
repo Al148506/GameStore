@@ -4,7 +4,7 @@ import { useVideogames } from "@hooks/useVideogames";
 import { Pagination } from "@components/pagination";
 import type { VideogameDto } from "../types/Videogame/videogame";
 import { Navbar } from "@components/Navbar";
-import { CartSidebar } from "@components/Cart/CartSidebar"; // 👈 Agrega esto
+
 
 import "../styles/home.css";
 import "../styles/modal.css";
@@ -138,8 +138,6 @@ export function Home() {
           isOpen={showModal}
           onClose={handleCloseModal}
         />
-        {/* 🛒 Panel lateral del carrito */}
-        <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
       </div>
     </>
   );

@@ -1,6 +1,9 @@
 import api from "./axios";
 import type { CartCreateDto, CartReadDto } from "../types/Cart/cart";
-import type { CartItemCreateDto, CartItemUpdateDto } from "../types/Cart/cartItem";
+import type {
+  CartItemCreateDto,
+  CartItemUpdateDto,
+} from "../types/Cart/cartItem";
 
 export const cartApi = {
   // Obtiene el carrito activo del usuario autenticado
@@ -16,28 +19,31 @@ export const cartApi = {
   },
 
   // Marca el carrito como checkout
-  checkoutCart: async (cartId: number): Promise<void> => {
-    await api.put(`/Cart/${cartId}/checkout`);
+  checkoutCart: async (): Promise<void> => {
+    await api.post("/Cart/checkout");
   },
 
   // Elimina un carrito
   deleteCart: async (cartId: number): Promise<void> => {
-    await api.delete(`/Cart/${cartId}`);
+    await api.delete(`Cart/${cartId}`);
   },
 
   // Agrega un ítem al carrito activo del usuario
   addItem: async (item: CartItemCreateDto): Promise<CartReadDto> => {
-    const res = await api.post("/CartItem/items", item);
+    const res = await api.post("CartItem/items", item);
     return res.data;
   },
 
   // Actualiza un ítem específico del carrito
-  updateItem: async (itemId: number, item: CartItemUpdateDto): Promise<void> => {
-    await api.put(`/CartItem/items/${itemId}`, item);
+  updateItem: async (
+    itemId: number,
+    item: CartItemUpdateDto
+  ): Promise<void> => {
+    await api.put(`CartItem/items/${itemId}`, item);
   },
 
   // Elimina un ítem específico del carrito
   deleteItem: async (itemId: number): Promise<void> => {
-    await api.delete(`/CartItem/items/${itemId}`);
+    await api.delete(`CartItem/items/${itemId}`);
   },
 };

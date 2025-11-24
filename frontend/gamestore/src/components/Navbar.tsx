@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import "../styles/navbar.css";
-
+import { FaShoppingCart } from "react-icons/fa";
 interface NavbarProps {
   onSearch?: (searchTerm: string) => void;
   onSort?: (sortBy: string) => void;
   onToggleCart?: () => void; // 👈 nuevo prop
 }
 
-export function Navbar({ onSearch, onSort, onToggleCart  }: NavbarProps) {
+export function Navbar({ onSearch, onSort, onToggleCart }: NavbarProps) {
   const navigate = useNavigate();
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (onSearch) {
@@ -29,22 +29,26 @@ export function Navbar({ onSearch, onSort, onToggleCart  }: NavbarProps) {
   };
 
   return (
-    <nav className="navbar">
+    <nav className="navbar" role="navigation" aria-label="Navegación principal">
       <div className="navbar-container">
         {/* Logo/Título */}
         <div className="navbar-brand">
-          <h1 className="navbar-title">🎮 GameStore</h1>
+          <h1 className="navbar-title">
+            <span className="logo-icon">🎮</span>
+            <span className="logo-text">GameStore</span>
+          </h1>
         </div>
 
         {/* Barra de búsqueda */}
         <div className="navbar-search">
+          <span className="search-icon search-icon-left">🔍</span>
           <input
             type="text"
             placeholder="Buscar juegos..."
             className="search-input"
             onChange={handleSearchChange}
+            aria-label="Buscar juegos"
           />
-          <span className="search-icon">🔍</span>
         </div>
 
         {/* Opciones de ordenamiento */}
@@ -53,6 +57,7 @@ export function Navbar({ onSearch, onSort, onToggleCart  }: NavbarProps) {
             className="sort-select"
             onChange={handleSortChange}
             defaultValue=""
+            aria-label="Ordenar juegos"
           >
             <option value="" disabled>
               Ordenar por
@@ -63,18 +68,25 @@ export function Navbar({ onSearch, onSort, onToggleCart  }: NavbarProps) {
             <option value="price-desc">Precio: Mayor a Menor</option>
             <option value="rating-desc">Rating: Mayor a Menor</option>
           </select>
-          <button className="cart-button" onClick={onToggleCart}>
-            🛒
-          </button>
 
           {/* Botón de logout */}
-          <button className="btn-logout" onClick={handleLogout}>
-            Cerrar Sesión
+          <button
+            className="btn-logout"
+            onClick={handleLogout}
+            aria-label="Cerrar sesión"
+          >
+            <span className="logout-text">Cerrar Sesión</span>
+          </button>
+          <button
+            className="btn-cart"
+            onClick={onToggleCart}
+            aria-label="Abrir carrito de compras"
+          >
+            <FaShoppingCart size={24} />
           </button>
         </div>
       </div>
     </nav>
   );
 }
-
 export default Navbar;

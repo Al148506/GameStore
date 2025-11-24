@@ -1,19 +1,18 @@
 export interface CartItemCreateDto {
-    VideogameId: number;
-    Quantity: number;
-    UnitPrice: number;
+  videogameId: number;
+  quantity: number;
+  unitPrice: number;
 }
 
 export interface CartItemUpdateDto {
-    Quantity: number;
+  quantity: number;
 }
 
-export interface CartItemReadDto{
-    Id: number;
-    VideogameId:number;
-    VideogameName: string;
-    Quantity: number;
-    UnitPrice: number;
-    Total:number;
+export interface CartItemReadDto {
+  id: number;
+  videogameId: number;
+  videogameName: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
 }
-

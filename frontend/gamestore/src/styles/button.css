@@ -13,21 +13,32 @@
   justify-content: center;
   white-space: nowrap; /* evita que el texto se corte */
 }
-
-.edit-btn {
+.custom-btn.default {
+  background-color: gray;
+}
+.custom-btn.edit {
   background-color: #007bff;
 }
 
-.delete-btn {
+.custom-btn.delete {
   background-color: #dc3545;
 }
 
-.edit-btn:hover {
+.custom-btn.add {
+  background-color: rgb(25, 156, 25);
+  
+}
+
+.custom-btn.add:hover {
+  background-color: rgb(17, 107, 17);
+    transform: scale(1.05);
+}
+.custom-btn.edit:hover {
   background-color: #0056b3;
   transform: scale(1.05);
 }
 
-.delete-btn:hover {
+.custom-btn.delete:hover {
   background-color: #a71d2a;
   transform: scale(1.05);
 }

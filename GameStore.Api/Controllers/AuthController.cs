@@ -10,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace GameStore.Api.Controllers
 {
     [ApiController]
-    [Route("auth")]
+    [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _users;

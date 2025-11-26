@@ -1,50 +1,37 @@
 import { CartIcon, ClearCartIcon } from "./Icons";
 import "../../styles/cart.css";
 import { useCart } from "../../hooks/useCart";
-import type { CartItemReadDto } from "../../types/Cart/cartItem";
+import { CartItem } from "./CartItem";
 import { useState, useEffect } from "react";
 
-function CartItem({
-  videogameName,
-  unitPrice,
-  quantity,
-  addToCart,
-}: CartItemReadDto & { addToCart: () => void }) {
-  return (
-    <li>
-      <div>
-        <strong>{videogameName}</strong>
-        <span>${unitPrice.toFixed(2)}</span>
-      </div>
-      <footer>
-        <small>Cantidad: {quantity}</small>
-        <button onClick={addToCart}>+</button>
-      </footer>
-    </li>
-  );
-}
-
 export function Cart() {
-  const { cart, isLoading, checkoutCart, addItem, fetchCart } = useCart();
+  const {
+    cart,
+    isLoading,
+    checkoutCart,
+    addItem,
+    fetchCart,
+    decreaseItemQuantity,
+  } = useCart();
+
   const [isOpen, setIsOpen] = useState(false);
+
   useEffect(() => {
     fetchCart();
   }, [fetchCart]);
 
   const totalItems =
     cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+
   const totalPrice =
     cart?.items?.reduce(
       (sum, item) => sum + item.unitPrice * item.quantity,
       0
     ) || 0;
 
-  const handleToggle = () => setIsOpen(prevState => !prevState);
-
-
   return (
     <>
-      <button className="cart-button" onClick={handleToggle}>
+      <button className="cart-button" onClick={() => setIsOpen(!isOpen)}>
         <CartIcon />
         {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
       </button>
@@ -55,19 +42,17 @@ export function Cart() {
         </div>
 
         {isLoading ? (
-          <div className="loading-cart">
-            <p>Cargando carrito...</p>
-          </div>
-        ) : !cart?.items || cart.items.length === 0 ? (
-          <div className="empty-cart">
-            <p>Tu carrito está vacío</p>
-          </div>
+          <div className="loading-cart">Cargando carrito...</div>
+        ) : !cart?.items?.length ? (
+          <div className="empty-cart">Tu carrito está vacío</div>
         ) : (
           <>
             <ul>
               {cart.items.map((item) => (
                 <CartItem
                   key={item.id}
+                  {...item}
+                  decreaseItemQuantity={decreaseItemQuantity}
                   addToCart={() =>
                     addItem({
                       videogameId: item.videogameId,
@@ -75,7 +60,6 @@ export function Cart() {
                       unitPrice: item.unitPrice,
                     })
                   }
-                  {...item}
                 />
               ))}
             </ul>

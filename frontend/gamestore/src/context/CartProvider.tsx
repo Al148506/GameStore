@@ -77,6 +77,18 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     [fetchCart]
   );
 
+  const decreaseItemQuantity = useCallback(
+    async (itemId: number) => {
+      try {
+        await cartApi.decreaseItemQuantity(itemId);
+        await fetchCart();
+      } catch (error) {
+        console.error("Error decreasing item quantity:", error);
+      }
+    },
+    []
+  );
+
   const removeItem = useCallback(
     async (itemId: number) => {
       try {
@@ -108,6 +120,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         updateItem,
         removeItem,
         checkoutCart,
+        decreaseItemQuantity,
       }}
     >
       {children}

@@ -1,13 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import "../styles/navbar.css";
-import { FaShoppingCart } from "react-icons/fa";
 interface NavbarProps {
   onSearch?: (searchTerm: string) => void;
   onSort?: (sortBy: string) => void;
   onToggleCart?: () => void; // 👈 nuevo prop
 }
 
-export function Navbar({ onSearch, onSort, onToggleCart }: NavbarProps) {
+export function Navbar({ onSearch, onSort }: NavbarProps) {
   const navigate = useNavigate();
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (onSearch) {
@@ -77,13 +76,7 @@ export function Navbar({ onSearch, onSort, onToggleCart }: NavbarProps) {
           >
             <span className="logout-text">Cerrar Sesión</span>
           </button>
-          <button
-            className="btn-cart"
-            onClick={onToggleCart}
-            aria-label="Abrir carrito de compras"
-          >
-            <FaShoppingCart size={24} />
-          </button>
+     
         </div>
       </div>
     </nav>

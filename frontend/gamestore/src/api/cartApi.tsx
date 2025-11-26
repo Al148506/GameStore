@@ -23,6 +23,11 @@ export const cartApi = {
     await api.post("/Cart/checkout");
   },
 
+  //Disminuye la cantidad de un ítem en el carrito
+  decreaseItemQuantity: async (itemId: number): Promise<void> => {
+    await api.patch(`/CartItem/decrease/${itemId}`);
+  },
+
   // Elimina un carrito
   deleteCart: async (cartId: number): Promise<void> => {
     await api.delete(`Cart/${cartId}`);

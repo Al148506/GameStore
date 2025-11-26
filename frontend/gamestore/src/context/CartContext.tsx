@@ -13,6 +13,7 @@ export interface CartContextType {
   updateItem: (itemId: number, item: CartItemUpdateDto) => Promise<void>;
   removeItem: (itemId: number) => Promise<void>;
   checkoutCart: () => Promise<void>;
+  decreaseItemQuantity: (itemId: number) => Promise<void>;
 }
 
 export const CartContext = createContext<CartContextType | undefined>(

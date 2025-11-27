@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using GameStore.Api.DTOs.Videogames;
+using GameStore.Api.Helper;
 
 namespace GameStore.Api.Controllers;
 
@@ -35,7 +36,14 @@ public class GamesController : ControllerBase
              .ProjectTo<VideogameDTO>(_mapper.ConfigurationProvider)
              .ToListAsync();
 
-        return Ok(new { page, pageSize, total, items });
+        return Ok(new PaginatedResponse<VideogameDTO>
+        {
+            Page = page,
+            PageSize = pageSize,
+            Total = total,
+            Items = items
+        });
+
     }
 
     [HttpGet("genres")]

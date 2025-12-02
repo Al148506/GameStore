@@ -1,6 +1,7 @@
 ﻿using GameStore.Api.Controllers;
 using GameStore.Infrastructure.Persistence.Videogames;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +12,11 @@ namespace GameStore.Tests.Repository
 {
     public class VideogameRepositoryTest
     {
-        public static async Task<VideogamesDbContext> GetDatabaseContext()
+        public static async Task<VideogamesDbContext> GetDatabaseContext(string databaseName)
         {
             var options = new DbContextOptionsBuilder<VideogamesDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .UseInMemoryDatabase(databaseName)
+                   .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
             var databaseContext = new VideogamesDbContext(options);
             databaseContext.Database.EnsureCreated();

@@ -1,0 +1,169 @@
+/* === HOME CONTAINER === */
+.videogames-list-container {
+  width: 100vw; /* ancho completo */
+  min-height: 100vh;
+  background-color: var(--color-background);
+  padding: var(--space-32) var(--space-20);
+  color: var(--color-text);
+  padding-top: var(--space-32); /* 👈 Espacio superior */
+}
+
+/* Contenedor máximo responsivo */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* === GRID DE VIDEOJUEGOS === */
+.videogames-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-24);
+  margin-bottom: var(--space-32);
+}
+
+/* Optimización para Container Queries (tendencia 2025) */
+@container (min-width: 600px) {
+  .videogames-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+/* === PAGINACIÓN === */
+.pagination {
+  margin-top: var(--space-32);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+/* === ESTADOS DE CARGA Y ERROR === */
+.loading,
+.error {
+  text-align: center;
+  font-size: var(--font-size-xl);
+  padding: var(--space-32);
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text);
+  gap: var(--space-16);
+}
+
+.loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.error {
+  color: #ff4d4d;
+  font-weight: var(--font-weight-medium);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .videogames-list-container {
+    padding: var(--space-20) var(--space-16);
+  }
+
+  .videogames-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-16);
+  }
+}
+
+@media (max-width: 480px) {
+  .videogames-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .videogames-list-container {
+    padding: var(--space-16);
+  }
+}
+
+/* Floating Action Button */
+.fab-button {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-teal-600) 100%
+  );
+  color: white;
+  font-size: 2rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(var(--color-teal-500-rgb), 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--duration-normal) var(--ease-standard);
+  z-index: 999;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.fab-button::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-teal-400) 100%
+  );
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-standard);
+  z-index: -1;
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0;
+  }
+}
+
+.fab-button:hover {
+  transform: scale(1.15) rotate(90deg);
+  box-shadow: 0 8px 30px rgba(var(--color-teal-500-rgb), 0.5);
+}
+
+.fab-button:hover::before {
+  opacity: 1;
+}
+
+.fab-button:active {
+  transform: scale(0.95) rotate(90deg);
+}
+
+/* Accesibilidad del FAB */
+.fab-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+}

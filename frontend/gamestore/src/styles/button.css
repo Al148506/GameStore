@@ -1,0 +1,53 @@
+/* 🎨 Estilo base de botones */
+.custom-btn {
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap; /* evita que el texto se corte */
+}
+.custom-btn.default {
+  background-color: gray;
+}
+.custom-btn.edit {
+  background-color: #007bff;
+}
+
+.custom-btn.delete {
+  background-color: #dc3545;
+}
+
+.custom-btn.add {
+  background-color: rgb(25, 156, 25);
+  
+}
+
+.custom-btn.add:hover {
+  background-color: rgb(17, 107, 17);
+    transform: scale(1.05);
+}
+.custom-btn.edit:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.custom-btn.delete:hover {
+  background-color: #a71d2a;
+  transform: scale(1.05);
+}
+
+/* 📱 Responsivo: botones más pequeños en pantallas pequeñas */
+@media (max-width: 600px) {
+  .custom-btn {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+}

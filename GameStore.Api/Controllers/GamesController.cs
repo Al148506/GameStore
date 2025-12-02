@@ -2,15 +2,16 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using GameStore.Api.DTOs.Videogames;
+using GameStore.Api.Helper;
 
 namespace GameStore.Api.Controllers;
 
 [ApiController]
 [Route("api/games")]
+
 public class GamesController : ControllerBase
 {
     private readonly VideogamesDbContext _db;
@@ -35,7 +36,34 @@ public class GamesController : ControllerBase
              .ProjectTo<VideogameDTO>(_mapper.ConfigurationProvider)
              .ToListAsync();
 
-        return Ok(new { page, pageSize, total, items });
+        return Ok(new PaginatedResponse<VideogameDTO>
+        {
+            Page = page,
+            PageSize = pageSize,
+            Total = total,
+            Items = items
+        });
+
+    }
+
+    [HttpGet("genres")]
+    public async Task<IActionResult> ListGenres()
+    {
+        var genres = await _db.Genres
+            .AsNoTracking()
+            .OrderBy(g => g.Name)
+            .ProjectTo<GenreDTO>(_mapper.ConfigurationProvider)
+            .ToListAsync();
+        return Ok(genres);
+    }
+    [HttpGet("platforms")]
+    public async Task<IActionResult> ListPlatforms()
+    {
+        var platforms = await _db.Platforms
+            .AsNoTracking()
+            .OrderBy(p => p.Name)
+            .ToListAsync();
+        return Ok(platforms);
     }
 
 
@@ -51,11 +79,14 @@ public class GamesController : ControllerBase
         if (vdto is null) return NotFound();
         return Ok(vdto);
     }
-    [Authorize(Policy = "RequireAdmin")]
+   [Authorize(Policy = "RequireAdmin")]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateVideogameRequestDto createDto)
     {
-            var vg = new Videogame
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var vg = new Videogame
             {
                 Name = createDto.Name,
                 Description = createDto.Description,
@@ -65,27 +96,29 @@ public class GamesController : ControllerBase
                 ImageUrl = createDto.ImageUrl,
                 Rating = createDto.Rating
             };
-            // Asociar géneros si se proporcionan
-            if (createDto.GenreIds is not null)
-            {
-                var genres = await _db.Genres
+     
+        var genres = await _db.Genres
                     .Where(g => createDto.GenreIds.Contains(g.Id))
                     .ToListAsync();
+                if (genres.Count != createDto.GenreIds.Count)
+                {
+                    return BadRequest("One or more genres do not exist.");
+                }
                 vg.Genres = genres;
-            }
-            // Asociar plataformas si se proporcionan
-            if (createDto.PlatformIds is not null)
-            {
-                var platforms = await _db.Platforms
+      
+        var platforms = await _db.Platforms
                     .Where(p => createDto.PlatformIds.Contains(p.Id))
                     .ToListAsync();
-                vg.Platforms = platforms;
-            }
+        if (platforms.Count != createDto.PlatformIds.Count)
+        {
+            return BadRequest("One or more platforms do not exist.");
+        }
+        vg.Platforms = platforms;
             _db.Videogames.Add(vg);
             await _db.SaveChangesAsync();
-            return CreatedAtAction(nameof(Get), new { id = vg.Id }, vg);
+            return Ok(vg);
 
-        }
+    }
 
 
 
@@ -148,6 +181,8 @@ public class GamesController : ControllerBase
         await _db.SaveChangesAsync();
         return NoContent();
     }
+
+
 
 
 }

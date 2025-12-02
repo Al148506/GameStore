@@ -1,10 +1,12 @@
 // src/api/axios.js
 import axios from "axios";
 
-const baseURL = "https://localhost:7250/";
+const baseURL = "http://localhost:5200/api/";
 
 const api = axios.create({
   baseURL,
+  headers: { "Content-Type": "application/json" },
+  withCredentials: false, // JWT se manejará en frontend
   timeout: 10000, // 10s
 });
 

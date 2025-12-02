@@ -1,0 +1,79 @@
+/* ===== CART ITEM ===== */
+
+.cart li {
+  background: #0f3460;
+  border-radius: 12px;
+  border: 1px solid #1a5490;
+  padding: 16px;
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+}
+
+.cart li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(233, 69, 96, 0.2);
+  border-color: #e94560;
+}
+
+.cart li > div {
+  color: #eee;
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.cart li strong {
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* FOOTER */
+.cart footer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #1a5490;
+}
+
+.cart footer small {
+  color: #a0a0a0;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* BUTTONS */
+.cart footer button {
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+
+.increment {
+  background: green;
+}
+.increment:hover {
+  background: #32cd32;
+  transform: scale(1.05);
+}
+
+.decrement {
+  background: #e94560;
+  /* margin-right: -120px; utilizo esto para juntar mis botones */
+}
+.decrement:hover {
+  background: #ff577f;
+  transform: scale(1.05);
+}
+
+.cart footer button:active {
+  transform: scale(0.95);
+}

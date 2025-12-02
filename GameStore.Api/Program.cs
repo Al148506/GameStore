@@ -8,21 +8,23 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using GameStore.Api.Helper;
 using GameStore.Api.AutoMapper;
+using System.Text.Json.Serialization;
+using Stripe;
+
 
 var builder = WebApplication.CreateBuilder(args);
-
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 // Serilog básico a consola
 builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(ctx.Configuration)
                                        .Enrich.FromLogContext()
                                        .WriteTo.Console());
 
-// Db catálogo (DB-First a VideogamesDB)
-builder.Services.AddDbContext<VideogamesDbContext>(o =>
-    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Db auth (Identity) apuntando a la MISMA BD (AspNet* ya existen)
+builder.Services.AddDbContext<VideogamesDbContext>(o =>
+    o.UseSqlServer(builder.Configuration.GetConnectionString("VideogamesDbConnection")));
+
 builder.Services.AddDbContext<ApplicationAuthDbContext>(o =>
-    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    o.UseSqlServer(builder.Configuration.GetConnectionString("AuthDbConnection")));
 
 // Identity Core + Roles
 builder.Services.AddIdentityCore<ApplicationUser>(o =>
@@ -74,8 +76,12 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
-
-builder.Services.AddAutoMapper(typeof(VideogameProfile));
+// Sustituir la línea problemática por la forma correcta de registrar múltiples perfiles de AutoMapper
+builder.Services.AddAutoMapper(
+    typeof(VideogameProfile),
+    typeof(OrdersProfile),
+    typeof(CartProfile)
+);
 
 // Swagger + esquema Bearer
 builder.Services.AddEndpointsApiExplorer();
@@ -101,6 +107,13 @@ builder.Services.AddSwaggerGen(c =>
         [scheme] = new List<string>()
     });
 });
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
+
 
 var app = builder.Build();
 
@@ -128,10 +141,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("AllowFrontend");
+
 app.MapControllers();
 await app.PromoteAdminFromConfigAsync();
+
 app.Run();
 

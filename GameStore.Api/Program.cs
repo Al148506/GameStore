@@ -9,10 +9,11 @@ using Serilog;
 using GameStore.Api.Helper;
 using GameStore.Api.AutoMapper;
 using System.Text.Json.Serialization;
+using Stripe;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 // Serilog básico a consola
 builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(ctx.Configuration)
                                        .Enrich.FromLogContext()

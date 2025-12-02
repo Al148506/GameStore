@@ -19,8 +19,9 @@ export const cartApi = {
   },
 
   // Marca el carrito como checkout
-  checkoutCart: async (): Promise<void> => {
-    await api.post("/Cart/checkout");
+  checkoutCart: async () => {
+    const res = await api.post("/payments/create-payment-link");
+    return res; // <-- FUNDAMENTAL
   },
 
   //Disminuye la cantidad de un ítem en el carrito

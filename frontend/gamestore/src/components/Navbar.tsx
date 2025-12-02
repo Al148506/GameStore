@@ -1,85 +1,35 @@
-import { useNavigate } from "react-router-dom";
-import "../styles/navbar.css";
-interface NavbarProps {
-  onSearch?: (searchTerm: string) => void;
-  onSort?: (sortBy: string) => void;
-  onToggleCart?: () => void; // 👈 nuevo prop
-}
+import { Link, useNavigate } from "react-router-dom";
+import "../styles/navbarGeneral.css";
 
-export function Navbar({ onSearch, onSort }: NavbarProps) {
+export function NavbarGeneral() {
   const navigate = useNavigate();
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (onSearch) {
-      onSearch(e.target.value);
-    }
-  };
-
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (onSort) {
-      onSort(e.target.value);
-    }
-  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
-    // Redirige sin recargar la página
     navigate("/login");
   };
 
   return (
-    <nav className="navbar" role="navigation" aria-label="Navegación principal">
-      <div className="navbar-container">
-        {/* Logo/Título */}
-        <div className="navbar-brand">
-          <h1 className="navbar-title">
-            <span className="logo-icon">🎮</span>
-            <span className="logo-text">GameStore</span>
-          </h1>
+    <nav className="navbar-general">
+      <div className="navbar-general-container">
+        <Link to="/home" className="nav-logo">
+          🎮 GameStore
+        </Link>
+
+        <div className="nav-links">
+          <Link to="/home">Inicio</Link>
+          <Link to="/orders">Mis Compras</Link>
+          <Link to="/profile">Mi Cuenta</Link>
+          <Link to="/cart">Carrito</Link>
         </div>
 
-        {/* Barra de búsqueda */}
-        <div className="navbar-search">
-          <span className="search-icon search-icon-left">🔍</span>
-          <input
-            type="text"
-            placeholder="Buscar juegos..."
-            className="search-input"
-            onChange={handleSearchChange}
-            aria-label="Buscar juegos"
-          />
-        </div>
-
-        {/* Opciones de ordenamiento */}
-        <div className="navbar-actions">
-          <select
-            className="sort-select"
-            onChange={handleSortChange}
-            defaultValue=""
-            aria-label="Ordenar juegos"
-          >
-            <option value="" disabled>
-              Ordenar por
-            </option>
-            <option value="name-asc">A-Z</option>
-            <option value="name-desc">Z-A</option>
-            <option value="price-asc">Precio: Menor a Mayor</option>
-            <option value="price-desc">Precio: Mayor a Menor</option>
-            <option value="rating-desc">Rating: Mayor a Menor</option>
-          </select>
-
-          {/* Botón de logout */}
-          <button
-            className="btn-logout"
-            onClick={handleLogout}
-            aria-label="Cerrar sesión"
-          >
-            <span className="logout-text">Cerrar Sesión</span>
-          </button>
-     
-        </div>
+        <button className="nav-btn-logout" onClick={handleLogout}>
+          Cerrar sesión
+        </button>
       </div>
     </nav>
   );
 }
-export default Navbar;
+
+export default NavbarGeneral;

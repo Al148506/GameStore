@@ -3,16 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useVideogames } from "@hooks/useVideogames";
 import { Pagination } from "@components/pagination";
 import type { VideogameDto } from "../types/Videogame/videogame";
-import { Navbar } from "@components/Navbar";
-
-
-import "../styles/home.css";
-import "../styles/modal.css";
-
+import { Searchbar } from "@components/Searchbar";
 import { VideogameDetailsModal } from "@components/Videogame/VideogameDetailsModal";
 import { VideogamesGrid } from "@components/Videogame/VideogamesGrid";
-
 import { VideogameFormModal } from "@components/Videogame/VideogameFormModal";
+import NavbarGeneral from "@components/Navbar";
+import type { Filters } from "@components/Searchbar";
+import "../styles/home.css";
+import "../styles/modal.css";
 
 export function Home() {
   const navigate = useNavigate();
@@ -31,11 +29,14 @@ export function Home() {
 
   const [selectedGame, setSelectedGame] = useState<VideogameDto | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState<string>(""); // 👈 Estado para búsqueda
-  const [sortBy, setSortBy] = useState<string>(""); // 👈 Estado para ordenamiento
   const [editingGame, setEditingGame] = useState<VideogameDto | null>(null);
   const [showFormModal, setShowCreateModal] = useState<boolean>(false);
-  const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
+  const [filters, setFilters] = useState<Filters>({
+    searchTerm: "",
+    alphabet: "",
+    price: "",
+    rating: "",
+  });
 
   useEffect(() => {
     const token =
@@ -53,47 +54,50 @@ export function Home() {
     setSelectedGame(null);
   };
 
-  // 👇 Función para manejar búsqueda
-  const handleSearch = (term: string) => {
-    setSearchTerm(term.toLowerCase());
-  };
-
-  // 👇 Función para manejar ordenamiento
-  const handleSort = (sortType: string) => {
-    setSortBy(sortType);
-  };
-
-  // 👇 Filtrar y ordenar juegos
-  const filteredAndSortedGames = videogames
-    .filter((game) => game.name.toLowerCase().includes(searchTerm))
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "name-asc":
-          return a.name.localeCompare(b.name);
-        case "name-desc":
-          return b.name.localeCompare(a.name);
-        case "price-asc":
-          return a.price - b.price;
-        case "price-desc":
-          return b.price - a.price;
-        // case "rating-desc":
-        //   return b.rating - a.rating;
-        default:
-          return 0;
-      }
-    });
-
   if (loading) return <div className="loading">Cargando...</div>;
   if (error) return <div className="error">Error: {error}</div>;
 
+  // 👇 Filtrar y ordenar juegos
+  const filteredAndSortedGames = videogames
+    .filter((game) =>
+      game.name.toLowerCase().includes(filters.searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      // Primero ordenar por alfabeto si está activo
+      if (filters.alphabet) {
+        if (filters.alphabet === "az") {
+          return a.name.localeCompare(b.name);
+        }
+        if (filters.alphabet === "za") {
+          return b.name.localeCompare(a.name);
+        }
+      }
+
+      // Luego ordenar por precio si está activo
+      if (filters.price) {
+        if (filters.price === "low-high") {
+          return a.price - b.price;
+        }
+        if (filters.price === "high-low") {
+          return b.price - a.price;
+        }
+      }
+
+      // Finalmente ordenar por rating si está activo
+      // if (filters.rating) {
+      //   if (filters.rating === "rating-desc") {
+      //     return (b.rating || 0) - (a.rating || 0);
+      //   }
+      // }
+
+      return 0; // Sin ordenamiento
+    });
+
   return (
     <>
+      <NavbarGeneral />
       {/* 👇 Navbar fuera del container */}
-      <Navbar
-        onSearch={handleSearch}
-        onSort={handleSort}
-        onToggleCart={() => setIsCartOpen(!isCartOpen)}
-      />
+      <Searchbar filters={filters} onFiltersChange={setFilters} />
       <div className="videogames-list-container">
         {/* ✅ Botón flotante para agregar */}
         <button

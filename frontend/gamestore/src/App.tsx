@@ -11,6 +11,8 @@ import Home from "./pages/Home";
 import { Cart } from "./components/Cart/Cart";
 import { AuthProvider } from "./context/AuthProvider";
 import { CartProvider } from "./context/CartProvider";
+import SuccessPage from "./pages/Success";
+import CancelPage from "./pages/Cancel";
 
 function App() {
   return (
@@ -31,10 +33,12 @@ function App() {
             element={
               <CartProvider>
                 <Home />
-                 <Cart></Cart>
+                <Cart></Cart>
               </CartProvider>
             }
           />
+          <Route path="/success" element={<SuccessPage />} />
+          <Route path="/cancel" element={<CancelPage />} />
         </Routes>
       </Router>
     </AuthProvider>

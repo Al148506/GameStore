@@ -8,6 +8,10 @@ import type {
 import { CartContext } from "./CartContext";
 import { useAuth } from "@hooks/useAuth";
 
+
+
+
+
 const CART_STORAGE_KEY = "shopping-cart";
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -77,17 +81,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     [fetchCart]
   );
 
-  const decreaseItemQuantity = useCallback(
-    async (itemId: number) => {
-      try {
-        await cartApi.decreaseItemQuantity(itemId);
-        await fetchCart();
-      } catch (error) {
-        console.error("Error decreasing item quantity:", error);
-      }
-    },
-    []
-  );
+  const decreaseItemQuantity = useCallback(async (itemId: number) => {
+    try {
+      await cartApi.decreaseItemQuantity(itemId);
+      await fetchCart();
+    } catch (error) {
+      console.error("Error decreasing item quantity:", error);
+    }
+  }, []);
 
   const removeItem = useCallback(
     async (itemId: number) => {
@@ -101,14 +102,21 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     [fetchCart]
   );
 
-  const checkoutCart = useCallback(async () => {
-    try {
-      await cartApi.checkoutCart();
-      setCart(null);
-    } catch (error) {
-      console.error("Error during checkout:", error);
-    }
-  }, []);
+const checkoutCart = useCallback(async () => {
+  setIsLoading(true);
+  try {
+    const res = await cartApi.checkoutCart();
+    window.location.href = res.data.url;
+  } catch (err) {
+    console.error(err);
+    alert("No se pudo iniciar el pago.");
+  } finally {
+    setIsLoading(false);
+  }
+}, []);
+
+
+
 
   return (
     <CartContext.Provider

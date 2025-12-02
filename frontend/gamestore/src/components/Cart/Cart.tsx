@@ -8,10 +8,10 @@ export function Cart() {
   const {
     cart,
     isLoading,
-    checkoutCart,
     addItem,
     fetchCart,
     decreaseItemQuantity,
+    checkoutCart,
   } = useCart();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -71,9 +71,19 @@ export function Cart() {
               </div>
             </div>
 
-            <button onClick={checkoutCart} className="checkout-button">
-              <ClearCartIcon />
-              Finalizar Compra
+            <button
+              onClick={checkoutCart}
+              className="checkout-button"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                "Procesando..."
+              ) : (
+                <>
+                  <ClearCartIcon />
+                  Finalizar Compra
+                </>
+              )}
             </button>
           </>
         )}

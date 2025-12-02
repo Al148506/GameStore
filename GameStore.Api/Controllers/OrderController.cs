@@ -54,5 +54,20 @@ namespace GameStore.Api.Controllers
             return Ok(_mapper.Map<OrderDto>(order));
         }
 
+        [HttpGet("last-order")]
+        public async Task<IActionResult> GetLastOrder()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) return Unauthorized();
+            var order = await _context.Orders
+                .Include(o => o.Items)
+                .ThenInclude(i => i.Videogame)
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.CreatedAt)
+                .FirstOrDefaultAsync();
+            if (order == null) return NotFound();
+            return Ok(_mapper.Map<OrderDto>(order));
+        }
+
     }
 }

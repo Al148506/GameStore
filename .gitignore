@@ -17,6 +17,8 @@ publish/
 # ASP.NET
 appsettings.Development.json
 appsettings.Local.json
+appsettings.json
+
 
 # Visual Studio Code
 .vscode/

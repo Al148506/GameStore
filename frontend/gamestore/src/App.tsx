@@ -33,7 +33,7 @@ function App() {
             element={
               <CartProvider>
                 <Home />
-                <Cart></Cart>
+                 <Cart></Cart>
               </CartProvider>
             }
           />

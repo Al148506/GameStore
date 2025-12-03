@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useVideogames } from "@hooks/useVideogames";
-import { Pagination } from "@components/pagination";
+import { Pagination } from "@components/Pagination";
 import type { VideogameDto } from "../types/Videogame/videogame";
 import { Searchbar } from "@components/Searchbar";
 import { VideogameDetailsModal } from "@components/Videogame/VideogameDetailsModal";

@@ -80,7 +80,6 @@ const Register = () => {
       const payload: RegisterRequestDto = { email, password };
       const response = await axios.post(REGISTER_URL, payload);
       console.log(response?.data);
-      setSuccess(true);
       setEmail("");
       setPassword("");
       setMatchPassword("");

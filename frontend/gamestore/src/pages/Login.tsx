@@ -80,13 +80,15 @@ const Login = () => {
         </p>
         <h1>Sign In</h1>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="email">Email:</label>
-          <span className={validEmail ? "valid hide" : ""}>
-            <FontAwesomeIcon icon={faCheck} />
-          </span>
-          <span className={validEmail || !email ? "hide" : "invalid"}>
-            <FontAwesomeIcon icon={faTimes} />
-          </span>
+          <label htmlFor="Email">
+            Email:
+            <span className={validEmail ? "valid" : "hide"}>
+              <FontAwesomeIcon icon={faCheck} />
+            </span>
+            <span className={validEmail || !email ? "hide" : "invalid"}>
+              <FontAwesomeIcon icon={faTimes} />
+            </span>
+          </label>
           <input
             type="text"
             id="email"
@@ -110,13 +112,15 @@ const Login = () => {
             address.
           </p>
 
-          <label htmlFor="password">Password:</label>
-          <span className={validPassword ? "valid hide" : ""}>
-            <FontAwesomeIcon icon={faCheck} />
-          </span>
-          <span className={validPassword || !password ? "hide" : "invalid"}>
-            <FontAwesomeIcon icon={faTimes} />
-          </span>
+          <label htmlFor="password">
+            Password:
+            <span className={!validPassword ? "hide" : "valid"}>
+              <FontAwesomeIcon icon={faCheck} />
+            </span>
+            <span className={validPassword || !password ? "hide" : "invalid"}>
+              <FontAwesomeIcon icon={faTimes} />
+            </span>
+          </label>
           <div className="password-container">
             <input
               type={showPassword ? "text" : "password"}
@@ -156,7 +160,12 @@ const Login = () => {
             />
             <label htmlFor="rememberMe">Remember me</label>
           </div>
-          <button disabled={!validEmail || !validPassword}>Sign In</button>
+          <button
+            className="action-btn"
+            disabled={!validEmail || !validPassword}
+          >
+            Sign In
+          </button>
           <p>
             Need an account?
             <br />

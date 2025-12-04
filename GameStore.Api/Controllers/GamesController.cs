@@ -23,18 +23,35 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> List(int page = 1, int pageSize = 20)
+    public async Task<IActionResult> List(
+        int page = 1,
+        int pageSize = 20,
+        string? search = null,
+        string? sort = null)
     {
         var query = _db.Videogames.AsNoTracking();
+
+        // FILTRO
+        if (!string.IsNullOrWhiteSpace(search))
+            query = query.Where(v => v.Name.Contains(search));
+
+        // ORDENAMIENTO GLOBAL
+        query = sort switch
+        {
+            "az" => query.OrderBy(v => v.Name),
+            "za" => query.OrderByDescending(v => v.Name),
+            "low-high" => query.OrderBy(v => v.Price),
+            "high-low" => query.OrderByDescending(v => v.Price),
+            _ => query.OrderBy(v => v.Name)
+        };
 
         var total = await query.CountAsync();
 
         var items = await query
-             .OrderBy(v => v.Name)
-             .Skip((page - 1) * pageSize)
-             .Take(pageSize)
-             .ProjectTo<VideogameDTO>(_mapper.ConfigurationProvider)
-             .ToListAsync();
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ProjectTo<VideogameDTO>(_mapper.ConfigurationProvider)
+            .ToListAsync();
 
         return Ok(new PaginatedResponse<VideogameDTO>
         {
@@ -43,8 +60,8 @@ public class GamesController : ControllerBase
             Total = total,
             Items = items
         });
-
     }
+
 
     [HttpGet("genres")]
     public async Task<IActionResult> ListGenres()

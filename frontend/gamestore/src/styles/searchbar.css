@@ -1,10 +1,8 @@
 /* === searchbar === */
 .searchbar {
   background: rgba(31, 33, 33, 1);
-  /* border-bottom: 1px solid var(--color-card-border);
-  box-shadow: var(--shadow-sm); */
   position: sticky;
-  top: 0;
+  top: 69px; /* altura de tu navbar */
   z-index: 1000;
   width: 100%;
 }
@@ -172,6 +170,11 @@
   font-weight: 500;
   transition: all 0.2s;
   margin-top: -0.1rem;
+  /* Alineación del icono y texto */
+  display: flex;
+  align-items: center; /* Alineación vertical */
+  justify-content: center; /* Alineación horizontal */
+  gap: 4px; /* Espacio entre icono y texto */
 }
 
 .btn-clear-filters:hover {

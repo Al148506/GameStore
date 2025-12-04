@@ -97,7 +97,13 @@
   outline: none;
   font-weight: var(--font-weight-medium);
   padding: 10px 40px 10px 16px;
-  max-width: 180px;
+  width: 180px; /* Aumenta de 180px a 200px */
+  min-width: 180px; /* Evita que se comprima */
+  padding-right: 0px; /* Más espacio para dropdown arrow */
+  /* ✅ Text-overflow controlado */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .sort-select:hover {

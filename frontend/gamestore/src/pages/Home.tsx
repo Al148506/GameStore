@@ -11,6 +11,8 @@ import NavbarGeneral from "@components/Navbar";
 import type { Filters } from "@components/Searchbar";
 import "../styles/home.css";
 import "../styles/modal.css";
+import Button from "@components/Button";
+
 
 export function Home() {
   const navigate = useNavigate();
@@ -64,13 +66,19 @@ export function Home() {
       <Searchbar filters={filters} onFiltersChange={setFilters} />
       <div className="videogames-list-container">
         {/* ✅ Botón flotante para agregar */}
-        <button
+        {/* <button
           className="fab-button"
           onClick={() => setShowCreateModal(true)}
           title="Agregar videojuego"
         >
           +
-        </button>
+        </button> */}
+         <Button
+                    text= {<>Agregar videojuego</>}
+                    variant="create"
+                    onClick={() => setShowCreateModal(true)}
+                    
+                  />
         <VideogamesGrid
           games={videogames}
           onCardClick={handleOpenModal}

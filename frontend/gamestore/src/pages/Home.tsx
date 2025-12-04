@@ -56,7 +56,7 @@ export function Home() {
     setSelectedGame(null);
   };
 
-  if (loading) return <div className="loading">Cargando...</div>;
+
   if (error) return <div className="error">Error: {error}</div>;
 
   return (
@@ -84,6 +84,7 @@ export function Home() {
           onCardClick={handleOpenModal}
           onEdit={setEditingGame}
           onDelete={deleteVideogame}
+          loading={loading} 
         />
         <VideogameFormModal
           isOpen={showFormModal}

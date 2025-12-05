@@ -12,6 +12,7 @@ import axios from "../api/axios";
 import { isAxiosError } from "axios";
 import type { LoginRequestDto } from "../types/Auth/auth";
 import "../styles/auth.css";
+import { useAuth } from "@hooks/useAuth";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const LOGIN_URL = "/auth/login";
@@ -19,7 +20,10 @@ const LOGIN_URL = "/auth/login";
 const Login = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const errRef = useRef<HTMLParagraphElement>(null);
+
   const navigate = useNavigate();
+   const { login } = useAuth(); 
+
   const [email, setEmail] = useState("");
   const [validEmail, setValidEmail] = useState(false);
   const [emailFocus, setEmailFocus] = useState(false);
@@ -29,20 +33,25 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-
+   // Focus inicial
   useEffect(() => {
     emailRef.current?.focus();
   }, []);
+  // Validaciones en tiempo real
   useEffect(() => {
     setValidEmail(EMAIL_REGEX.test(email));
     setValidPassword(password.length >= 8);
   }, [email, password]);
+  // Limpia mensaje de error al cambiar email o password
   useEffect(() => {
     setErrMsg("");
   }, [email, password]);
-
+  // Manejo de submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    delete axios.defaults.headers.common["Authorization"];
     if (!EMAIL_REGEX.test(email) || password.length < 8) {
       setErrMsg("Invalid Entry");
       return;
@@ -50,12 +59,8 @@ const Login = () => {
     try {
       const payload: LoginRequestDto = { email, password };
       const response = await axios.post(LOGIN_URL, payload);
-      const { accessToken } = response.data;
-      if (rememberMe) {
-        localStorage.setItem("token", accessToken);
-      } else {
-        sessionStorage.setItem("token", accessToken);
-      }
+      const { accessToken, user } = response.data;
+      login(accessToken, user, rememberMe);
       navigate("/home");
     } catch (err: unknown) {
       if (isAxiosError(err)) {

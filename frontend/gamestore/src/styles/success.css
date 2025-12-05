@@ -9,6 +9,13 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
+.order-history-item{
+  background: #f3f4f6;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
 .success-container {
   background: white;
   border-radius: 16px;
@@ -38,6 +45,7 @@
 
 .success-content {
   margin-bottom: 2rem;
+ 
 }
 
 .success-footer {
@@ -114,4 +122,51 @@
   .success-title {
     font-size: 2rem;
   }
+}
+.btn-show-details {
+  /* Alineación a la derecha */
+  margin-left: auto;
+  display: block; /* o inline-block si está en línea con otros elementos */
+
+  /* Espaciado y tamaño */
+  margin-top: -1.5rem;
+  margin-bottom: 10px;
+  padding: 10px 20px;
+
+  /* Estilos modernos */
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+
+  /* Sombras para profundidad */
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25), 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  /* Transiciones suaves */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease,
+    box-shadow 0.3s ease;
+
+  /* Optimización de rendimiento */
+  will-change: transform;
+}
+
+.btn-show-details:hover {
+  background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35), 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn-show-details:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 1px 3px rgba(79, 70, 229, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition-duration: 0.1s;
+}
+
+/* Accesibilidad */
+.btn-show-details:focus-visible {
+  outline: 3px solid #818cf8;
+  outline-offset: 3px;
 }

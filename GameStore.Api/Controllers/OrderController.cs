@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using GameStore.Infrastructure.Persistence.Videogames;
 using Microsoft.EntityFrameworkCore;
+using GameStore.Api.DTOs.Videogames;
+using GameStore.Api.Helper;
 namespace GameStore.Api.Controllers
 {
     [ApiController]
@@ -21,20 +23,48 @@ namespace GameStore.Api.Controllers
 
         // Historial de pedidos del usuario logueado
         [HttpGet("history")]
-        public async Task<IActionResult> GetOrderHistory()
+        public async Task<IActionResult> GetOrderHistory(int page = 1, int pageSize = 5, string? sort = "date_desc")
         {
+
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null) return Unauthorized();
 
-            var orders = await _context.Orders
-                .Include(o => o.Items)
-                .ThenInclude(i => i.Videogame)
-                .Where(o => o.UserId == userId)
-                .OrderByDescending(o => o.CreatedAt)
-                .ToListAsync();
+            var query = _context.Orders
+         .Include(o => o.Items)
+         .ThenInclude(i => i.Videogame)
+         .Where(o => o.UserId == userId)
+         .AsQueryable();
 
-            var dto = _mapper.Map<List<OrderDto>>(orders);
-            return Ok(dto);
+            query = sort switch
+            {
+                "date_asc" => query.OrderBy(o => o.CreatedAt),
+                "date_desc" => query.OrderByDescending(o => o.CreatedAt),
+
+                "total_asc" => query.OrderBy(o => o.TotalAmount),
+                "total_desc" => query.OrderByDescending(o => o.TotalAmount),
+
+                _ => query.OrderByDescending(o => o.CreatedAt)
+            };
+            var totalRecords = await query.CountAsync();
+
+            var total = await query.CountAsync();
+
+
+            var orders = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+
+            var items = _mapper.Map<List<OrderDto>>(orders);
+
+            return Ok(new PaginatedResponse<OrderDto>
+            {
+                Page = page,
+                PageSize = pageSize,
+                Total = total,
+                Items = items
+            });
         }
 
         // Obtener detalle de un pedido

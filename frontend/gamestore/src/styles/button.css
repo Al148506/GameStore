@@ -1,53 +1,212 @@
-/* 🎨 Estilo base de botones */
+/* 🎨 Variables para consistencia */
+:root {
+  --btn-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --btn-transition-fast: all 0.15s ease;
+}
+
+/* Estilo base de botones */
 .custom-btn {
   border: none;
   color: #fff;
-  padding: 6px 12px;
+  padding: 10px 20px;
   border-radius: 8px;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  margin-right: 8px;
-  display: flex;
+  transition: var(--btn-transition);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  white-space: nowrap; /* evita que el texto se corte */
+  gap: 6px; /* Espacio para iconos */
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+  
+  /* Accesibilidad y rendimiento */
+  min-height: 36px; /* Touch target mínimo */
+  min-width: 44px;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
+
+/* Efecto ripple sutil */
+.custom-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  opacity: 0;
+  transform: scale(0);
+  transition: transform 0.6s ease, opacity 0.6s ease;
+}
+
+.custom-btn:active::before {
+  transform: scale(2);
+  opacity: 1;
+  transition: 0s;
+}
+
+/* 🎯 Variantes de botones */
 .custom-btn.default {
-  background-color: gray;
-}
-.custom-btn.edit {
-  background-color: #007bff;
-}
-
-.custom-btn.delete {
-  background-color: #dc3545;
-}
-
-.custom-btn.add {
-  background-color: rgb(25, 156, 25);
+  background-color: #6c757d;
   
 }
 
-.custom-btn.add:hover {
-  background-color: rgb(17, 107, 17);
-    transform: scale(1.05);
+.custom-btn.default:hover {
+  background-color: #5a6268;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.custom-btn.edit {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+}
+
 .custom-btn.edit:hover {
-  background-color: #0056b3;
-  transform: scale(1.05);
+  background: linear-gradient(135deg, #0069d9 0%, #004085 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 12px rgba(0, 123, 255, 0.3),
+    0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.custom-btn.delete {
+  background: linear-gradient(135deg, #dc3545 0%, #bd2130 100%);
 }
 
 .custom-btn.delete:hover {
-  background-color: #a71d2a;
-  transform: scale(1.05);
+  background: linear-gradient(135deg, #c82333 0%, #a71d2a 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 12px rgba(220, 53, 69, 0.3),
+    0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* 📱 Responsivo: botones más pequeños en pantallas pequeñas */
-@media (max-width: 600px) {
+.custom-btn.add {
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+}
+
+.custom-btn.add:hover {
+  background: linear-gradient(135deg, #218838 0%, #155724 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 12px rgba(40, 167, 69, 0.3),
+    0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.custom-btn.create {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  padding: 12px 24px;
+  font-size: 1rem;
+  margin-top: -1rem;
+  margin-bottom: 1rem;
+  box-shadow: 
+    0 4px 8px rgba(23, 162, 184, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+
+}
+
+.custom-btn.create:hover {
+  background: linear-gradient(135deg, #138496 0%, #0f6674 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 16px rgba(23, 162, 184, 0.4),
+    0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ⌨️ Estados de interacción */
+.custom-btn:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.1),
+    inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: var(--btn-transition-fast);
+}
+
+/* Accesibilidad: Focus visible para teclado */
+.custom-btn:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+  opacity: 0.9;
+}
+
+/* Estado deshabilitado */
+.custom-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  pointer-events: none;
+}
+
+/* 🔄 Estados de carga (opcional) */
+.custom-btn.loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.custom-btn.loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: button-spin 0.6s linear infinite;
+}
+
+@keyframes button-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 📱 Responsivo */
+@media (max-width: 768px) {
   .custom-btn {
-    font-size: 0.75rem;
-    padding: 4px 8px;
-    border-radius: 6px;
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    min-height: 40px; /* Touch target más grande en móvil */
   }
+  
+  .custom-btn.create {
+    padding: 10px 20px;
+    font-size: 0.95rem;
+  }
+}
+
+/* Reducción de movimiento para accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .custom-btn,
+  .custom-btn::before,
+  .custom-btn::after {
+    transition-duration: 0.01ms !important;
+    animation: none !important;
+  }
+  
+  .custom-btn:hover {
+    transform: none !important;
+  }
+}
+
+/* 🎨 Variantes adicionales opcionales */
+.custom-btn.outlined {
+  background: transparent;
+  border: 2px solid currentColor;
+  color: #007bff;
+  box-shadow: none;
+}
+
+.custom-btn.outlined:hover {
+  background: rgba(0, 123, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.custom-btn.custom-btn:disabled.outlined {
+  color: #6c757d;
+  border-color: #6c757d;
 }

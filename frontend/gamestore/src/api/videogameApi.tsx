@@ -5,13 +5,9 @@ import type {
   Genre,
   Platform,
 } from "../types/Videogame/videogame";
-// Paginación opcional
-export interface PaginatedResponse<T> {
-  items: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-}
+import type { PaginatedResponse } from "../types/Pagination/paginatedResponse";
+
+
 
 export const getVideogames = async (
   page = 1,

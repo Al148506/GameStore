@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useVideogames } from "@hooks/useVideogames";
-import { Pagination } from "@components/pagination";
+import { Pagination } from "@components/Pagination";
 import type { VideogameDto } from "../types/Videogame/videogame";
 import { Searchbar } from "@components/Searchbar";
 import { VideogameDetailsModal } from "@components/Videogame/VideogameDetailsModal";
@@ -11,10 +11,12 @@ import NavbarGeneral from "@components/Navbar";
 import type { Filters } from "@components/Searchbar";
 import "../styles/home.css";
 import "../styles/modal.css";
+import Button from "@components/Button";
+
 
 export function Home() {
   const navigate = useNavigate();
-  const pageSize = 6;
+  const pageSize = 5;
   const [filters, setFilters] = useState<Filters>({
     searchTerm: "",
     alphabet: "",
@@ -54,7 +56,7 @@ export function Home() {
     setSelectedGame(null);
   };
 
-  if (loading) return <div className="loading">Cargando...</div>;
+
   if (error) return <div className="error">Error: {error}</div>;
 
   return (
@@ -64,18 +66,25 @@ export function Home() {
       <Searchbar filters={filters} onFiltersChange={setFilters} />
       <div className="videogames-list-container">
         {/* ✅ Botón flotante para agregar */}
-        <button
+        {/* <button
           className="fab-button"
           onClick={() => setShowCreateModal(true)}
           title="Agregar videojuego"
         >
           +
-        </button>
+        </button> */}
+         <Button
+                    text= {<>Agregar videojuego</>}
+                    variant="create"
+                    onClick={() => setShowCreateModal(true)}
+                    
+                  />
         <VideogamesGrid
           games={videogames}
           onCardClick={handleOpenModal}
           onEdit={setEditingGame}
           onDelete={deleteVideogame}
+          loading={loading} 
         />
         <VideogameFormModal
           isOpen={showFormModal}

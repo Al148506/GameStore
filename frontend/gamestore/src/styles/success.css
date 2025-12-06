@@ -17,7 +17,7 @@
 }
 
 .success-container {
-  background: white;
+  background: #e7edf8ec;
   border-radius: 16px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   padding: 3rem;
@@ -169,4 +169,37 @@
 .btn-show-details:focus-visible {
   outline: 3px solid #818cf8;
   outline-offset: 3px;
+}
+
+.sort-container {
+  margin-bottom: -1rem;
+  margin-top: 1rem;
+  text-align: right;
+}
+
+.sort-container label {
+  margin-right: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+.sort-container select {
+  padding: var(--space-10) var(--space-16);
+  font-size: var(--font-size-lg);
+  color: var(--color-text);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-standard);
+  outline: none;
+  font-weight: var(--font-weight-medium);
+  padding: 10px 40px 10px 16px;
+  width: 180px; /* Aumenta de 180px a 200px */
+  min-width: 180px; /* Evita que se comprima */
+  padding-right: 0px; /* Más espacio para dropdown arrow */
+  /* ✅ Text-overflow controlado */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  
 }

@@ -1,7 +1,7 @@
 // VideogameCard.tsx
 import React from "react";
 import type { VideogameDto } from "../../types/Videogame/videogame";
-import Button from "@components/button";
+import Button from "@components/Button";
 import "../../styles/videogameCard.css";
 import { useCart } from "../../hooks/useCart";
 import { AddToCartIcon, RemoveFromCartIcon, ClearCartIcon, DeleteIcon, EditIcon } from "../Cart/Icons";
@@ -56,7 +56,7 @@ export function VideogameCard({
         {game.stock === 0 ? (
           <Button
             text={<><ClearCartIcon/> Agotado</>}
-            variant="default"
+            variant="disabled"
             onClick={() => console.log("")}
           />
         ) : (

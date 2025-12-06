@@ -19,7 +19,7 @@ export function NavbarGeneral() {
 
         <div className="nav-links">
           <Link to="/home">Inicio</Link>
-          <Link to="/orders">Mis Compras</Link>
+          <Link to="/order-history">Mis Compras</Link>
           <Link to="/profile">Mi Cuenta</Link>
           <Link to="/cart">Carrito</Link>
         </div>

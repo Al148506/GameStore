@@ -4,7 +4,7 @@ import "../../styles/orderSummary.css";
 export function OrderSummary({ order }: { order: OrderDto }) {
   return (
     <div className="order-summary">
-      <h2 className="order-summary-title">Resumen del pedido</h2>
+      <h2 className="order-summary-title">Resumen del pedido #{order.id}</h2>
 
       <div className="order-summary-grid">
         <div className="order-detail-item">

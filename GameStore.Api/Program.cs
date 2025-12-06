@@ -114,6 +114,11 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.WriteIndented = true;
 });
 
+Console.WriteLine("JWT KEY: " + builder.Configuration["Jwt:Key"]);
+Console.WriteLine("JWT ISSUER: " + builder.Configuration["Jwt:Issuer"]);
+Console.WriteLine("JWT AUDIENCE: " + builder.Configuration["Jwt:Audience"]);
+
+
 
 var app = builder.Build();
 

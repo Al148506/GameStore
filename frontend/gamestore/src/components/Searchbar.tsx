@@ -1,6 +1,6 @@
 import "../styles/searchbar.css";
-
- export interface Filters {
+import { CleanIcon } from "./Cart/Icons";
+export interface Filters {
   searchTerm: string;
   alphabet: string;
   price: string;
@@ -31,7 +31,9 @@ export function Searchbar({ filters, onFiltersChange }: SearchbarProps) {
       <div className="searchbar-container">
         {/* Input de búsqueda */}
         <div className="searchbar-search">
-          <span className="search-icon" aria-hidden="true">🔍</span>
+          <span className="search-icon" aria-hidden="true">
+            🔍
+          </span>
 
           <input
             type="text"
@@ -86,7 +88,8 @@ export function Searchbar({ filters, onFiltersChange }: SearchbarProps) {
             onClick={clearFilters}
             aria-label="Limpiar filtros"
           >
-            🔄 Limpiar
+            <CleanIcon />
+            Limpiar
           </button>
         </div>
       </div>

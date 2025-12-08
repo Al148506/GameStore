@@ -26,6 +26,7 @@ export function Searchbar({ filters, onFiltersChange }: SearchbarProps) {
     });
   };
 
+
   return (
     <nav className="searchbar" role="navigation" aria-label="Barra de búsqueda">
       <div className="searchbar-container">

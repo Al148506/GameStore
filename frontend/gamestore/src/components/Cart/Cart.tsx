@@ -1,10 +1,14 @@
-import { CartIcon, ClearCartIcon } from "./Icons";
+import { ClearCartIcon } from "./Icons";
 import "../../styles/cart.css";
 import { useCart } from "../../hooks/useCart";
 import { CartItem } from "./CartItem";
-import { useState, useEffect } from "react";
-
-export function Cart() {
+import { useEffect } from "react";
+import Navbar from "@components/Navbar";
+interface CartProps {
+  mode?: "sidebar" | "fullscreen";
+   isOpen?: boolean;
+}
+export function Cart({mode, isOpen}:CartProps) {
   const {
     cart,
     isLoading,
@@ -14,14 +18,11 @@ export function Cart() {
     checkoutCart,
   } = useCart();
 
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     fetchCart();
   }, [fetchCart]);
 
-  const totalItems =
-    cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   const totalPrice =
     cart?.items?.reduce(
@@ -31,12 +32,8 @@ export function Cart() {
 
   return (
     <>
-      <button className="cart-button" onClick={() => setIsOpen(!isOpen)}>
-        <CartIcon />
-        {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
-      </button>
-
-      <aside className={`cart ${isOpen ? "open" : ""}`}>
+    {mode === "fullscreen" && <Navbar />}
+      <aside className={`cart ${mode} ${isOpen ? `open ` : ""}`}>
         <div className="cart-header">
           <h2>Tu Carrito</h2>
         </div>

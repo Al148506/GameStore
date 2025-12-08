@@ -29,9 +29,9 @@ export function OrderItems({ items,  title }: { items: OrderItemDto[];  title?: 
               </div>
 
               <div className="order-item-price-section">
-                <p className="order-item-unit-price">
+                {/* <p className="order-item-unit-price">
                   ${item.unitPrice.toFixed(2)} c/u
-                </p>
+                </p> */}
                 <p className="order-item-total-price">
                   ${(item.quantity * item.unitPrice).toFixed(2)}
                 </p>

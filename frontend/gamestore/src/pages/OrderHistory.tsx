@@ -6,6 +6,7 @@ import type { OrderDto } from "../types/Order/order";
 import Navbar from "@components/Navbar";
 import "../styles/success.css";
 import { Pagination } from "@components/Pagination";
+import Button from "@components/Button";
 
 export default function OrderHistory() {
   const [orders, setOrders] = useState<OrderDto[]>([]);
@@ -33,7 +34,11 @@ export default function OrderHistory() {
         });
 
         setOrders(res.items);
-        setTotalPages(res.total % pageSize === 0 ? res.total / pageSize : Math.floor(res.total / pageSize) + 1);
+        setTotalPages(
+          res.total % pageSize === 0
+            ? res.total / pageSize
+            : Math.floor(res.total / pageSize) + 1
+        );
       } catch (error) {
         console.error("Error fetching order history:", error);
       }
@@ -86,12 +91,11 @@ export default function OrderHistory() {
                 <div key={order.id} className="order-history-item">
                   <OrderSummary order={order} />
 
-                  <button
+                  <Button
+                    text={isExpanded ? "Ocultar detalles" : "Ver más detalles"}
                     onClick={() => toggleOrderDetails(order.id)}
-                    className="btn-show-details"
-                  >
-                    {isExpanded ? "Ocultar detalles" : "Ver más detalles"}
-                  </button>
+                    variant="default"
+                  ></Button>
 
                   {isExpanded && (
                     <OrderItems
@@ -113,12 +117,12 @@ export default function OrderHistory() {
           </div>
 
           <div className="success-footer">
-            <button
+            {/* <button
               onClick={() => (window.location.href = "/home")}
               className="btn-back-store"
             >
               Volver a la tienda
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

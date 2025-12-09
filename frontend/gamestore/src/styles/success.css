@@ -201,8 +201,9 @@
 }
 
 .sort-container select:hover {
-  border-color: var(--color-primary);
+  border-color: pink;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background-color: var(--color-surface);
 }
 
 .sort-container select:focus {

@@ -139,7 +139,7 @@ public class GamesController : ControllerBase
                 Rating = createDto.Rating
             };
      
-        var genres = await _db.Genres
+                var genres = await _db.Genres
                     .Where(g => createDto.GenreIds.Contains(g.Id))
                     .ToListAsync();
                 if (genres.Count != createDto.GenreIds.Count)
@@ -148,14 +148,14 @@ public class GamesController : ControllerBase
                 }
                 vg.Genres = genres;
       
-        var platforms = await _db.Platforms
+                var platforms = await _db.Platforms
                     .Where(p => createDto.PlatformIds.Contains(p.Id))
                     .ToListAsync();
         if (platforms.Count != createDto.PlatformIds.Count)
         {
             return BadRequest("One or more platforms do not exist.");
         }
-        vg.Platforms = platforms;
+                vg.Platforms = platforms;
             _db.Videogames.Add(vg);
             await _db.SaveChangesAsync();
             return Ok(vg);

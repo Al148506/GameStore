@@ -30,29 +30,23 @@ namespace GameStore.Tests.Test
         // LIST
         // ------------------------------
         [Fact]
-        public async Task List_ShouldReturnAllVideogames()
         {
             // Arrange
-            var controller = await BuildController();
 
             // Act
             var result = await controller.List();
 
             // Assert
             var ok = Assert.IsType<OkObjectResult>(result);
+
             var response = Assert.IsType<PaginatedResponse<VideogameDTO>>(ok.Value);
 
             Assert.Equal(10, response.Total);
             Assert.Equal(10, response.Items.Count);
         }
 
-        // ------------------------------
-        // GET
-        // ------------------------------
         [Fact]
-        public async Task Get_WhenExists_ShouldReturnVideogame()
         {
-            var db = await VideogameRepositoryTest.GetDatabaseContext(Guid.NewGuid().ToString());
             var mapper = TestMapperFactory.CreateMapper();
             var controller = new GamesController(db, mapper);
 
@@ -61,15 +55,11 @@ namespace GameStore.Tests.Test
             var result = await controller.Get(existing.Id, CancellationToken.None);
 
             var ok = Assert.IsType<OkObjectResult>(result);
-            var dto = Assert.IsType<VideogameDTO>(ok.Value);
 
-            Assert.Equal(existing.Id, dto.Id);
         }
 
         [Fact]
-        public async Task Get_WhenNotExists_ShouldReturnNotFound()
         {
-            var controller = await BuildController();
 
             var result = await controller.Get(9999, CancellationToken.None);
 
@@ -80,11 +70,8 @@ namespace GameStore.Tests.Test
         // CREATE
         // ------------------------------
         [Fact]
-        public async Task Create_WhenValid_ShouldInsertVideogame()
         {
             // Arrange
-            var dbName = Guid.NewGuid().ToString();
-            var db = await VideogameRepositoryTest.GetDatabaseContext(dbName);
             var mapper = TestMapperFactory.CreateMapper();
             var controller = new GamesController(db, mapper);
 
@@ -148,9 +135,7 @@ namespace GameStore.Tests.Test
         }
 
         [Fact]
-        public async Task Create_WhenGenreDoesNotExist_ShouldReturnBadRequest()
         {
-            var db = await VideogameRepositoryTest.GetDatabaseContext(Guid.NewGuid().ToString());
             var mapper = TestMapperFactory.CreateMapper();
             var controller = new GamesController(db, mapper);
 
@@ -203,7 +188,6 @@ namespace GameStore.Tests.Test
             var result = await controller.Update(vg.Id, dto);
 
             var ok = Assert.IsType<OkObjectResult>(result);
-            var updated = Assert.IsType<VideogameDTO>(ok.Value);
 
             Assert.Equal("Updated Game", updated.Name);
 
@@ -239,10 +223,7 @@ namespace GameStore.Tests.Test
         // DELETE
         // ------------------------------
         [Fact]
-        public async Task Delete_WhenExists_ShouldRemoveVideogame()
         {
-            var dbName = Guid.NewGuid().ToString();
-            var db = await VideogameRepositoryTest.GetDatabaseContext(dbName);
             var mapper = TestMapperFactory.CreateMapper();
             var controller = new GamesController(db, mapper);
 
@@ -254,10 +235,6 @@ namespace GameStore.Tests.Test
             Assert.False(db.Videogames.Any(v => v.Id == vg.Id));
         }
 
-        [Fact]
-        public async Task Delete_WhenIdNotExist_ShouldReturnNotFound()
-        {
-            var controller = await BuildController();
 
             var result = await controller.Delete(9999);
 

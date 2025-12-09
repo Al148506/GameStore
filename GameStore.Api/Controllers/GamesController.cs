@@ -23,19 +23,42 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet]
     public async Task<IActionResult> List(
-        int page = 1,
-        int pageSize = 20,
-        string? search = null,
-        string? sort = null)
+    int page = 1,
+    int pageSize = 20,
+    string? search = null,
+    string? sort = null,
+    [FromQuery] int[]? genreIds = null,
+    [FromQuery] int[]? platformIds = null)
     {
-        var query = _db.Videogames.AsNoTracking();
+        var query = _db.Videogames
+            .AsNoTracking()
+            .Include(v => v.Genres)
+            .Include(v => v.Platforms)
+            .AsQueryable();
 
-        // FILTRO
+        // 🔎 FILTRO: búsqueda por nombre
         if (!string.IsNullOrWhiteSpace(search))
             query = query.Where(v => v.Name.Contains(search));
 
-        // ORDENAMIENTO GLOBAL
+        // 🔎 FILTRO por géneros
+        if (genreIds is { Length: > 0 })
+        {
+            query = query.Where(v =>
+                v.Genres.Any(g => genreIds.Contains(g.Id))
+            );
+        }
+
+        // 🔎 FILTRO por plataformas
+        if (platformIds is { Length: > 0 })
+        {
+            query = query.Where(v =>
+                v.Platforms.Any(p => platformIds.Contains(p.Id))
+            );
+        }
+
+        // 🔽 ORDENAMIENTO GLOBAL
         query = sort switch
         {
             "az" => query.OrderBy(v => v.Name),
@@ -61,6 +84,8 @@ public class GamesController : ControllerBase
             Items = items
         });
     }
+
+
 
 
     [HttpGet("genres")]

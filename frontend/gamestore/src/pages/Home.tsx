@@ -22,7 +22,8 @@ export function Home() {
     searchTerm: "",
     alphabet: "",
     price: "",
-    rating: "",
+    genreIds: [],
+    platformIds:  [],
   });
   const {
     videogames,
@@ -65,14 +66,7 @@ export function Home() {
       {/* 👇 Navbar fuera del container */}
       <Searchbar filters={filters} onFiltersChange={setFilters} />
       <div className="videogames-list-container">
-        {/* ✅ Botón flotante para agregar */}
-        {/* <button
-          className="fab-button"
-          onClick={() => setShowCreateModal(true)}
-          title="Agregar videojuego"
-        >
-          +
-        </button> */}
+      
         <Button
           text={<>Agregar videojuego</>}
           variant="create"

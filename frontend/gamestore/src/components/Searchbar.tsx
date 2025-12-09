@@ -1,15 +1,25 @@
+import { useVideogameOptions } from "@hooks/useVideogameOptions";
 import "../styles/searchbar.css";
 import { CleanIcon } from "./Cart/Icons";
+import Select, { type MultiValue } from "react-select";
+import { customSelectStyles } from "../constants/selectCustomStyles";
+
 export interface Filters {
   searchTerm: string;
   alphabet: string;
   price: string;
-  rating: string;
+  genreIds: number[];
+  platformIds: number[];
 }
 
 interface SearchbarProps {
   filters: Filters;
   onFiltersChange: (newFilters: Filters) => void;
+}
+
+interface Option {
+  value: number;
+  label: string;
 }
 
 export function Searchbar({ filters, onFiltersChange }: SearchbarProps) {
@@ -22,10 +32,37 @@ export function Searchbar({ filters, onFiltersChange }: SearchbarProps) {
       searchTerm: "",
       alphabet: "",
       price: "",
-      rating: "",
+      genreIds: [],
+      platformIds: [],
     });
   };
 
+  const { genres, platforms, loading } = useVideogameOptions(true);
+
+  const genreOptions: Option[] = genres.map((g) => ({
+    value: g.id,
+    label: g.name,
+  }));
+
+  const platformOptions: Option[] = platforms.map((p) => ({
+    value: p.id,
+    label: p.name,
+  }));
+
+  function handleMultiSelect(
+    key: "genreIds" | "platformIds",
+    value: MultiValue<Option>
+  ) {
+    const selectedIds = value.map((option) => option.value);
+    onFiltersChange({ ...filters, [key]: selectedIds });
+  }
+
+  const hasActiveFilters =
+    filters.searchTerm !== "" ||
+    filters.alphabet !== "" ||
+    filters.price !== "" ||
+    filters.genreIds.length > 0 ||
+    filters.platformIds.length > 0;
 
   return (
     <nav className="searchbar" role="navigation" aria-label="Barra de búsqueda">
@@ -35,7 +72,6 @@ export function Searchbar({ filters, onFiltersChange }: SearchbarProps) {
           <span className="search-icon" aria-hidden="true">
             🔍
           </span>
-
           <input
             type="text"
             placeholder="Buscar juegos..."
@@ -46,52 +82,100 @@ export function Searchbar({ filters, onFiltersChange }: SearchbarProps) {
           />
         </div>
 
-        {/* Filtros */}
-        <div className="searchbar-actions">
-          {/* Orden alfabético */}
-          <select
-            className="sort-select"
-            value={filters.alphabet}
-            onChange={(e) => updateFilter("alphabet", e.target.value)}
-            aria-label="Ordenar alfabéticamente"
-          >
-            <option value="">Alfabético</option>
-            <option value="az">A–Z</option>
-            <option value="za">Z–A</option>
-          </select>
+        {/* Filtros y ordenamiento */}
+        <div className="searchbar-filters">
+          {/* Grupo de ordenamiento */}
+          <div className="filter-group filter-group--multiselect">
+            <div className="select-wrapper">
+            <label htmlFor="sort-select" className="select-label">
+              Orden Alfabetico
+            </label>
+            <select
+              className="sort-select"
+              value={filters.alphabet}
+              onChange={(e) => updateFilter("alphabet", e.target.value)}
+              aria-label="Ordenar alfabéticamente"
+              id="sort-select"
+            >
+              <option value="">Seleccionar orden</option>
+              <option value="az">A–Z</option>
+              <option value="za">Z–A</option>
+            </select>
+            </div>
 
-          {/* Orden por precio */}
-          <select
-            className="sort-select"
-            value={filters.price}
-            onChange={(e) => updateFilter("price", e.target.value)}
-            aria-label="Ordenar por precio"
-          >
-            <option value="">Precio</option>
-            <option value="low-high">Menor a Mayor</option>
-            <option value="high-low">Mayor a Menor</option>
-          </select>
+            <div className="select-wrapper">
+            <label htmlFor="sort-select" className="select-label">
+              Orden Precio
+            </label>
+            <select
+              className="sort-select"
+              value={filters.price}
+              onChange={(e) => updateFilter("price", e.target.value)}
+              aria-label="Ordenar por precio"
+              id="sort-select"
+            >
+              <option value="">Seleccionar orden</option>
+              <option value="low-high">Menor a Mayor</option>
+              <option value="high-low">Mayor a Menor</option>
+            </select>
+            </div>
+          </div>
 
-          {/* Orden por rating */}
-          <select
-            className="sort-select"
-            value={filters.rating}
-            onChange={(e) => updateFilter("rating", e.target.value)}
-            aria-label="Ordenar por rating"
-          >
-            <option value="">Rating</option>
-            <option value="rating-desc">Mayor a Menor</option>
-          </select>
+          {/* Grupo de filtros multi-select */}
+          <div className="filter-group filter-group--multiselect">
+            <div className="select-wrapper">
+              <label htmlFor="genreIds" className="select-label">
+                Géneros
+              </label>
+              <Select
+                isMulti
+                inputId="genreIds"
+                name="genreIds"
+                options={genreOptions}
+                isLoading={loading}
+                placeholder="Seleccionar géneros..."
+                value={genreOptions.filter((o) =>
+                  filters.genreIds.includes(o.value)
+                )}
+                onChange={(val) => handleMultiSelect("genreIds", val)}
+                styles={customSelectStyles}
+                classNamePrefix="react-select"
+              />
+            </div>
 
-          {/* Botón limpiar filtros */}
-          <button
-            className="btn-clear-filters"
-            onClick={clearFilters}
-            aria-label="Limpiar filtros"
-          >
-            <CleanIcon />
-            Limpiar
-          </button>
+            <div className="select-wrapper">
+              <label htmlFor="platformIds" className="select-label">
+                Plataformas
+              </label>
+              <Select
+                isMulti
+                inputId="platformIds"
+                name="platformIds"
+                options={platformOptions}
+                isLoading={loading}
+                placeholder="Seleccionar plataformas..."
+                value={platformOptions.filter((o) =>
+                  filters.platformIds.includes(o.value)
+                )}
+                onChange={(val) => handleMultiSelect("platformIds", val)}
+                styles={customSelectStyles}
+                classNamePrefix="react-select"
+              />
+            </div>
+          </div>
+
+          {/* Botón limpiar filtros - solo visible si hay filtros activos */}
+          {hasActiveFilters && (
+            <button
+              className="btn-clear-filters"
+              onClick={clearFilters}
+              aria-label="Limpiar todos los filtros"
+              title="Limpiar filtros"
+            >
+              <CleanIcon />
+              <span>Limpiar</span>
+            </button>
+          )}
         </div>
       </div>
     </nav>

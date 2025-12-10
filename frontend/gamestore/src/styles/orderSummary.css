@@ -1,18 +1,18 @@
 .order-summary {
-  background: #f9fafb;
+  background: var(--color-surface);
   border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 2rem;
-  border: 1px solid #e5e7eb;
+  box-shadow: var(--shadow-sm);
 }
 
 .order-summary-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #111827;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
   margin-bottom: 1.5rem;
   padding-bottom: 0.75rem;
-  border-bottom: 2px solid #667eea;
+  border-bottom: 2px solid var(--color-primary);
 }
 
 .order-summary-grid {
@@ -25,38 +25,45 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem;
-  background: white;
-  border-radius: 8px;
-  transition: transform 0.2s;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  transition: transform var(--duration-fast) var(--ease-standard), 
+              box-shadow var(--duration-fast) var(--ease-standard);
 }
 
 .order-detail-item:hover {
   transform: translateX(5px);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--color-primary);
 }
 
 .order-detail-label {
-  font-weight: 600;
-  color: #374151;
-  font-size: 0.95rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
 }
 
 .order-detail-value {
-  color: #6b7280;
-  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
 }
 
 .order-detail-value.total {
   color: #10b981;
-  font-weight: 700;
-  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xl);
+  text-shadow: 0 1px 2px rgba(16, 185, 129, 0.15);
 }
 
 .order-id {
-  font-family: monospace;
-  background: #eef2ff;
+  font-family: 'Courier New', Courier, monospace;
+  background: var(--color-surface);
   padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  color: #4f46e5;
+  border-radius: var(--radius-sm);
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+  font-weight: var(--font-weight-medium);
 }
 
 @media (max-width: 768px) {
@@ -64,9 +71,22 @@
     padding: 1rem;
   }
 
+  .order-summary-title {
+    font-size: var(--font-size-xl);
+  }
+
   .order-detail-item {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+  }
+
+  .order-detail-label,
+  .order-detail-value {
+    font-size: var(--font-size-sm);
+  }
+
+  .order-detail-value.total {
+    font-size: var(--font-size-lg);
   }
 }

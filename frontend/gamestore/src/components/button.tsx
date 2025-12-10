@@ -3,7 +3,7 @@ import "../styles/button.css";
 
 interface ButtonProps {
   text: React.ReactNode;
-  variant?: "default" | "edit" | "delete" | "add" | "create" | "disabled";
+  variant?: "default" | "edit" | "delete" | "add" | "create" | "disabled"| "closesession";
   onClick: React.MouseEventHandler<HTMLButtonElement>;
 }
 export default function Button({

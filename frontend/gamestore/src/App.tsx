@@ -14,6 +14,7 @@ import { CartProvider } from "./context/CartProvider";
 import SuccessPage from "./pages/Success";
 import OrderHistory from "./pages/OrderHistory";
 import CancelPage from "./pages/Cancel";
+import ManageUsers from "./pages/ManageUsers";
 
 function App() {
   return (
@@ -28,11 +29,15 @@ function App() {
             <Route path="/register" element={<Register />} />
 
             <Route path="/home" element={<Home />} />
-            <Route path="/cart" element={<Cart mode="fullscreen" isOpen={true}/>} />
+            <Route
+              path="/cart"
+              element={<Cart mode="fullscreen" isOpen={true} />}
+            />
 
             <Route path="/success" element={<SuccessPage />} />
             <Route path="/order-history" element={<OrderHistory />} />
             <Route path="/cancel" element={<CancelPage />} />
+            <Route path="/profile" element={<ManageUsers />} />
           </Routes>
 
           {/* Cart sidebar visible en todas las páginas del sistema */}

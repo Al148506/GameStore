@@ -4,6 +4,7 @@ import type { VideogameDto } from "../../types/Videogame/videogame";
 import Button from "@components/Button";
 import "../../styles/videogameCard.css";
 import { useCart } from "../../hooks/useCart";
+import { AddToCartIcon, RemoveFromCartIcon, ClearCartIcon, DeleteIcon, EditIcon } from "../Cart/Icons";
 
 interface VideogameCardProps {
   game: VideogameDto;
@@ -54,37 +55,41 @@ export function VideogameCard({
       <div className="card-actions">
         {game.stock === 0 ? (
           <Button
-            text="Agotado"
-            variant="default"
+            text={<><ClearCartIcon/> Agotado</>}
+            variant="disabled"
             onClick={() => console.log("")}
           />
         ) : (
-          <button
-            style={{
-              backgroundColor: isProductInCart ? "red" : "#09f",
-              color: "#fff",
-              border: "none",
-              padding: "8px 12px",
-              cursor: "pointer",
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (isProductInCart) {
-                const cartItem = cart?.items.find(
-                  (item) => item.videogameId === game.id
-                );
-                if (cartItem) removeItem(cartItem.id);
-              } else {
-                handleAddToCart(e);
+          <>
+            <Button
+              text={
+                isProductInCart ? (
+                  <>
+                    <RemoveFromCartIcon></RemoveFromCartIcon>Remove
+                  </>
+                ) : (
+                  <>
+                    <AddToCartIcon></AddToCartIcon>Add
+                  </>
+                )
               }
-            }}
-          >
-            {isProductInCart ? "Remove" : "Add"}
-          </button>
+              variant={isProductInCart ? "delete" : "add"}
+              onClick={
+                isProductInCart
+                  ? () => {
+                      const cartItem = cart?.items.find(
+                        (item) => item.videogameId === game.id
+                      );
+                      if (cartItem) removeItem(cartItem.id);
+                    }
+                  : handleAddToCart
+              }
+            />
+          </>
         )}
         <div className="card-admin-actions">
           <Button
-            text="Edit"
+            text= {<><EditIcon/> Edit</>}
             variant="edit"
             onClick={(e) => {
               e.stopPropagation();
@@ -92,7 +97,7 @@ export function VideogameCard({
             }}
           />
           <Button
-            text="Delete"
+            text= {<><DeleteIcon/> Delete</>}
             variant="delete"
             onClick={(e) => {
               e.stopPropagation();

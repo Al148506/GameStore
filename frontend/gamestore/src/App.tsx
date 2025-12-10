@@ -12,6 +12,7 @@ import { Cart } from "./components/Cart/Cart";
 import { AuthProvider } from "./context/AuthProvider";
 import { CartProvider } from "./context/CartProvider";
 import SuccessPage from "./pages/Success";
+import OrderHistory from "./pages/OrderHistory";
 import CancelPage from "./pages/Cancel";
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
             }
           />
           <Route path="/success" element={<SuccessPage />} />
+          <Route path="/order-history" element={<OrderHistory />} />
           <Route path="/cancel" element={<CancelPage />} />
         </Routes>
       </Router>

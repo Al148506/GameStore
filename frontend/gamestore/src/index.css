@@ -1,0 +1,17 @@
+/* RESET GLOBAL RECOMENDADO */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* FUENTE GLOBAL */
+html {
+  font-family: "Nunito", sans-serif;
+}
+
+/* NUNCA CENTRAR EL BODY GLOBAL — SOLO FONDO Y COLOR SI QUIERES */
+body {
+  background-color: #0c0c0c; /* fondo base */
+  color: #ffffff; /* si tu app es dark mode */
+}

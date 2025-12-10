@@ -67,7 +67,7 @@
 
 .decrement {
   background: #e94560;
-  /* margin-right: -120px; utilizo esto para juntar mis botones */
+  margin-right: -2rem;
 }
 .decrement:hover {
   background: #ff577f;

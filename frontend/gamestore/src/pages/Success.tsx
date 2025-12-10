@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { OrderSummary } from "../components/Orders/OrderSummary";
 import { OrderItems } from "../components/Orders/OrderItems";
-import { orderApi } from "../api/orderApi";
+import { orderApi } from "../api/orderApi.ts";
 import type { OrderDto } from "../types/Order/order";
 import Navbar from "@components/Navbar";
 import "../styles/success.css";

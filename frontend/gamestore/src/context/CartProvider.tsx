@@ -45,7 +45,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const data = await cartApi.getCart();
       setCart(data);
-      console.log("Cart fetched from server:", data);
     } catch (err) {
       console.error("Error fetching cart", err);
       // Mantener el carrito del localStorage si falla

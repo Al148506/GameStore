@@ -4,7 +4,6 @@ import { OrderItems } from "../components/Orders/OrderItems";
 import { orderApi } from "../api/orderApi";
 import type { OrderDto } from "../types/Order/order";
 import Navbar from "@components/Navbar";
-import Searchbar from "@components/Searchbar";
 import "../styles/success.css";
 
 export default function SuccessPage() {
@@ -34,7 +33,7 @@ export default function SuccessPage() {
   return (
     <>
       <Navbar />
-      <Searchbar />
+
       <div className="success-page">
         <div className="success-container">
           <div className="success-header">

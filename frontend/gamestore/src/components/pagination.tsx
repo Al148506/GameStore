@@ -1,4 +1,5 @@
 import React from "react";
+import "../styles/pagination.css"; // Importa los estilos
 
 interface PaginationProps {
   currentPage: number;
@@ -13,40 +14,74 @@ export const Pagination: React.FC<PaginationProps> = ({
 }) => {
   if (totalPages <= 1) return null;
 
+  // Optimizar render: mostrar solo páginas cercanas + ellipsis
+  const getVisiblePages = () => {
+    const delta = 2;
+    const range: number[] = [];
+    const rangeWithDots: (number | string)[] = [];
+    let l: number | undefined;
+
+    range.push(1);
+    for (let i = currentPage - delta; i <= currentPage + delta; i++) {
+      if (i >= 2 && i < totalPages) {
+        range.push(i);
+      }
+    }
+    range.push(totalPages);
+
+    range.forEach((i) => {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l !== 1) {
+          rangeWithDots.push("...");
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    });
+
+    return rangeWithDots;
+  };
+
   return (
-    <div style={{ marginTop: "20px" }}>
+    <div className="pagination-container">
       <button
+        className={`pagination-btn pagination-nav-btn ${
+          currentPage === 1 ? "disabled" : ""
+        }`}
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        style={{ marginRight: 5 }}
       >
-        Anterior
+        ← Anterior
       </button>
 
-      {Array.from({ length: totalPages }, (_, i) => (
-        <button
-          key={i}
-          onClick={() => onPageChange(i + 1)}
-          disabled={currentPage === i + 1}
-          style={{
-            marginRight: 5,
-            backgroundColor: currentPage === i + 1 ? "#ccc" : "#007bff",
-            color: "#fff",
-            border: "none",
-            borderRadius: 4,
-            padding: "5px 10px",
-            cursor: currentPage === i + 1 ? "default" : "pointer",
-          }}
-        >
-          {i + 1}
-        </button>
+      {getVisiblePages().map((page, idx) => (
+        <React.Fragment key={idx}>
+          {page === "..." ? (
+            <span className="pagination-ellipsis">...</span>
+          ) : (
+            <button
+              className={`pagination-btn ${
+                currentPage === page ? "pagination-btn--active" : ""
+              }`}
+              onClick={() => onPageChange(Number(page))}
+              disabled={currentPage === page}
+            >
+              {page}
+            </button>
+          )}
+        </React.Fragment>
       ))}
 
       <button
+        className={`pagination-btn pagination-nav-btn ${
+          currentPage === totalPages ? "disabled" : ""
+        }`}
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
       >
-        Siguiente
+        Siguiente →
       </button>
     </div>
   );

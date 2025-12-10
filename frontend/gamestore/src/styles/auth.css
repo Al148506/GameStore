@@ -1,131 +1,248 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito&display=swap");
-.principal-container {
-  width: 100%;
-  max-width: 420px;
-  min-height: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* centra el contenido dentro */
-  align-items: center; /* centra el contenido dentro */
-  padding: 1rem;
-  background-color: rgba(105, 78, 102, 0.7); /* fondo semi-transparente */
-  border-radius: 10px; /* opcional, solo estético */
-}
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh; /* ocupa toda la altura de la pantalla */
-  margin: 0;
-  background-color: #121212; /* color de fondo oscuro */
-}
-.container-login {
-  min-height: 100vh;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-}
-* {
+
+/* 
+  TODA LA PÁGINA DE AUTH ESTÁ ENCAPSULADA
+  PARA QUE NO AFECTE A NADA FUERA DE ESTE ARCHIVO
+*/
+
+.auth-page * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html {
+.auth-page {
   font-family: "Nunito", sans-serif;
   font-size: 22px;
-  color: #fff;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
 }
 
-.App {
+/* CONTENEDOR PRINCIPAL */
+.auth-page .principal-container {
+  width: 100%;
+  max-width: 450px;
+  min-height: 400px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  padding: 1rem 0.5rem;
+  padding: 2rem;
+  background: rgba(25, 25, 35, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-form {
+/* CONTENEDORES GENERALES */
+.auth-page .App,
+.auth-page .container-login {
+  min-height: 100vh;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* FORMULARIO */
+.auth-page form {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   flex-grow: 1;
   padding-bottom: 1rem;
+  width: 100%;
 }
 
-a,
-a:visited {
-  color: #fff;
+/* TITULO */
+.auth-page h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-input[type="text"],
-input[type="password"],
-button,
-textarea {
-  font-family: "Nunito", sans-serif;
-  font-size: 22px;
-  padding: 0.25rem;
-  border-radius: 0.5rem;
-}
-
-label,
-button {
+/* LABELS */
+.auth-page label {
   margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: #e0e0e0;
+  font-weight: 600;
+  font-size: 1.1rem;
 }
 
-button {
-  padding: 0.5rem;
+/* INPUTS Y TEXTAREAS */
+.auth-page input[type="text"],
+.auth-page input[type="password"],
+.auth-page input[type="email"],
+.auth-page textarea {
+  font-family: "Nunito", sans-serif;
+  font-size: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: rgba(40, 40, 50, 0.8);
+  color: #ffffff;
+  width: 100%;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
 
-.instructions {
-  font-size: 0.75rem;
-  border-radius: 0.5rem;
-  background: #000;
-  color: #fff;
-  padding: 0.25rem;
+.auth-page input:focus,
+.auth-page textarea:focus {
+  outline: none;
+  border-color: #4a90e2;
+  background: rgba(50, 50, 60, 0.95);
+  box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.1);
+}
+
+.auth-page input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* BOTONES (solo login/register) */
+.auth-page button {
+  margin-top: 1.5rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.auth-page button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(74, 144, 226, 0.4);
+}
+
+.auth-page button:disabled {
+  background: rgba(74, 144, 226, 0.3);
+  cursor: not-allowed;
+}
+
+/* PASSWORD ICON */
+.auth-page .password-container {
   position: relative;
-  bottom: -10px;
+  width: 100%;
+  margin-top: 0.5rem;
 }
 
-.instructions > svg {
-  margin-right: 0.25rem;
+.auth-page .password-container input {
+  padding-right: 3.5rem;
 }
 
-.offscreen {
+.auth-page .password-toggle {
+  position: absolute;
+  top: -0.5rem;
+  right: -2rem;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.1rem;
+  width: 2rem;
+}
+
+/* REMEMBER ME */
+.auth-page .remember-me {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+
+.auth-page .remember-me input[type="checkbox"] {
+  width: 1.4rem;
+  height: 1.4rem;
+  accent-color: #4a90e2;
+}
+
+.auth-page .remember-me label {
+  margin: 0;
+  color: #e0e0e0;
+}
+
+/* LINKS */
+.auth-page a,
+.auth-page a:visited {
+  color: #4a90e2;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.auth-page a:hover {
+  color: #5aa3f0;
+  text-decoration: underline;
+}
+
+/* UTILITIES */
+.auth-page .line {
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+.auth-page .valid {
+  color: #10b981;
+  margin-left: 0.5rem;
+}
+
+.auth-page .invalid {
+  color: #ef4444;
+  margin-left: 0.5rem;
+}
+
+.auth-page .instructions {
+  font-size: 0.85rem;
+  border-radius: 8px;
+  background: rgba(59, 130, 246, 0.9);
+  color: #ffffff;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  position: relative;
+}
+
+.auth-page .offscreen {
   position: absolute;
   left: -9999px;
 }
 
-.hide {
+.auth-page .hide {
   display: none;
 }
-
-.valid {
-  color: limegreen;
-  margin-left: 0.25rem;
+.validation-label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem; /* Pequeño espacio uniforme entre texto e íconos */
 }
 
-.invalid {
-  color: red;
-  margin-left: 0.25rem;
+.validation-label span {
+  margin-left: 0.25rem; /* Espacio adicional solo a la derecha del texto */
+  font-size: 0.8em; /* Opcional: íconos un poco más pequeños */
 }
 
-.errmsg {
-  background-color: lightpink;
-  color: firebrick;
-  font-weight: bold;
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.line {
-  display: inline-block;
-}
-
-h1 {
-  text-align: center;
+.auth-page .errmsg {
+  background: rgba(239, 68, 68, 0.95);
+  color: #ffffff;
+  font-weight: 600;
+  padding: 1rem;
   margin-bottom: 1rem;
-  color: #fff;
+  border-radius: 12px;
+  border-left: 4px solid #dc2626;
+}
+
+.action-btn {
+  margin-bottom: 1rem;
 }

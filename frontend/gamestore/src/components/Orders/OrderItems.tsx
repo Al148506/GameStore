@@ -1,10 +1,10 @@
 import type { OrderItemDto } from "../../types/Order/orderItem";
 import "../../styles/orderItems.css";
 
-export function OrderItems({ items }: { items: OrderItemDto[] }) {
+export function OrderItems({ items,  title }: { items: OrderItemDto[];  title?: string;}) {
   return (
     <div className="order-items">
-      <h3 className="order-items-title">Artículos</h3>
+      <h3 className="order-items-title">{title}</h3>
 
       <div className="order-items-list">
         {items.map((item) => (

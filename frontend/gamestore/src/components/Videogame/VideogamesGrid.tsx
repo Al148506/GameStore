@@ -4,6 +4,7 @@ import { VideogameCard } from "./VideogameCard";
 
 interface VideogamesGridProps {
   games: VideogameDto[];
+  loading: boolean;
   onCardClick: (game: VideogameDto) => void;
   onEdit: (game: VideogameDto) => void;
   onDelete: (id: number) => void;
@@ -11,10 +12,14 @@ interface VideogamesGridProps {
 
 export function VideogamesGrid({
   games,
+  loading,
   onCardClick,
   onEdit,
   onDelete,
 }: VideogamesGridProps) {
+  if (loading) {
+    return <div className="mini-loading">Cargando videojuegos...</div>;
+  }
   return (
     <div className="videogames-grid">
       {games.map((game) => (

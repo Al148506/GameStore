@@ -38,7 +38,17 @@ namespace GameStore.Api.Controllers
                 .FirstOrDefaultAsync(c => c.UserId == userId && !c.IsCheckedOut);
 
             if (cart == null)
-                return NotFound("No se encontró un carrito activo para este usuario.");
+            {
+                cart = new Cart
+                {
+                    UserId = userId,
+                    CreatedAt = DateTime.UtcNow,
+                    IsCheckedOut = false
+                };
+                _context.Carts.Add(cart);
+                await _context.SaveChangesAsync();
+
+            }
 
             var cartReadDto = _mapper.Map<CartReadDto>(cart);
             return Ok(cartReadDto);

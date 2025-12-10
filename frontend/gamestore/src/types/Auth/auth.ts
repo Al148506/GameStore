@@ -11,3 +11,19 @@ export interface AuthResponseDto {
   email: string;
   roles: string[];
 }
+
+export interface UserWithRoles {
+  id: string;
+  userName: string;
+  email: string;
+  roles: string[];
+}
+
+export interface UserQuery {
+  search?: string;
+  pageNumber?: number;
+  pageSize?: number;
+  sortBy?: string;
+  sortDir?: string;
+}
+

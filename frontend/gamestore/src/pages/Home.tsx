@@ -12,7 +12,8 @@ import type { Filters } from "@components/Searchbar";
 import "../styles/home.css";
 import "../styles/modal.css";
 import Button from "@components/Button";
-
+import { CartButton } from "@components/Cart/CartButton";
+import { Cart } from "@components/Cart/Cart";
 
 export function Home() {
   const navigate = useNavigate();
@@ -21,7 +22,8 @@ export function Home() {
     searchTerm: "",
     alphabet: "",
     price: "",
-    rating: "",
+    genreIds: [],
+    platformIds:  [],
   });
   const {
     videogames,
@@ -39,7 +41,7 @@ export function Home() {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [editingGame, setEditingGame] = useState<VideogameDto | null>(null);
   const [showFormModal, setShowCreateModal] = useState<boolean>(false);
-
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   useEffect(() => {
     const token =
       localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -56,7 +58,6 @@ export function Home() {
     setSelectedGame(null);
   };
 
-
   if (error) return <div className="error">Error: {error}</div>;
 
   return (
@@ -65,26 +66,21 @@ export function Home() {
       {/* 👇 Navbar fuera del container */}
       <Searchbar filters={filters} onFiltersChange={setFilters} />
       <div className="videogames-list-container">
-        {/* ✅ Botón flotante para agregar */}
-        {/* <button
-          className="fab-button"
+      
+        <Button
+          text={<>Agregar videojuego</>}
+          variant="create"
           onClick={() => setShowCreateModal(true)}
-          title="Agregar videojuego"
-        >
-          +
-        </button> */}
-         <Button
-                    text= {<>Agregar videojuego</>}
-                    variant="create"
-                    onClick={() => setShowCreateModal(true)}
-                    
-                  />
+        />
+        <CartButton onClick={() => setIsOpen(!isOpen)} />
+        <Cart isOpen={isOpen} mode="sidebar" />
+
         <VideogamesGrid
           games={videogames}
           onCardClick={handleOpenModal}
           onEdit={setEditingGame}
           onDelete={deleteVideogame}
-          loading={loading} 
+          loading={loading}
         />
         <VideogameFormModal
           isOpen={showFormModal}

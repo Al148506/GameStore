@@ -2,9 +2,13 @@
 using System.Security.Claims;
 using System.Text;
 using GameStore.Api.Dtos.Auth;
+using GameStore.Api.DTOs.Auth;
+using GameStore.Api.Helper;
 using GameStore.Infrastructure.Persistence.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace GameStore.Api.Controllers
@@ -62,6 +66,30 @@ namespace GameStore.Api.Controllers
             };
         }
 
+        //Endpoint toggle-admin
+        [Authorize(Policy = "RequireAdmin")]
+        [HttpPut("toggle-admin/{userId}")]
+        public async Task<IActionResult> ToogleAdminRole(string userId)
+        {
+            var user = await _users.FindByEmailAsync(userId);
+            if (user == null)
+                return NotFound("Usuario no encontrado.");
+            var isAdmin = await _users.IsInRoleAsync(user, "Admin");
+            IdentityResult result;
+
+            if (isAdmin)
+            {
+                result = await _users.RemoveFromRoleAsync(user, "Admin");
+            }
+            else
+            {
+                result = await _users.AddToRoleAsync(user, "Admin");
+            }
+            if (!result.Succeeded)
+                return BadRequest("No se pudo actualizar el rol del usuario.");
+            return NoContent();
+        }
+
         private string CreateJwt(ApplicationUser user, IList<string> roles)
         {
             var claims = new List<Claim>
@@ -87,5 +115,70 @@ namespace GameStore.Api.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        [Authorize(Policy = "RequireAdmin")]
+        [HttpGet("list")]
+        public async Task<IActionResult> GetUsersAsync([FromQuery] UserQueryParameters query)
+        {
+            var usersQuery = _users.Users.AsQueryable();
+
+            // === 1. Filtro de búsqueda ===
+            if (!string.IsNullOrWhiteSpace(query.Search))
+            {
+                var search = query.Search.ToLower();
+                usersQuery = usersQuery.Where(u =>
+                    u.Email.ToLower().Contains(search) ||
+                    u.UserName.ToLower().Contains(search)
+                );
+            }
+
+            // === 2. Ordenamiento dinámico ===
+            usersQuery = query.SortBy.ToLower() switch
+            {
+                "email" => (query.SortDir == "desc")
+                            ? usersQuery.OrderByDescending(u => u.Email)
+                            : usersQuery.OrderBy(u => u.Email),
+
+                _ => (query.SortDir == "desc")
+                            ? usersQuery.OrderByDescending(u => u.UserName)
+                            : usersQuery.OrderBy(u => u.UserName),
+            };
+
+            // === 3. Total antes de paginar ===
+            var totalItems = await usersQuery.CountAsync();
+
+            // === 4. Paginación ===
+            var users = await usersQuery
+                .Skip((query.PageNumber - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .ToListAsync();
+
+            // === 5. Crear DTO principal ===
+            var userDtos = new List<UserWithRolesDto>();
+
+            foreach (var user in users)
+            {
+                var roles = await _users.GetRolesAsync(user);
+
+                userDtos.Add(new UserWithRolesDto
+                {
+                    Id = user.Id,
+                    UserName = user.UserName!,
+                    Email = user.Email!,
+                    Roles = roles.ToList()
+                });
+            }
+
+            // === 6. Estructurar respuesta ===
+            var response = new PaginatedResponse<UserWithRolesDto>
+            {
+                Items = userDtos,
+                Total = totalItems,
+                Page = query.PageNumber,
+                PageSize = query.PageSize
+            };
+
+            return Ok(response);
+        }
+
     }
 }

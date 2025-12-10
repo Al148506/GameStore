@@ -1,10 +1,14 @@
-import { CartIcon, ClearCartIcon } from "./Icons";
+import { ClearCartIcon } from "./Icons";
 import "../../styles/cart.css";
 import { useCart } from "../../hooks/useCart";
 import { CartItem } from "./CartItem";
-import { useState, useEffect } from "react";
-
-export function Cart() {
+import { useEffect } from "react";
+import Navbar from "@components/Navbar";
+interface CartProps {
+  mode?: "sidebar" | "fullscreen";
+   isOpen?: boolean;
+}
+export function Cart({mode, isOpen}: CartProps) {
   const {
     cart,
     isLoading,
@@ -14,14 +18,9 @@ export function Cart() {
     checkoutCart,
   } = useCart();
 
-  const [isOpen, setIsOpen] = useState(false);
-
   useEffect(() => {
     fetchCart();
   }, [fetchCart]);
-
-  const totalItems =
-    cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   const totalPrice =
     cart?.items?.reduce(
@@ -31,63 +30,122 @@ export function Cart() {
 
   return (
     <>
-      <button className="cart-button" onClick={() => setIsOpen(!isOpen)}>
-        <CartIcon />
-        {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
-      </button>
-
-      <aside className={`cart ${isOpen ? "open" : ""}`}>
+      {mode === "fullscreen" && <Navbar />}
+      <aside className={`cart ${mode} ${isOpen ? "open" : ""}`}>
         <div className="cart-header">
-          <h2>Tu Carrito</h2>
+          <h2>{mode === "fullscreen" ? "🛒 Tu Carrito de Compras" : "Tu Carrito"}</h2>
         </div>
 
         {isLoading ? (
-          <div className="loading-cart">Cargando carrito...</div>
+          <div className="loading-cart">
+            <div className="spinner"></div>
+            Cargando carrito...
+          </div>
         ) : !cart?.items?.length ? (
-          <div className="empty-cart">Tu carrito está vacío</div>
+          <div className="empty-cart">
+            {mode === "fullscreen" ? "Tu carrito está vacío. ¡Empieza a comprar!" : "Tu carrito está vacío"}
+          </div>
         ) : (
           <>
-            <ul>
-              {cart.items.map((item) => (
-                <CartItem
-                  key={item.id}
-                  {...item}
-                  decreaseItemQuantity={decreaseItemQuantity}
-                  addToCart={() =>
-                    addItem({
-                      videogameId: item.videogameId,
-                      quantity: 1,
-                      unitPrice: item.unitPrice,
-                    })
-                  }
-                />
-              ))}
-            </ul>
+            {mode === "fullscreen" ? (
+              <div className="cart-content-wrapper">
+                <div className="cart-items-section">
+                  <ul>
+                    {cart.items.map((item) => (
+                      <CartItem
+                        key={item.id}
+                        {...item}
+                        decreaseItemQuantity={decreaseItemQuantity}
+                        addToCart={() =>
+                          addItem({
+                            videogameId: item.videogameId,
+                            quantity: 1,
+                            unitPrice: item.unitPrice,
+                          })
+                        }
+                      />
+                    ))}
+                  </ul>
+                </div>
 
-            <div className="cart-summary">
-              <div className="summary-row">
-                <span>Total:</span>
-                <strong>${totalPrice.toFixed(2)}</strong>
+                <div className="cart-summary-section">
+                  <div className="cart-summary">
+                    <div className="summary-row">
+                      <span>Subtotal:</span>
+                      <strong>${totalPrice.toFixed(2)}</strong>
+                    </div>
+                    <div className="summary-row">
+                      <span>Envío:</span>
+                      <span>Gratis</span>
+                    </div>
+                    <div className="summary-row">
+                      <span>Total:</span>
+                      <strong>${totalPrice.toFixed(2)}</strong>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={checkoutCart}
+                    className="checkout-button"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      "Procesando..."
+                    ) : (
+                      <>
+                        <ClearCartIcon />
+                        Finalizar Compra
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
-            </div>
+            ) : (
+              <>
+                <ul>
+                  {cart.items.map((item) => (
+                    <CartItem
+                      key={item.id}
+                      {...item}
+                      decreaseItemQuantity={decreaseItemQuantity}
+                      addToCart={() =>
+                        addItem({
+                          videogameId: item.videogameId,
+                          quantity: 1,
+                          unitPrice: item.unitPrice,
+                        })
+                      }
+                    />
+                  ))}
+                </ul>
 
-            <button
-              onClick={checkoutCart}
-              className="checkout-button"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                "Procesando..."
-              ) : (
-                <>
-                  <ClearCartIcon />
-                  Finalizar Compra
-                </>
-              )}
-            </button>
+                <div className="cart-summary">
+                  <div className="summary-row">
+                    <span>Total:</span>
+                    <strong>${totalPrice.toFixed(2)}</strong>
+                  </div>
+                </div>
+
+                <button
+                  onClick={checkoutCart}
+                  className="checkout-button"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    "Procesando..."
+                  ) : (
+                    <>
+                      <ClearCartIcon />
+                      Finalizar Compra
+                    </>
+                  )}
+                </button>
+              </>
+            )}
           </>
         )}
       </aside>
     </>
   );
 }
+

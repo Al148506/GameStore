@@ -7,32 +7,51 @@ import type {
 } from "../types/Videogame/videogame";
 import type { PaginatedResponse } from "../types/Pagination/paginatedResponse";
 
-
-
+interface Params {
+  page: number;
+  pageSize: number;
+  search: string;
+  sort: string;
+  genreIds?: number[];
+  platformIds?: number[];
+}
 export const getVideogames = async (
   page = 1,
   pageSize = 20,
   filters: Filters
 ): Promise<PaginatedResponse<VideogameDto>> => {
   
-  // Convertir filtros a parámetros del backend
+  // Definir sort
   let sort = "";
-
   if (filters.alphabet) sort = filters.alphabet;
   if (filters.price) sort = filters.price;
 
+  // Construir parámetros
+  const params: Params = {
+    page,
+    pageSize,
+    search: filters.searchTerm || "",
+    sort: sort,
+  };
+
+  if (filters.genreIds?.length) {
+    params.genreIds = filters.genreIds;
+  }
+
+  if (filters.platformIds?.length) {
+    params.platformIds = filters.platformIds;
+  }
+
+  // Llamada al backend con paramsSerializer
   const res = await api.get<PaginatedResponse<VideogameDto>>("games", {
-    params: {
-      page,
-      pageSize,
-      search: filters.searchTerm || "",
-      sort: sort || ""
-    },
+    params,
+    paramsSerializer: {
+      indexes: null  // ⬅️ convierte arrays en genreIds=1&genreIds=16
+    }
   });
 
   return res.data;
 };
-
 
 export const getVideogame = async (id: number): Promise<VideogameDto> => {
   const res = await api.get<VideogameDto>(`games/${id}`);

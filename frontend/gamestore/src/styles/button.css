@@ -110,6 +110,24 @@
 
 }
 
+.custom-btn.closesession {
+  background: linear-gradient(135deg, #f53f17 0%, #c70039 100%);
+  padding: 10px 20px;
+  font-size: 1rem;
+  margin-top: 0rem;
+  margin-bottom: 0rem;
+  box-shadow: 
+    0 4px 8px rgba(255, 87, 51, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+
+}
+
+.custom-btn.closesession:hover {
+  background: linear-gradient(135deg, #e04e2c 0%, #a5002e 100%);
+  transform: translateY(-2px);
+ 
+}
+
 .custom-btn.create:hover {
   background: linear-gradient(135deg, #138496 0%, #0f6674 100%);
   transform: translateY(-2px);

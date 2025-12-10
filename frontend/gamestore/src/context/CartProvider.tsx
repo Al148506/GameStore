@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { cartApi } from "../api/cartApi";
+import { cartApi } from "../api/cartApi.ts";
 import type { CartReadDto } from "../types/Cart/cart";
 import type {
   CartItemCreateDto,

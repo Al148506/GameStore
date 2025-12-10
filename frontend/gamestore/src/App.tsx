@@ -14,37 +14,37 @@ import { CartProvider } from "./context/CartProvider";
 import SuccessPage from "./pages/Success";
 import OrderHistory from "./pages/OrderHistory";
 import CancelPage from "./pages/Cancel";
+import ManageUsers from "./pages/ManageUsers";
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <Routes>
-          {/* Redirigir la raíz hacia /login */}
-          <Route path="/" element={<Navigate to="/login" />} />
-          {/* Login Route */}
+        {/* CartProvider envuelve TODAS las rutas */}
+        <CartProvider>
+          <Routes>
+            <Route path="/" element={<Navigate to="/login" />} />
 
-          <Route path="/login" element={<Login />} />
-          {/* Register Route */}
-          <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-          {/* Home Route */}
-          <Route
-            path="/home"
-            element={
-              <CartProvider>
-                <Home />
-                 <Cart></Cart>
-              </CartProvider>
-            }
-          />
-          <Route path="/success" element={<SuccessPage />} />
-          <Route path="/order-history" element={<OrderHistory />} />
-          <Route path="/cancel" element={<CancelPage />} />
-        </Routes>
+            <Route path="/home" element={<Home />} />
+            <Route
+              path="/cart"
+              element={<Cart mode="fullscreen" isOpen={true} />}
+            />
+
+            <Route path="/success" element={<SuccessPage />} />
+            <Route path="/order-history" element={<OrderHistory />} />
+            <Route path="/cancel" element={<CancelPage />} />
+            <Route path="/profile" element={<ManageUsers />} />
+          </Routes>
+
+          {/* Cart sidebar visible en todas las páginas del sistema */}
+          <Cart />
+        </CartProvider>
       </Router>
     </AuthProvider>
   );
 }
-
 export default App;

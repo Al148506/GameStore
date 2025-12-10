@@ -15,7 +15,7 @@
   padding: 0 var(--space-12, 12px);
   border: 2px solid transparent;
   border-radius: var(--radius-lg, 12px);
-  background: rgb(50, 184, 198);
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
   color: var(--color-text, #333);
   font-weight: var(--font-weight-medium, 500);
   font-size: var(--font-size-base, 0.95rem);

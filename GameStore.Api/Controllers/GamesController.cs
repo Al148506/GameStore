@@ -224,7 +224,4 @@ public class GamesController : ControllerBase
         return NoContent();
     }
 
-
-
-
 }

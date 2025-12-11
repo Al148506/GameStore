@@ -6,10 +6,10 @@ import { useVideogameOptions } from "../../hooks/useVideogameOptions";
 import { useImageValidation } from "../../hooks/useImageValidation";
 import { mapGameToFormData } from "../../utils/mapGameToFormData";
 import { ratings } from "../../constants/ratings";
-import "../../styles/modal.css";
 import { customSelectStyles } from "../../constants/selectCustomStyles";
 import type { VideogameDto } from "../../types/Videogame/videogame";
-
+import { useVideogameAutoComplete } from "../../hooks/useAutoComplete";
+import "../../styles/modal.css";
 interface VideogameModalProps {
   isOpen: boolean;
   mode: "create" | "edit";
@@ -60,6 +60,12 @@ export function VideogameFormModal({
   const { imageError, validateImage } = useImageValidation();
 
   const [formData, setFormData] = useState<FormState>(defaultForm);
+
+  const {
+    autoComplete,
+    isLoading: isAutoLoading,
+    error: autoError,
+  } = useVideogameAutoComplete({ genres, platforms });
 
   // Cargar valores iniciales
   useEffect(() => {
@@ -124,6 +130,19 @@ export function VideogameFormModal({
   const title =
     mode === "create" ? "Agregar Nuevo Videojuego" : "Editar Videojuego";
 
+  async function handleAutoComplete() {
+    const result = await autoComplete(formData.name);
+
+    if (!result) return;
+
+    setFormData((prev) => ({
+      ...prev,
+      ...result,
+    }));
+
+    validateImage(result.imageUrl);
+  }
+
   return (
     <div className="modal-overlay">
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -146,6 +165,24 @@ export function VideogameFormModal({
               onChange={handleChange}
             />
           </div>
+
+          <button
+            type="button"
+            onClick={handleAutoComplete}
+            disabled={isAutoLoading || !formData.name.trim()}
+            className="autocomplete-btn"
+          >
+            {isAutoLoading ? (
+              <>
+                <span className="spinner" />
+                Cargando...
+              </>
+            ) : (
+              <>✨ Autocompletar</>
+            )}
+          </button>
+
+          {autoError && <p style={{ color: "red" }}>{autoError}</p>}
 
           {/* Descripción */}
           <div className="form-group">
@@ -261,6 +298,16 @@ export function VideogameFormModal({
               value={formData.imageUrl}
               onChange={handleChange}
             />
+            {formData.imageUrl && !imageError && (
+              <div className="image-preview-container">
+                <img
+                  src={formData.imageUrl}
+                  alt="Preview"
+                  className="image-preview"
+                  onError={() => validateImage(formData.imageUrl)}
+                />
+              </div>
+            )}
           </div>
 
           {imageError && (
@@ -270,6 +317,7 @@ export function VideogameFormModal({
           <button className="btn-primary" type="submit">
             {mode === "create" ? "Crear" : "Guardar cambios"}
           </button>
+            
         </form>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { jwtDecode } from "jwt-decode";
 import {
   faCheck,
   faTimes,
@@ -11,6 +12,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "../api/axios";
 import { isAxiosError } from "axios";
 import type { LoginRequestDto } from "../types/Auth/auth";
+import type { JwtPayload } from "../types/Auth/jwt";
 import "../styles/auth.css";
 import { useAuth } from "@hooks/useAuth";
 
@@ -22,7 +24,7 @@ const Login = () => {
   const errRef = useRef<HTMLParagraphElement>(null);
 
   const navigate = useNavigate();
-   const { login } = useAuth(); 
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [validEmail, setValidEmail] = useState(false);
@@ -33,7 +35,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-   // Focus inicial
+  // Focus inicial
   useEffect(() => {
     emailRef.current?.focus();
   }, []);
@@ -59,7 +61,18 @@ const Login = () => {
     try {
       const payload: LoginRequestDto = { email, password };
       const response = await axios.post(LOGIN_URL, payload);
-      const { accessToken, user } = response.data;
+      const { accessToken } = response.data;
+      
+      const decoded: JwtPayload = jwtDecode(accessToken);
+      const user = {
+        id: decoded.sub,
+        email: decoded.email,
+        username: decoded.email.split("@")[0],
+        role: decoded[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+        ][0],
+      };
+
       login(accessToken, user, rememberMe);
       navigate("/home");
     } catch (err: unknown) {

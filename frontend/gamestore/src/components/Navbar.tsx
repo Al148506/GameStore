@@ -66,11 +66,11 @@ export function NavbarGeneral() {
             Mis Compras
           </Link>
           <Link
-            to="/profile"
+            to="/account-managment"
             className={location.pathname === "/profile" ? "active" : ""}
             onClick={handleLinkClick}
           >
-            Mi Cuenta
+            Manejo de cuentas
           </Link>
           <Link
             to="/cart"

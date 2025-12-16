@@ -109,10 +109,6 @@ function UserList() {
               </button>
             )}
           </div>
-
-          <div className="results-info">
-            Mostrando {users.length} de {users.length * totalPages} usuarios
-          </div>
         </div>
 
         <div className="table-wrapper">
@@ -197,9 +193,15 @@ function UserList() {
                   </tr>
                 ))}
               </tbody>
+              
             </table>
+            
           )}
+              <div className="results-info">
+            Mostrando {users.length} de {users.length * totalPages} usuarios
+          </div>
         </div>
+    
 
         <div className="pagination-wrapper">
           <Pagination

@@ -37,7 +37,7 @@ function App() {
             <Route path="/success" element={<SuccessPage />} />
             <Route path="/order-history" element={<OrderHistory />} />
             <Route path="/cancel" element={<CancelPage />} />
-            <Route path="/profile" element={<ManageUsers />} />
+            <Route path="/account-managment" element={<ManageUsers />} />
           </Routes>
 
           {/* Cart sidebar visible en todas las páginas del sistema */}

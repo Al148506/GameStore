@@ -24,6 +24,8 @@ export function NavbarGeneral() {
     try {
       localStorage.removeItem("token");
       sessionStorage.removeItem("token");
+      localStorage.removeItem("user");
+      sessionStorage.removeItem("user");
       setIsMenuOpen(false);
       navigate("/login");
     } catch (error) {
@@ -65,19 +67,30 @@ export function NavbarGeneral() {
           >
             Mis Compras
           </Link>
-          <Link
-            to="/account-managment"
-            className={location.pathname === "/profile" ? "active" : ""}
-            onClick={handleLinkClick}
-          >
-            Manejo de cuentas
-          </Link>
+
           <Link
             to="/cart"
             className={location.pathname === "/cart" ? "active" : ""}
             onClick={handleLinkClick}
           >
             Carrito
+          </Link>
+
+          <Link
+            to="/profile"
+            className={location.pathname === "/profile" ? "active" : ""}
+            onClick={handleLinkClick}
+          >
+            Mi Cuenta
+          </Link>
+          <Link
+            to="/account-managment"
+            className={
+              location.pathname === "/account-managment" ? "active" : ""
+            }
+            onClick={handleLinkClick}
+          >
+            Manejo de cuentas
           </Link>
         </div>
 

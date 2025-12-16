@@ -15,6 +15,7 @@ import SuccessPage from "./pages/Success";
 import OrderHistory from "./pages/OrderHistory";
 import CancelPage from "./pages/Cancel";
 import ManageUsers from "./pages/ManageUsers";
+import { Profile } from "@components/User/Profile";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
             <Route path="/order-history" element={<OrderHistory />} />
             <Route path="/cancel" element={<CancelPage />} />
             <Route path="/account-managment" element={<ManageUsers />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
 
           {/* Cart sidebar visible en todas las páginas del sistema */}

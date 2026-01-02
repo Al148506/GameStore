@@ -19,6 +19,11 @@ export interface AuthContextType {
     remember: boolean
   ) => Promise<boolean>;
 
+  registerRequest: (
+    email: string,
+    password: string
+  ) => Promise<boolean>;
+
   logout: () => void;
 }
 

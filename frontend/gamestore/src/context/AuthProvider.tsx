@@ -40,6 +40,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+    /* =========================
+      REGISTER
+  ========================= */
+  const registerRequest = async (
+    email: string,
+    password: string,
+  ): Promise<boolean> => {
+    setLoading(true);
+    setError(null);
+    try {
+      await authApi.register({
+        email,
+        password
+      });
+      return true;
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+      console.error("Registration error:", error);
+      setError(
+        error.response?.data?.message ?? "Error during registration"
+      );
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   /* =========================
      LOGIN 
   ========================= */
@@ -91,6 +118,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  /* =========================
+      LOGOUT
+  ========================= */
+
 const logout = () => {
   setToken(null);
   setUser(null);
@@ -105,7 +136,7 @@ const logout = () => {
 
   return (
     <AuthContext.Provider
-      value={{ token, user, loading, error, loginRequest, logout }}
+      value={{ token, user, loading, error, loginRequest,registerRequest,logout }}
     >
       {children}
     </AuthContext.Provider>

@@ -57,12 +57,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     } else {
       localStorage.removeItem(CART_STORAGE_KEY);
     }
-  }, [cart,user]);
+  }, [cart, user]);
 
   const addItem = useCallback(async (item: CartItemCreateDto) => {
     try {
       const updatedCart = await cartApi.addItem(item);
-      console.log("Item added, updated cart:", updatedCart);
       setCart(updatedCart);
     } catch (error) {
       console.error("Error adding item:", error);
@@ -116,12 +115,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const clearCart = useCallback(() => {
-  setCart(null);
-  Object.keys(localStorage)
-    .filter(key => key.startsWith("shopping-cart-"))
-    .forEach(key => localStorage.removeItem(key));
-}, []);
-
+    setCart(null);
+    Object.keys(localStorage)
+      .filter((key) => key.startsWith("shopping-cart-"))
+      .forEach((key) => localStorage.removeItem(key));
+  }, []);
 
   return (
     <CartContext.Provider
@@ -134,7 +132,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         removeItem,
         checkoutCart,
         decreaseItemQuantity,
-        clearCart
+        clearCart,
       }}
     >
       {children}

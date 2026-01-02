@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { changePassword } from "../../api/usersApi";
 import { useAuth } from "@hooks/useAuth";
-import type { changePasswordRequestDto } from "../../types/Auth/auth";
+import type { changePasswordRequestDto } from "../../types/auth/auth";
 export const ChangePasswordForm = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");

@@ -1,12 +1,15 @@
-import type { Genre, Platform } from "../types/Videogame/videogame";
+import type { Genre, Platform } from "../types/videogame/videogame";
 import { useState } from "react";
 
-interface VideogameAutoComplete{
-    genres:Genre[],
-    platforms: Platform[],
+interface VideogameAutoComplete {
+  genres: Genre[];
+  platforms: Platform[];
 }
 
-export function useVideogameAutoComplete({ genres, platforms }: VideogameAutoComplete) {
+export function useVideogameAutoComplete({
+  genres,
+  platforms,
+}: VideogameAutoComplete) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,14 +25,10 @@ export function useVideogameAutoComplete({ genres, platforms }: VideogameAutoCom
   }
 
   const mapGenres = (apiGenres: string[]) =>
-    genres
-      .filter((g) => apiGenres.includes(g.name))
-      .map((g) => g.id);
+    genres.filter((g) => apiGenres.includes(g.name)).map((g) => g.id);
 
   const mapPlatforms = (apiPlats: string[]) =>
-    platforms
-      .filter((p) => apiPlats.includes(p.name))
-      .map((p) => p.id);
+    platforms.filter((p) => apiPlats.includes(p.name)).map((p) => p.id);
 
   async function autoComplete(name: string) {
     if (!name.trim()) {
@@ -42,7 +41,9 @@ export function useVideogameAutoComplete({ genres, platforms }: VideogameAutoCom
 
     try {
       const response = await fetch(
-        `http://localhost:5200/api/autoComplete?name=${encodeURIComponent(name)}`
+        `http://localhost:5200/api/autoComplete?name=${encodeURIComponent(
+          name
+        )}`
       );
 
       if (!response.ok) {

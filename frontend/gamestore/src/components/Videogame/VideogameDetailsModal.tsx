@@ -1,4 +1,4 @@
-import type { VideogameDto } from "../../types/Videogame/videogame";
+import type { VideogameDto } from "../../types/videogame/videogame";
 import "../../styles/modal.css";
 
 interface VideogameDetailsModalProps {

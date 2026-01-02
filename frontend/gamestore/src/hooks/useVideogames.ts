@@ -6,8 +6,7 @@ import {
   createVideogame as createVideogameApi,
 } from "../api/videogameApi";
 
-
-import type { VideogameDto } from "../types/Videogame/videogame";
+import type { VideogameDto } from "../types/videogame/videogame";
 import type { Filters } from "../components/Searchbar";
 
 import Swal from "sweetalert2";
@@ -83,7 +82,11 @@ export function useVideogames(filters: Filters, pageSize = 20) {
 
       setVideogames((prev) => [createdGame, ...prev]);
 
-      Swal.fire("Creado", "El videojuego ha sido creado exitosamente", "success");
+      Swal.fire(
+        "Creado",
+        "El videojuego ha sido creado exitosamente",
+        "success"
+      );
     } catch (err) {
       console.error("Error creating videogame:", err);
 
@@ -111,7 +114,11 @@ export function useVideogames(filters: Filters, pageSize = 20) {
         prev.map((game) => (game.id === id ? updatedGame : game))
       );
 
-      Swal.fire("Actualizado", "El videojuego ha sido actualizado correctamente", "success");
+      Swal.fire(
+        "Actualizado",
+        "El videojuego ha sido actualizado correctamente",
+        "success"
+      );
     } catch (err) {
       console.error("Error updating videogame:", err);
 

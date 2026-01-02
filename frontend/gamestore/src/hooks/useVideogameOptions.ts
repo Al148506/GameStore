@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getGenres, getPlatforms } from "../api/videogameApi";
-import type { Genre, Platform } from "../types/Videogame/videogame";
+import type { Genre, Platform } from "../types/videogame/videogame";
 
 export function useVideogameOptions(isOpen: boolean) {
   const [genres, setGenres] = useState<Genre[]>([]);

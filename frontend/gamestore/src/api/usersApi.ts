@@ -1,10 +1,10 @@
 import api from "./axios";
-import type { PaginatedResponse } from "../types/Pagination/paginatedResponse";
+import type { PaginatedResponse } from "../types/pagination/paginatedResponse";
 import type {
   UserQuery,
   UserWithRoles,
   changePasswordRequestDto,
-} from "../types/Auth/auth";
+} from "../types/auth/auth";
 
 export const getUsers = async (params: UserQuery) => {
   const res = await api.get<PaginatedResponse<UserWithRoles>>("/Auth/list", {

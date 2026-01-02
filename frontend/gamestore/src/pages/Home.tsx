@@ -2,18 +2,18 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useVideogames } from "@hooks/useVideogames";
 import { Pagination } from "@components/Pagination";
-import type { VideogameDto } from "../types/Videogame/videogame";
+import type { VideogameDto } from "../types/videogame/videogame";
 import { Searchbar } from "@components/Searchbar";
-import { VideogameDetailsModal } from "@components/Videogame/VideogameDetailsModal";
-import { VideogamesGrid } from "@components/Videogame/VideogamesGrid";
-import { VideogameFormModal } from "@components/Videogame/VideogameFormModal";
+import { VideogameDetailsModal } from "@components/videogame/VideogameDetailsModal";
+import { VideogamesGrid } from "@components/videogame/VideogamesGrid";
+import { VideogameFormModal } from "@components/videogame/VideogameFormModal";
 import NavbarGeneral from "@components/Navbar";
 import type { Filters } from "@components/Searchbar";
 import "../styles/home.css";
 import "../styles/modal.css";
 import Button from "@components/Button";
-import { CartButton } from "@components/Cart/CartButton";
-import { Cart } from "@components/Cart/Cart";
+import { CartButton } from "@components/cart/CartButton";
+import { Cart } from "@components/cart/Cart";
 
 export function Home() {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ export function Home() {
     alphabet: "",
     price: "",
     genreIds: [],
-    platformIds:  [],
+    platformIds: [],
   });
   const {
     videogames,
@@ -66,7 +66,6 @@ export function Home() {
       {/* 👇 Navbar fuera del container */}
       <Searchbar filters={filters} onFiltersChange={setFilters} />
       <div className="videogames-list-container">
-      
         <Button
           text={<>Agregar videojuego</>}
           variant="create"

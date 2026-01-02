@@ -8,14 +8,14 @@ import {
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
-import { Cart } from "./components/Cart/Cart";
+import { Cart } from "./components/cart/Cart";
 import { AuthProvider } from "./context/AuthProvider";
 
 import SuccessPage from "./pages/Success";
 import OrderHistory from "./pages/OrderHistory";
 import CancelPage from "./pages/Cancel";
 import ManageUsers from "./pages/ManageUsers";
-import { Profile } from "@components/User/Profile";
+import { Profile } from "@components/user/Profile";
 import ProtectedLayout from "./ProtectedLayout";
 
 function App() {

@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { CartProvider } from "./context/CartProvider";
 import { useAuth } from "./hooks/useAuth";
-import {Cart} from "./components/Cart/Cart";
+import { Cart } from "./components/cart/Cart";
 
 const ProtectedLayout = () => {
   const { user } = useAuth();

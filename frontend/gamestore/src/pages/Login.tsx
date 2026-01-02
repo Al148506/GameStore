@@ -4,8 +4,8 @@ import "../styles/auth.css";
 import { useAuth } from "@hooks/useAuth";
 import { EmailInput } from "@components/auth/EmailInput";
 import { PasswordInput } from "@components/auth/PasswordInput";
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { useEmailValidation } from "@hooks/useEmailValidation";
+import { usePasswordValidation } from "@hooks/usePasswordValidation";
 
 const Login = () => {
   const emailRef = useRef<HTMLInputElement>(null);
@@ -17,20 +17,16 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-
-  const [validEmail, setValidEmail] = useState(false);
-  const [validPassword, setValidPassword] = useState(false);
-
+  const validEmail = useEmailValidation(email);
+  const {
+    isValid: validPassword
+  } = usePasswordValidation(password);
 
   // Focus inicial
   useEffect(() => {
     emailRef.current?.focus();
   }, []);
-  // Validaciones en tiempo real
-  useEffect(() => {
-    setValidEmail(EMAIL_REGEX.test(email));
-    setValidPassword(password.length >= 8);
-  }, [email, password]);
+
   // Manejo de submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

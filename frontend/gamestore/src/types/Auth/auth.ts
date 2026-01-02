@@ -27,3 +27,9 @@ export interface UserQuery {
   sortDir?: string;
 }
 
+export interface changePasswordRequestDto{
+  email: string;
+  password: string;
+  newPassword: string;
+}
+

@@ -1,10 +1,10 @@
-﻿using GameStore.Infrastructure.Persistence.Videogames;
-using Microsoft.AspNetCore.Mvc;
-using Stripe;
-using Microsoft.EntityFrameworkCore;
-using GameStore.Infrastructure.Persistence.Videogames.Models;
+﻿using System.Text.Json;
 using GameStore.Api.DTOs.Order;
-using System.Text.Json;
+using GameStore.Infrastructure.Persistence.Videogames;
+using GameStore.Infrastructure.Persistence.Videogames.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 namespace GameStore.Api.Controllers
 {
@@ -19,7 +19,8 @@ namespace GameStore.Api.Controllers
         public WebhookController(
             VideogamesDbContext context,
             IConfiguration config,
-            ILogger<WebhookController> logger)
+            ILogger<WebhookController> logger
+        )
         {
             _context = context;
             _config = config;
@@ -60,8 +61,12 @@ namespace GameStore.Api.Controllers
 
                 _logger.LogInformation("📌 Metadata recibida: {@Metadata}", session.Metadata);
 
-                var userId = session.Metadata.ContainsKey("userId") ? session.Metadata["userId"] : null;
-                var cartJson = session.Metadata.ContainsKey("cart") ? session.Metadata["cart"] : null;
+                var userId = session.Metadata.ContainsKey("userId")
+                    ? session.Metadata["userId"]
+                    : null;
+                var cartJson = session.Metadata.ContainsKey("cart")
+                    ? session.Metadata["cart"]
+                    : null;
 
                 if (userId == null || cartJson == null)
                 {
@@ -72,9 +77,9 @@ namespace GameStore.Api.Controllers
                 var items = JsonSerializer.Deserialize<List<OrderItemDto>>(cartJson);
 
                 _logger.LogInformation("🛒 Items deserializados: {@Items}", items);
-                var cart = await _context.Carts
-                .FirstOrDefaultAsync(c => c.UserId == userId && !c.IsCheckedOut);
-
+                var cart = await _context.Carts.FirstOrDefaultAsync(c =>
+                    c.UserId == userId && !c.IsCheckedOut
+                );
 
                 var order = new Order
                 {
@@ -82,30 +87,33 @@ namespace GameStore.Api.Controllers
                     CartId = cart?.Id ?? 0,
                     CreatedAt = DateTime.UtcNow,
                     TotalAmount = items.Sum(i => i.UnitPrice * i.Quantity),
-                    Items = items.Select(i => new OrderItem
-                    {
-                        VideogameId = i.VideogameId,
-                        Quantity = i.Quantity,
-                        UnitPrice = i.UnitPrice
-                    }).ToList()
+                    Items = items
+                        .Select(i => new OrderItem
+                        {
+                            VideogameId = i.VideogameId,
+                            Quantity = i.Quantity,
+                            UnitPrice = i.UnitPrice,
+                        })
+                        .ToList(),
                 };
 
                 _context.Orders.Add(order);
 
                 // 🟦 Marcar carrito como checkout en vez de vaciarlo
 
-
                 if (cart != null)
                 {
                     cart.IsCheckedOut = true;
 
                     // Crear nuevo carrito vacío
-                    _context.Carts.Add(new Cart
-                    {
-                        UserId = userId,
-                        CreatedAt = DateTime.UtcNow,
-                        IsCheckedOut = false
-                    });
+                    _context.Carts.Add(
+                        new Cart
+                        {
+                            UserId = userId,
+                            CreatedAt = DateTime.UtcNow,
+                            IsCheckedOut = false,
+                        }
+                    );
                 }
 
                 await _context.SaveChangesAsync();
@@ -119,6 +127,5 @@ namespace GameStore.Api.Controllers
 
             return Ok();
         }
-
     }
 }

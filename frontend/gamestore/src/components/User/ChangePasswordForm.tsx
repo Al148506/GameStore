@@ -1,14 +1,30 @@
 import { useState } from "react";
-
+import { changePassword } from "../../api/usersApi";
+import { useAuth } from "@hooks/useAuth";
+import type { changePasswordRequestDto } from "../../types/Auth/auth";
 export const ChangePasswordForm = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const { user } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user?.email) return;
 
-    // llamada a API
-    // POST /auth/change-password
+    const payload: changePasswordRequestDto = {
+      email: user.email,
+      password: currentPassword,
+      newPassword: newPassword,
+    };
+    try {
+      await changePassword(payload);
+      alert("Contraseña actualizada correctamente");
+      setCurrentPassword("");
+      setNewPassword("");
+    } catch (error) {
+      console.error(error);
+      alert("Error al cambiar la contraseña");
+    }
   };
 
   return (

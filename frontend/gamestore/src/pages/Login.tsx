@@ -1,14 +1,9 @@
 import { useRef, useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCheck,
-  faTimes,
-  faInfoCircle,
-} from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/auth.css";
 import { useAuth } from "@hooks/useAuth";
-import { PasswordInput } from "@components/Auth/PasswordInput";
+import { EmailInput } from "@components/auth/EmailInput";
+import { PasswordInput } from "@components/auth/PasswordInput";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -25,7 +20,7 @@ const Login = () => {
 
   const [validEmail, setValidEmail] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
-  const [emailFocus, setEmailFocus] = useState(false);
+
 
   // Focus inicial
   useEffect(() => {
@@ -65,46 +60,13 @@ const Login = () => {
         <h1>Sign In</h1>
 
         <form onSubmit={handleSubmit}>
-          <label htmlFor="email">
-            Email:
-            <span className={validEmail ? "valid" : "hide"}>
-              <FontAwesomeIcon icon={faCheck} />
-            </span>
-            <span className={validEmail || !email ? "hide" : "invalid"}>
-              <FontAwesomeIcon icon={faTimes} />
-            </span>
-          </label>
-
-          <input
-            type="email"
-            id="email"
-            ref={emailRef}
-            autoComplete="email"
-            value={email}
-            required
-            aria-invalid={validEmail ? "false" : "true"}
-            aria-describedby="emailnote"
-            onChange={(e) => setEmail(e.target.value)}
-            onFocus={() => setEmailFocus(true)}
-            onBlur={() => setEmailFocus(false)}
-          />
-
-          <p
-            id="emailnote"
-            className={
-              emailFocus && email && !validEmail ? "instructions" : "offscreen"
-            }
-          >
-            <FontAwesomeIcon icon={faInfoCircle} /> Must be a valid email
-            address.
-          </p>
+          <EmailInput value={email} onChange={setEmail} isValid={validEmail} />
 
           <PasswordInput
             label="Password"
             value={password}
             onChange={setPassword}
             isValid={validPassword}
-            showValidation
           />
 
           <div className="remember-me">

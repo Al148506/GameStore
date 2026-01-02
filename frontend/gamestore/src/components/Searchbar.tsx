@@ -1,6 +1,6 @@
 import { useVideogameOptions } from "@hooks/useVideogameOptions";
 import "../styles/searchbar.css";
-import { CleanIcon } from "./Cart/Icons";
+import { CleanIcon } from "./cart/Icons";
 import Select, { type MultiValue } from "react-select";
 import { customSelectStyles } from "../constants/selectCustomStyles";
 
@@ -87,37 +87,37 @@ export function Searchbar({ filters, onFiltersChange }: SearchbarProps) {
           {/* Grupo de ordenamiento */}
           <div className="filter-group filter-group--multiselect">
             <div className="select-wrapper">
-            <label htmlFor="sort-select" className="select-label">
-              Orden Alfabetico
-            </label>
-            <select
-              className="sort-select"
-              value={filters.alphabet}
-              onChange={(e) => updateFilter("alphabet", e.target.value)}
-              aria-label="Ordenar alfabéticamente"
-              id="sort-select"
-            >
-              <option value="">Seleccionar orden</option>
-              <option value="az">A–Z</option>
-              <option value="za">Z–A</option>
-            </select>
+              <label htmlFor="sort-select" className="select-label">
+                Orden Alfabetico
+              </label>
+              <select
+                className="sort-select"
+                value={filters.alphabet}
+                onChange={(e) => updateFilter("alphabet", e.target.value)}
+                aria-label="Ordenar alfabéticamente"
+                id="sort-select"
+              >
+                <option value="">Seleccionar orden</option>
+                <option value="az">A–Z</option>
+                <option value="za">Z–A</option>
+              </select>
             </div>
 
             <div className="select-wrapper">
-            <label htmlFor="sort-select" className="select-label">
-              Orden Precio
-            </label>
-            <select
-              className="sort-select"
-              value={filters.price}
-              onChange={(e) => updateFilter("price", e.target.value)}
-              aria-label="Ordenar por precio"
-              id="sort-select"
-            >
-              <option value="">Seleccionar orden</option>
-              <option value="low-high">Menor a Mayor</option>
-              <option value="high-low">Mayor a Menor</option>
-            </select>
+              <label htmlFor="sort-select" className="select-label">
+                Orden Precio
+              </label>
+              <select
+                className="sort-select"
+                value={filters.price}
+                onChange={(e) => updateFilter("price", e.target.value)}
+                aria-label="Ordenar por precio"
+                id="sort-select"
+              >
+                <option value="">Seleccionar orden</option>
+                <option value="low-high">Menor a Mayor</option>
+                <option value="high-low">Mayor a Menor</option>
+              </select>
             </div>
           </div>
 

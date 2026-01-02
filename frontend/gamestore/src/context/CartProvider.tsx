@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { cartApi } from "../api/cartApi.ts";
-import type { CartReadDto } from "../types/Cart/cart.ts";
+import type { CartReadDto } from "../types/cart/cart.ts";
 import type {
   CartItemCreateDto,
   CartItemUpdateDto,
-} from "../types/Cart/cartItem.ts";
+} from "../types/cart/cartItem.ts";
 import { CartContext } from "./CartContext.ts";
 import { useAuth } from "@hooks/useAuth";
 

@@ -1,9 +1,9 @@
 import api from "./axios";
-import type { CartCreateDto, CartReadDto } from "../types/Cart/cart";
+import type { CartCreateDto, CartReadDto } from "../types/cart/cart";
 import type {
   CartItemCreateDto,
   CartItemUpdateDto,
-} from "../types/Cart/cartItem";
+} from "../types/cart/cartItem";
 
 export const cartApi = {
   // Obtiene el carrito activo del usuario autenticado

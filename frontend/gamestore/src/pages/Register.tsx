@@ -1,10 +1,11 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState} from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { EmailInput } from "../components/auth/EmailInput";
-import { PasswordInput } from "../components/auth/PasswordInput";
+import { EmailInput } from "@components/auth/EmailInput";
+import { PasswordInput } from "@components/auth/PasswordInput";
 import { useAuth } from "@hooks/useAuth";
+import { usePasswordValidation } from "@hooks/usePasswordValidation";
 import "../styles/auth.css";
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { useEmailValidation } from "@hooks/useEmailValidation";
 
 const Register = () => {
   const errRef = useRef<HTMLParagraphElement>(null);
@@ -13,19 +14,10 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const validEmail = useEmailValidation(email);
+  const { rules, isValid: validPassword, match: passwordMatch } =
+  usePasswordValidation(password, confirmPassword);
 
-  const [validEmail, setValidEmail] = useState(false);
-  const [validPassword, setValidPassword] = useState(false);
-  const [passwordMatch, setPasswordMatch] = useState(false);
-
-  // Validaciones
-  useEffect(() => {
-    setValidEmail(EMAIL_REGEX.test(email));
-    setValidPassword(password.length >= 8);
-    setPasswordMatch(
-      password === confirmPassword && confirmPassword.length > 0
-    );
-  }, [email, password, confirmPassword]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +50,7 @@ const Register = () => {
             value={password}
             onChange={setPassword}
             isValid={validPassword}
-            showValidation
+            rules={rules}
           />
 
           <PasswordInput
@@ -66,7 +58,6 @@ const Register = () => {
             value={confirmPassword}
             onChange={setConfirmPassword}
             isValid={passwordMatch}
-            showValidation
           />
 
           <button

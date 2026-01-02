@@ -5,9 +5,9 @@ import type { MultiValue } from "react-select";
 import { useVideogameOptions } from "../../hooks/useVideogameOptions";
 import { useImageValidation } from "../../hooks/useImageValidation";
 import { mapGameToFormData } from "../../utils/mapGameToFormData";
-import { ratings } from "../../constants/ratings";
+import { ratings } from "../../constants/videogameRatings";
 import { customSelectStyles } from "../../constants/selectCustomStyles";
-import type { VideogameDto } from "../../types/Videogame/videogame";
+import type { VideogameDto } from "../../types/videogame/videogame";
 import { useVideogameAutoComplete } from "../../hooks/useAutoComplete";
 import "../../styles/modal.css";
 interface VideogameModalProps {
@@ -317,7 +317,6 @@ export function VideogameFormModal({
           <button className="btn-primary" type="submit">
             {mode === "create" ? "Crear" : "Guardar cambios"}
           </button>
-            
         </form>
       </div>
     </div>

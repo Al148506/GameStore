@@ -14,7 +14,7 @@ export interface AuthResponseDto {
 
 export interface UserWithRoles {
   id: string;
-  userName: string;
+  username: string;
   email: string;
   roles: string[];
 }
@@ -27,9 +27,8 @@ export interface UserQuery {
   sortDir?: string;
 }
 
-export interface changePasswordRequestDto{
+export interface changePasswordRequestDto {
   email: string;
   password: string;
   newPassword: string;
 }
-

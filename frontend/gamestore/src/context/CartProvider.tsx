@@ -1,45 +1,19 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { cartApi } from "../api/cartApi.ts";
-import type { CartReadDto } from "../types/Cart/cart";
+import type { CartReadDto } from "../types/Cart/cart.ts";
 import type {
   CartItemCreateDto,
   CartItemUpdateDto,
-} from "../types/Cart/cartItem";
-import { CartContext } from "./CartContext";
+} from "../types/Cart/cartItem.ts";
+import { CartContext } from "./CartContext.ts";
 import { useAuth } from "@hooks/useAuth";
-
-
-
-
-
-const CART_STORAGE_KEY = "shopping-cart";
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [cart, setCart] = useState<CartReadDto | null>(() => {
-    // ✅ Inicializar desde localStorage
-    try {
-      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
-      return savedCart ? JSON.parse(savedCart) : null;
-    } catch (error) {
-      console.error("Error loading cart from localStorage:", error);
-      return null;
-    }
-  });
-
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
-
-  // ✅ Guardar en localStorage cada vez que cambie el carrito
-  useEffect(() => {
-    if (cart) {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-    } else {
-      localStorage.removeItem(CART_STORAGE_KEY);
-    }
-  }, [cart]);
-
+  const [cart, setCart] = useState<CartReadDto | null>(null);
   const fetchCart = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -47,16 +21,43 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
       setCart(data);
     } catch (err) {
       console.error("Error fetching cart", err);
-      // Mantener el carrito del localStorage si falla
     } finally {
       setIsLoading(false);
     }
-  }, [user]);
+  }, []);
 
-  // ✅ Sincronizar con servidor cuando cambie el usuario
   useEffect(() => {
+    if (!user) {
+      setCart(null);
+      setIsLoading(false);
+      return;
+    }
+    // 🟢 Usuario logueado → intentar cargar cache
+    const CART_STORAGE_KEY = `shopping-cart-${user.id}`;
+    const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+    if (savedCart) {
+      try {
+        setCart(JSON.parse(savedCart));
+        setIsLoading(false);
+        return;
+      } catch {
+        localStorage.removeItem(CART_STORAGE_KEY);
+      }
+    }
+    // 🟢 Si no hay cache, ir al backend
     fetchCart();
-  }, [user]); // Solo cuando cambia el usuario
+  }, [user, fetchCart]);
+
+  // ✅ Guardar en localStorage cada vez que cambie el carrito
+  useEffect(() => {
+    if (!user) return;
+    const CART_STORAGE_KEY = `shopping-cart-${user.id}`;
+    if (cart) {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+    } else {
+      localStorage.removeItem(CART_STORAGE_KEY);
+    }
+  }, [cart,user]);
 
   const addItem = useCallback(async (item: CartItemCreateDto) => {
     try {
@@ -101,20 +102,25 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     [fetchCart]
   );
 
-const checkoutCart = useCallback(async () => {
-  setIsLoading(true);
-  try {
-    const res = await cartApi.checkoutCart();
-    window.location.href = res.data.url;
-  } catch (err) {
-    console.error(err);
-    alert("No se pudo iniciar el pago.");
-  } finally {
-    setIsLoading(false);
-  }
+  const checkoutCart = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const res = await cartApi.checkoutCart();
+      window.location.href = res.data.url;
+    } catch (err) {
+      console.error(err);
+      alert("No se pudo iniciar el pago.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const clearCart = useCallback(() => {
+  setCart(null);
+  Object.keys(localStorage)
+    .filter(key => key.startsWith("shopping-cart-"))
+    .forEach(key => localStorage.removeItem(key));
 }, []);
-
-
 
 
   return (
@@ -128,6 +134,7 @@ const checkoutCart = useCallback(async () => {
         removeItem,
         checkoutCart,
         decreaseItemQuantity,
+        clearCart
       }}
     >
       {children}

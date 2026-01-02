@@ -3,11 +3,15 @@ import { useState } from "react";
 import "../styles/navbarGeneral.css";
 import Button from "./Button";
 import Swal from "sweetalert2";
+import { useAuth } from "@hooks/useAuth";
+import { useCart } from "@hooks/useCart";
 
 export function NavbarGeneral() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { logout } = useAuth();
+  const { clearCart } = useCart();
 
   const handleLogout = async () => {
     const result = await Swal.fire({
@@ -21,16 +25,10 @@ export function NavbarGeneral() {
 
     if (!result.isConfirmed) return;
 
-    try {
-      localStorage.removeItem("token");
-      sessionStorage.removeItem("token");
-      localStorage.removeItem("user");
-      sessionStorage.removeItem("user");
-      setIsMenuOpen(false);
-      navigate("/login");
-    } catch (error) {
-      console.error("Error during logout:", error);
-    }
+    logout();
+    clearCart();
+    setIsMenuOpen(false);
+    navigate("/login");
   };
 
   const handleLinkClick = () => {

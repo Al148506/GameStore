@@ -1,10 +1,16 @@
 // VideogameCard.tsx
 import React from "react";
-import type { VideogameDto } from "../../types/Videogame/videogame";
+import type { VideogameDto } from "../../types/videogame/videogame";
 import Button from "@components/Button";
 import "../../styles/videogameCard.css";
 import { useCart } from "../../hooks/useCart";
-import { AddToCartIcon, RemoveFromCartIcon, ClearCartIcon, DeleteIcon, EditIcon } from "../Cart/Icons";
+import {
+  AddToCartIcon,
+  RemoveFromCartIcon,
+  ClearCartIcon,
+  DeleteIcon,
+  EditIcon,
+} from "../cart/Icons";
 
 interface VideogameCardProps {
   game: VideogameDto;
@@ -55,7 +61,11 @@ export function VideogameCard({
       <div className="card-actions">
         {game.stock === 0 ? (
           <Button
-            text={<><ClearCartIcon/> Agotado</>}
+            text={
+              <>
+                <ClearCartIcon /> Agotado
+              </>
+            }
             variant="disabled"
             onClick={() => console.log("")}
           />
@@ -89,7 +99,11 @@ export function VideogameCard({
         )}
         <div className="card-admin-actions">
           <Button
-            text= {<><EditIcon/> Edit</>}
+            text={
+              <>
+                <EditIcon /> Edit
+              </>
+            }
             variant="edit"
             onClick={(e) => {
               e.stopPropagation();
@@ -97,7 +111,11 @@ export function VideogameCard({
             }}
           />
           <Button
-            text= {<><DeleteIcon/> Delete</>}
+            text={
+              <>
+                <DeleteIcon /> Delete
+              </>
+            }
             variant="delete"
             onClick={(e) => {
               e.stopPropagation();

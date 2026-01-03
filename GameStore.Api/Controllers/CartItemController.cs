@@ -1,19 +1,19 @@
 ﻿// PUT: api/cart/items/{itemId}
+using System.Security.Claims;
+using AutoMapper;
 using GameStore.Api.Dtos.Cart;
 using GameStore.Api.DTOs.Cart;
+using GameStore.Infrastructure.Persistence.Videogames;
 using GameStore.Infrastructure.Persistence.Videogames.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using GameStore.Infrastructure.Persistence.Videogames;
-using AutoMapper;
+
 namespace GameStore.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-
     public class CartItemController : ControllerBase
     {
         private readonly VideogamesDbContext _context;
@@ -25,8 +25,6 @@ namespace GameStore.Api.Controllers
             _mapper = mapper;
         }
 
- 
-
         // POST: api/cart/items
         [HttpPost("items")]
         public async Task<ActionResult<CartReadDto>> AddItemToCart([FromBody] CartItemCreateDto dto)
@@ -35,16 +33,17 @@ namespace GameStore.Api.Controllers
             if (userId == null)
                 return Unauthorized();
 
-            var cart = await _context.Carts
-                .Include(c => c.Items)
-                 .ThenInclude(i => i.Videogame)
+            var cart = await _context
+                .Carts.Include(c => c.Items)
+                    .ThenInclude(i => i.Videogame)
                 .FirstOrDefaultAsync(c => c.UserId == userId && !c.IsCheckedOut);
 
             if (cart == null)
                 return NotFound("No se encontró un carrito activo.");
 
-            var videogame = await _context.Videogames
-                .FirstOrDefaultAsync(v => v.Id == dto.VideogameId);
+            var videogame = await _context.Videogames.FirstOrDefaultAsync(v =>
+                v.Id == dto.VideogameId
+            );
             if (videogame == null)
                 return NotFound("El videojuego especificado no existe.");
 
@@ -70,8 +69,12 @@ namespace GameStore.Api.Controllers
             var cartReadDto = _mapper.Map<CartReadDto>(cart);
             return Ok(cartReadDto);
         }
+
         [HttpPut("items/{itemId}")]
-        public async Task<IActionResult> UpdateCartItem(int itemId, [FromBody] CartItemUpdateDto dto)
+        public async Task<IActionResult> UpdateCartItem(
+            int itemId,
+            [FromBody] CartItemUpdateDto dto
+        )
         {
             if (!ModelState.IsValid)
             {
@@ -81,9 +84,11 @@ namespace GameStore.Api.Controllers
             if (userId == null)
                 return Unauthorized();
 
-            var cartItem = await _context.CartItems
-                .Include(i => i.Cart)
-                .FirstOrDefaultAsync(i => i.Id == itemId && i.Cart.UserId == userId && !i.Cart.IsCheckedOut);
+            var cartItem = await _context
+                .CartItems.Include(i => i.Cart)
+                .FirstOrDefaultAsync(i =>
+                    i.Id == itemId && i.Cart.UserId == userId && !i.Cart.IsCheckedOut
+                );
 
             if (cartItem == null)
                 return NotFound("No se encontró el producto en el carrito.");
@@ -97,7 +102,6 @@ namespace GameStore.Api.Controllers
             return NoContent();
         }
 
-     
         // PATCH: api/CartItem/decrease/{itemId}
         [HttpPatch("decrease/{itemId}")]
         public async Task<IActionResult> DecreaseItemQuantity(int itemId)
@@ -106,12 +110,11 @@ namespace GameStore.Api.Controllers
             if (userId == null)
                 return Unauthorized();
 
-            var cartItem = await _context.CartItems
-                .Include(i => i.Cart)
+            var cartItem = await _context
+                .CartItems.Include(i => i.Cart)
                 .FirstOrDefaultAsync(i =>
-                    i.Id == itemId &&
-                    i.Cart.UserId == userId &&
-                    !i.Cart.IsCheckedOut);
+                    i.Id == itemId && i.Cart.UserId == userId && !i.Cart.IsCheckedOut
+                );
 
             if (cartItem == null)
                 return NotFound("No se encontró el producto en el carrito.");
@@ -135,15 +138,15 @@ namespace GameStore.Api.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(new
-            {
-                removed = false,
-                quantity = cartItem.Quantity,
-                total = cartItem.Total
-            });
+            return Ok(
+                new
+                {
+                    removed = false,
+                    quantity = cartItem.Quantity,
+                    total = cartItem.Total,
+                }
+            );
         }
-
-
 
         // DELETE: api/cart/items/{itemId}
         [HttpDelete("items/{itemId}")]
@@ -153,9 +156,11 @@ namespace GameStore.Api.Controllers
             if (userId == null)
                 return Unauthorized();
 
-            var item = await _context.CartItems
-                .Include(i => i.Cart)
-                .FirstOrDefaultAsync(i => i.Id == itemId && i.Cart.UserId == userId && !i.Cart.IsCheckedOut);
+            var item = await _context
+                .CartItems.Include(i => i.Cart)
+                .FirstOrDefaultAsync(i =>
+                    i.Id == itemId && i.Cart.UserId == userId && !i.Cart.IsCheckedOut
+                );
 
             if (item == null)
                 return NotFound("No se encontró el producto en el carrito.");
@@ -165,7 +170,5 @@ namespace GameStore.Api.Controllers
 
             return NoContent();
         }
-
-
     }
 }

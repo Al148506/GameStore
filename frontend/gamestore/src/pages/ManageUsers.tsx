@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { getUsers, updateUserRole } from "../api/usersApi";
-import type { PaginatedResponse } from "../types/Pagination/paginatedResponse";
-import type { UserWithRoles } from "../types/Auth/auth";
+import type { PaginatedResponse } from "../types/pagination/paginatedResponse";
+import type { UserWithRoles } from "../types/auth/auth";
 import Navbar from "@components/Navbar";
-import { Pagination } from "@components/Pagination";
+import { Pagination } from "@components/pagination";
 import "../styles/manageUsers.css";
 
 function UserList() {
@@ -13,7 +13,7 @@ function UserList() {
   const pageSize = 5;
   const [totalPages, setTotalPages] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
-  const [sortBy, setSortBy] = useState<string>("userName");
+  const [sortBy, setSortBy] = useState<string>("username");
   const [sortDir, setSortDir] = useState<string>("asc");
 
   useEffect(() => {
@@ -128,13 +128,13 @@ function UserList() {
               <thead>
                 <tr>
                   <th
-                    onClick={() => handleSort("userName")}
+                    onClick={() => handleSort("username")}
                     className="sortable"
                   >
                     <div className="th-content">
                       <span>Usuario</span>
                       <span className="sort-indicator">
-                        {sortBy === "userName" &&
+                        {sortBy === "username" &&
                           (sortDir === "asc" ? "↑" : "↓")}
                       </span>
                     </div>
@@ -158,9 +158,9 @@ function UserList() {
                     <td>
                       <div className="user-cell">
                         <div className="user-avatar">
-                          {user.userName.charAt(0).toUpperCase()}
+                          {user.username.charAt(0).toUpperCase()}
                         </div>
-                        <span className="user-name">{user.userName}</span>
+                        <span className="user-name">{user.username}</span>
                       </div>
                     </td>
                     <td>
@@ -193,15 +193,12 @@ function UserList() {
                   </tr>
                 ))}
               </tbody>
-              
             </table>
-            
           )}
-              <div className="results-info">
+          <div className="results-info">
             Mostrando {users.length} de {users.length * totalPages} usuarios
           </div>
         </div>
-    
 
         <div className="pagination-wrapper">
           <Pagination

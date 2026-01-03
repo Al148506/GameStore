@@ -1,4 +1,8 @@
-import type { VideogameDto, Genre, Platform } from "../types/Videogame/videogame";
+import type {
+  VideogameDto,
+  Genre,
+  Platform,
+} from "../types/videogame/videogame";
 
 export function mapGameToFormData(
   game: VideogameDto,
@@ -6,12 +10,12 @@ export function mapGameToFormData(
   platforms: Platform[]
 ) {
   const matchedGenreIds = genres
-    .filter(g => game.genres?.includes(g.name))
-    .map(g => g.id);
+    .filter((g) => game.genres?.includes(g.name))
+    .map((g) => g.id);
 
   const matchedPlatformIds = platforms
-    .filter(p => game.platforms?.includes(p.name))
-    .map(p => p.id);
+    .filter((p) => game.platforms?.includes(p.name))
+    .map((p) => p.id);
 
   return {
     name: game.name,

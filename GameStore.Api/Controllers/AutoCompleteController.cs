@@ -12,7 +12,12 @@ namespace GameStore.Api.Controllers
         private readonly VideogamesDbContext _db;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
-        public AutoCompleteController(VideogamesDbContext db, IMapper mapper, IConfiguration configuration)
+
+        public AutoCompleteController(
+            VideogamesDbContext db,
+            IMapper mapper,
+            IConfiguration configuration
+        )
         {
             _db = db;
             _mapper = mapper;
@@ -25,7 +30,8 @@ namespace GameStore.Api.Controllers
             var apiKey = _configuration["Rawg:ApiKey"];
             using var client = new HttpClient();
 
-            var url = $"https://api.rawg.io/api/games?search={Uri.EscapeDataString(name)}&key={apiKey}";
+            var url =
+                $"https://api.rawg.io/api/games?search={Uri.EscapeDataString(name)}&key={apiKey}";
             var response = await client.GetAsync(url);
 
             if (!response.IsSuccessStatusCode)
@@ -66,31 +72,37 @@ namespace GameStore.Api.Controllers
                     description = detail["description_raw"]?.ToString() ?? "";
 
                     // Extraer plataformas (ej: "PC", "PlayStation 5")
-                    platforms = detail["platforms"]
-                        ?.Select(p => p["platform"]?["name"]?.ToString())
-                        .Where(p => !string.IsNullOrWhiteSpace(p))
-                        .Distinct()
-                        .ToList() ?? new();
+                    platforms =
+                        detail["platforms"]
+                            ?.Select(p => p["platform"]?["name"]?.ToString())
+                            .Where(p => !string.IsNullOrWhiteSpace(p))
+                            .Distinct()
+                            .ToList()
+                        ?? new();
 
                     // Extraer géneros (ej: "Action", "RPG")
-                    genres = detail["genres"]
-                        ?.Select(g => g["name"]?.ToString())
-                        .Where(g => !string.IsNullOrWhiteSpace(g))
-                        .Distinct()
-                        .ToList() ?? new();
+                    genres =
+                        detail["genres"]
+                            ?.Select(g => g["name"]?.ToString())
+                            .Where(g => !string.IsNullOrWhiteSpace(g))
+                            .Distinct()
+                            .ToList()
+                        ?? new();
                 }
             }
 
-            return Json(new
-            {
-                name = gameName,
-                description = description,
-                rating = esrbSlug,
-                releaseDate = releaseDate,
-                imageUrl = imageUrl,
-                platforms = platforms,
-                genres = genres
-            });
+            return Json(
+                new
+                {
+                    name = gameName,
+                    description = description,
+                    rating = esrbSlug,
+                    releaseDate = releaseDate,
+                    imageUrl = imageUrl,
+                    platforms = platforms,
+                    genres = genres,
+                }
+            );
         }
     }
 }

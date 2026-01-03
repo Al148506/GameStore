@@ -1,9 +1,9 @@
 import { createContext } from "react";
-import type { CartReadDto } from "../types/Cart/cart";
+import type { CartReadDto } from "../types/cart/cart";
 import type {
   CartItemCreateDto,
   CartItemUpdateDto,
-} from "../types/Cart/cartItem";
+} from "../types/cart/cartItem";
 
 export interface CartContextType {
   cart: CartReadDto | null;
@@ -14,6 +14,7 @@ export interface CartContextType {
   removeItem: (itemId: number) => Promise<void>;
   checkoutCart: () => Promise<void>;
   decreaseItemQuantity: (itemId: number) => Promise<void>;
+  clearCart: () => void;
 }
 
 export const CartContext = createContext<CartContextType | undefined>(

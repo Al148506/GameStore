@@ -58,12 +58,19 @@ namespace GameStore.Api.Controllers
             var roles = await _users.GetRolesAsync(user);
             var token = CreateJwt(user, roles);
 
-            return new AuthResponseDto
+            var response = new AuthResponseDto
             {
-                accessToken = token,
-                email = user.Email!,
-                roles = roles
+                AccessToken = token,
+                User = new UserWithRolesDto
+                {
+                    Id = user.Id,
+                    Email = user.Email!,
+                    Username = user.UserName ?? user.Email!,
+                    Roles = roles
+                }
             };
+
+            return Ok(response);
         }
 
         //Endpoint toggle-admin
@@ -162,7 +169,7 @@ namespace GameStore.Api.Controllers
                 userDtos.Add(new UserWithRolesDto
                 {
                     Id = user.Id,
-                    UserName = user.UserName!,
+                    Username = user.UserName!,
                     Email = user.Email!,
                     Roles = roles.ToList()
                 });
@@ -178,6 +185,25 @@ namespace GameStore.Api.Controllers
             };
 
             return Ok(response);
+        }
+
+        [Authorize(Policy = "RequireAdmin")]
+        [HttpPut("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestDto userData)
+        {
+            var user = await _users.FindByEmailAsync(userData.email);
+            if (user is null) return NotFound("Usuario no encontrado");
+
+            var result = await _users.ChangePasswordAsync(
+                 user,
+                 userData.password,      
+                 userData.newPassword    
+             );
+
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            return Ok("Contraseña actualizada correctamente");
         }
 
     }

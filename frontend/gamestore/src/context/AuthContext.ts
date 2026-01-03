@@ -4,7 +4,7 @@ export interface User {
   id: string;
   username: string;
   email: string;
-  role: string;
+  roles: string[];
 }
 
 export interface AuthContextType {
@@ -19,10 +19,7 @@ export interface AuthContextType {
     remember: boolean
   ) => Promise<boolean>;
 
-  registerRequest: (
-    email: string,
-    password: string
-  ) => Promise<boolean>;
+  registerRequest: (email: string, password: string) => Promise<boolean>;
 
   logout: () => void;
 }

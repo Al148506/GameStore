@@ -1,15 +1,15 @@
 import React from "react";
 import NavbarGeneral from "@components/Navbar";
-import { ProfileInfo } from "./ProfileInfo";
-import { ChangePasswordForm } from "./ChangePasswordForm";
-import "../../styles/profile.css"
+import { ProfileInfo } from "../components/user/ProfileInfo";
+import { ChangePasswordForm } from "../components/user/ChangePasswordForm";
+import "../styles/profile.css";
 export const Profile = () => {
   return (
     <>
-    <NavbarGeneral/>
+      <NavbarGeneral />
       <main className="profile-container">
         <h1>Mi cuenta</h1>
-         <ProfileInfo />
+        <ProfileInfo />
         <ChangePasswordForm />
       </main>
     </>

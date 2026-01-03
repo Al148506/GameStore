@@ -11,21 +11,21 @@ type Props = {
   value: string;
   onChange: (value: string) => void;
   isValid?: boolean;
-    rules?: {
+  rules?: {
     minLength: boolean;
     hasUppercase: boolean;
     hasDigit: boolean;
     hasNonAlphanumeric: boolean;
   };
 };
+import "../../styles/passwordInput.css";
 
 export const PasswordInput = ({ label, value, onChange, isValid }: Props) => {
   const [focus, setFocus] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  
 
   return (
-    <>
+    <div className="password-input">
       <label>
         {label}
         <span className={isValid ? "valid" : "hide"}>
@@ -62,7 +62,7 @@ export const PasswordInput = ({ label, value, onChange, isValid }: Props) => {
         className={focus && value && !isValid ? "instructions" : "offscreen"}
       >
         <FontAwesomeIcon icon={faInfoCircle} />
-        {label === "Password" ? (
+        {label === "Password" || label === "Nueva contraseña" ? (
           <>
             Your password must meet the following criteria:
             <br />
@@ -71,13 +71,12 @@ export const PasswordInput = ({ label, value, onChange, isValid }: Props) => {
             - Contains at least one uppercase letter
             <br />
             - Contains at least one digit
-            <br />
-            - Contains at least one special character
+            <br />- Contains at least one special character
           </>
         ) : (
           "Please make sure the passwords match."
         )}
       </p>
-    </>
+    </div>
   );
 };

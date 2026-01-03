@@ -1,22 +1,25 @@
-﻿using GameStore.Infrastructure.Persistence.Videogames;
+﻿using System.Security.Claims;
+using System.Text.Json;
+using GameStore.Infrastructure.Persistence.Videogames;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
-using System.Security.Claims;
-using System.Text.Json;
 
 namespace GameStore.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-
     public class PaymentsController : ControllerBase
     {
         private readonly ILogger<PaymentsController> _logger;
         private readonly VideogamesDbContext _context;
         private readonly IConfiguration _config;
 
-        public PaymentsController(IConfiguration config, VideogamesDbContext context, ILogger<PaymentsController> logger)
+        public PaymentsController(
+            IConfiguration config,
+            VideogamesDbContext context,
+            ILogger<PaymentsController> logger
+        )
         {
             _config = config;
             _context = context;
@@ -33,8 +36,8 @@ namespace GameStore.Api.Controllers
                 return Unauthorized("No se pudo identificar al usuario.");
 
             // Obtener carrito
-            var cart = await _context.Carts
-                .Include(c => c.Items)
+            var cart = await _context
+                .Carts.Include(c => c.Items)
                     .ThenInclude(i => i.Videogame)
                 .FirstOrDefaultAsync(c => c.UserId == userId && !c.IsCheckedOut);
 
@@ -42,54 +45,64 @@ namespace GameStore.Api.Controllers
                 return BadRequest("Tu carrito está vacío.");
 
             // Convertir carrito a JSON para metadata
-            var cartItemsMetadata = cart.Items.Select(i => new
-            {
-                VideogameId = i.VideogameId,
-                Quantity = i.Quantity,
-                UnitPrice = i.UnitPrice
-            }).ToList();
+            var cartItemsMetadata = cart
+                .Items.Select(i => new
+                {
+                    VideogameId = i.VideogameId,
+                    Quantity = i.Quantity,
+                    UnitPrice = i.UnitPrice,
+                })
+                .ToList();
 
-            var serializedCart = JsonSerializer.Serialize(cart.Items.Select(i => new { i.VideogameId, i.Quantity, i.UnitPrice }));
+            var serializedCart = JsonSerializer.Serialize(
+                cart.Items.Select(i => new
+                {
+                    i.VideogameId,
+                    i.Quantity,
+                    i.UnitPrice,
+                })
+            );
 
             // 🔹 Log de depuración de metadata
-            _logger.LogInformation("Creando Payment Link con metadata: {@Metadata}", new Dictionary<string, string>
-            {
-                { "userId", userId },
-                { "cart", serializedCart }
-            });
+            _logger.LogInformation(
+                "Creando Payment Link con metadata: {@Metadata}",
+                new Dictionary<string, string> { { "userId", userId }, { "cart", serializedCart } }
+            );
 
             // Crear Payment Link
             var options = new PaymentLinkCreateOptions
             {
-                LineItems = cart.Items.Select(item => new PaymentLinkLineItemOptions
-                {
-                    PriceData = new PaymentLinkLineItemPriceDataOptions
+                LineItems = cart
+                    .Items.Select(item => new PaymentLinkLineItemOptions
                     {
-                        Currency = "mxn",
-                        UnitAmount = (long)(item.UnitPrice * 100),
-                        ProductData = new PaymentLinkLineItemPriceDataProductDataOptions
+                        PriceData = new PaymentLinkLineItemPriceDataOptions
                         {
-                            Name = item.Videogame.Name
-                        }
-                    },
-                    Quantity = item.Quantity
-                }).ToList(),
+                            Currency = "mxn",
+                            UnitAmount = (long)(item.UnitPrice * 100),
+                            ProductData = new PaymentLinkLineItemPriceDataProductDataOptions
+                            {
+                                Name = item.Videogame.Name,
+                            },
+                        },
+                        Quantity = item.Quantity,
+                    })
+                    .ToList(),
 
                 AfterCompletion = new PaymentLinkAfterCompletionOptions
                 {
                     Type = "redirect",
                     Redirect = new PaymentLinkAfterCompletionRedirectOptions
                     {
-                        Url = "http://localhost:5173/success"
-                    }
+                        Url = "http://localhost:5173/success",
+                    },
                 },
 
                 // METADATA que el webhook necesita
                 Metadata = new Dictionary<string, string>
                 {
                     { "userId", userId },
-                    { "cart", serializedCart }
-                }
+                    { "cart", serializedCart },
+                },
             };
 
             var service = new PaymentLinkService();

@@ -4,8 +4,8 @@ import type {
   VideogameDto,
   Genre,
   Platform,
-} from "../types/Videogame/videogame";
-import type { PaginatedResponse } from "../types/Pagination/paginatedResponse";
+} from "../types/videogame/videogame";
+import type { PaginatedResponse } from "../types/pagination/paginatedResponse";
 
 interface Params {
   page: number;
@@ -20,7 +20,6 @@ export const getVideogames = async (
   pageSize = 20,
   filters: Filters
 ): Promise<PaginatedResponse<VideogameDto>> => {
-  
   // Definir sort
   let sort = "";
   if (filters.alphabet) sort = filters.alphabet;
@@ -46,8 +45,8 @@ export const getVideogames = async (
   const res = await api.get<PaginatedResponse<VideogameDto>>("games", {
     params,
     paramsSerializer: {
-      indexes: null  // ⬅️ convierte arrays en genreIds=1&genreIds=16
-    }
+      indexes: null, // ⬅️ convierte arrays en genreIds=1&genreIds=16
+    },
   });
 
   return res.data;

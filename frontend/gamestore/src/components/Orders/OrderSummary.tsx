@@ -1,4 +1,4 @@
-import type { OrderDto } from "../../types/Order/order";
+import type { OrderDto } from "../../types/order/order";
 import "../../styles/orderSummary.css";
 
 export function OrderSummary({ order }: { order: OrderDto }) {

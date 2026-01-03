@@ -1,7 +1,13 @@
-import type { OrderItemDto } from "../../types/Order/orderItem";
+import type { OrderItemDto } from "../../types/order/orderItem";
 import "../../styles/orderItems.css";
 
-export function OrderItems({ items,  title }: { items: OrderItemDto[];  title?: string;}) {
+export function OrderItems({
+  items,
+  title,
+}: {
+  items: OrderItemDto[];
+  title?: string;
+}) {
   return (
     <div className="order-items">
       <h3 className="order-items-title">{title}</h3>

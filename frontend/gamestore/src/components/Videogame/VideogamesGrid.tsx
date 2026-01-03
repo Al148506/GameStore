@@ -1,5 +1,5 @@
 // VideogamesGrid.tsx
-import type { VideogameDto } from "../../types/Videogame/videogame";
+import type { VideogameDto } from "../../types/videogame/videogame";
 import { VideogameCard } from "./VideogameCard";
 
 interface VideogamesGridProps {

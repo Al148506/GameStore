@@ -1,17 +1,17 @@
-import type { CartItemReadDto } from "../../types/Cart/cartItem";
+import type { CartItemReadDto } from "../../types/cart/cartItem";
 import "../../styles/cartItem.css";
 interface CartItemProps extends CartItemReadDto {
   addToCart: () => void;
   decreaseItemQuantity: (itemId: number) => Promise<void>;
 }
 
-export function CartItem({ 
-  id, 
-  videogameName, 
-  unitPrice, 
-  quantity, 
-  addToCart, 
-  decreaseItemQuantity 
+export function CartItem({
+  id,
+  videogameName,
+  unitPrice,
+  quantity,
+  addToCart,
+  decreaseItemQuantity,
 }: CartItemProps) {
   return (
     <li>

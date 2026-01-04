@@ -191,13 +191,13 @@ namespace GameStore.Api.Controllers
         [HttpPut("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestDto userData)
         {
-            var user = await _users.FindByEmailAsync(userData.email);
+            var user = await _users.FindByEmailAsync(userData.Email);
             if (user is null) return NotFound("Usuario no encontrado");
 
             var result = await _users.ChangePasswordAsync(
                  user,
-                 userData.password,      
-                 userData.newPassword    
+                 userData.Password,      
+                 userData.NewPassword    
              );
 
             if (!result.Succeeded)

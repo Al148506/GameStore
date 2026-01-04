@@ -1,21 +1,22 @@
 import { useState } from "react";
-import { changePassword } from "../../api/usersApi";
 import { useAuth } from "@hooks/useAuth";
 import type { changePasswordRequestDto } from "../../types/auth/auth";
 import { PasswordInput } from "@components/auth/PasswordInput";
 import { usePasswordValidation } from "@hooks/usePasswordValidation";
-import Swal from "sweetalert2";
+import { useChangePassword } from "@hooks/useChangePassword";
 
 export const ChangePasswordForm = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
-  const passwordsMatch = newPassword === confirmPassword;
 
   const { user } = useAuth();
   const { rules, isValid: isNewPasswordValid } =
     usePasswordValidation(newPassword);
+
+  const { loading, submitChangePassword } = useChangePassword();
+
+  const passwordsMatch = newPassword === confirmPassword;
 
   const canSubmit =
     currentPassword.length > 0 &&
@@ -26,47 +27,18 @@ export const ChangePasswordForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user?.email || !canSubmit) return;
-    setLoading(true);
 
     const payload: changePasswordRequestDto = {
       email: user.email,
       password: currentPassword,
-      newPassword: newPassword,
+      newPassword,
     };
 
-    try {
-      await changePassword(payload);
-      await Swal.fire({
-        title: "Contraseña actualizada",
-        text: "Tu contraseña ha sido actualizada exitosamente.",
-        icon: "success",
-        confirmButtonText: "Aceptar",
-      });
+    await submitChangePassword(payload, () => {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-    } catch (error) {
-      const err = error as Error & { response?: { data: unknown } };
-      console.log(err.response?.data);
-      const errors = err.response?.data;
-      if (Array.isArray(errors)) {
-        await Swal.fire({
-          title: "Error al cambiar la contraseña",
-          html: errors.map((e: { description: string }) => `<p>• ${e.description}</p>`).join(""),
-          icon: "error",
-          confirmButtonText: "Aceptar",
-        });
-      } else {
-        await Swal.fire({
-          title: "Error al cambiar la contraseña",
-          text: err.message,
-          icon: "error",
-          confirmButtonText: "Aceptar",
-        });
-      }
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   return (

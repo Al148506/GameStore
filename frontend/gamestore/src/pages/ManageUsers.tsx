@@ -3,7 +3,7 @@ import { getUsers, updateUserRole } from "../api/usersApi";
 import type { PaginatedResponse } from "../types/pagination/paginatedResponse";
 import type { UserWithRoles } from "../types/auth/auth";
 import Navbar from "@components/Navbar";
-import { Pagination } from "@components/pagination";
+import { Pagination } from "@components/Pagination";
 import "../styles/manageUsers.css";
 
 function UserList() {

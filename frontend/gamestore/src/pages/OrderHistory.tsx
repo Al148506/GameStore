@@ -5,8 +5,8 @@ import { orderApi } from "../api/orderApi.ts";
 import type { OrderDto } from "../types/order/order.ts";
 import Navbar from "@components/Navbar";
 import "../styles/success.css";
-import { Pagination } from "@components/Pagination";
-import Button from "@components/Button";
+import { Pagination } from "@components/Pagination.tsx";
+import Button from "@components/Button.tsx";
 
 export default function OrderHistory() {
   const [orders, setOrders] = useState<OrderDto[]>([]);

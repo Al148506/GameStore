@@ -5,6 +5,7 @@ import { PasswordInput } from "@components/auth/PasswordInput";
 import { useAuth } from "@hooks/useAuth";
 import { usePasswordValidation } from "@hooks/usePasswordValidation";
 import { useEmailValidation } from "@hooks/useEmailValidation";
+import { useEmailAvailability } from "@hooks/useEmailAvailability";
 import Swal from "sweetalert2";
 import "../styles/auth.css";
 const Register = () => {
@@ -15,6 +16,8 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const validEmail = useEmailValidation(email);
+  const { isAvailable, isChecking } = useEmailAvailability(email, validEmail);
+
   const {
     rules,
     isValid: validPassword,
@@ -51,7 +54,13 @@ const Register = () => {
         <h1>Sign Up</h1>
 
         <form onSubmit={handleSubmit}>
-          <EmailInput value={email} onChange={setEmail} isValid={validEmail} />
+          <EmailInput
+            value={email}
+            onChange={setEmail}
+            isValid={validEmail}
+            isAvailable={isAvailable}
+            isChecking={isChecking}
+          />
 
           <PasswordInput
             label="Password"

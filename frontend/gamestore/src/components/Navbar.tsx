@@ -1,16 +1,16 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
-import "../styles/navbarGeneral.css";
 import Button from "./Button";
 import Swal from "sweetalert2";
 import { useAuth } from "@hooks/useAuth";
 import { useCart } from "@hooks/useCart";
+import "../styles/navbarGeneral.css";
 
 export function NavbarGeneral() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const { clearCart } = useCart();
 
   const handleLogout = async () => {
@@ -97,6 +97,7 @@ export function NavbarGeneral() {
           onClick={handleLogout}
           variant="closesession"
         />
+        <label className="nav-lbl-username">Bienvenido, {user?.username}</label>
       </div>
     </nav>
   );

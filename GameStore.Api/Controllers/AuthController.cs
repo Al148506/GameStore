@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using GameStore.Api.Dtos.Auth;
@@ -44,6 +45,18 @@ namespace GameStore.Api.Controllers
 
             await _users.AddToRoleAsync(user, "User");
             return StatusCode(201);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EmailExists([FromQuery] string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return BadRequest();
+            var user = await _users.FindByEmailAsync(email);
+            return Ok(new
+            {
+                exists = user != null
+            });
         }
 
         [HttpPost("login")]

@@ -29,7 +29,6 @@ export const ChangePasswordForm = () => {
     if (!user?.email || !canSubmit) return;
 
     const payload: changePasswordRequestDto = {
-      email: user.email,
       password: currentPassword,
       newPassword,
     };

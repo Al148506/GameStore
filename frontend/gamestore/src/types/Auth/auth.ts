@@ -28,7 +28,6 @@ export interface UserQuery {
 }
 
 export interface changePasswordRequestDto {
-  email: string;
   password: string;
   newPassword: string;
 }

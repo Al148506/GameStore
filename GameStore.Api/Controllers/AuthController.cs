@@ -187,12 +187,18 @@ namespace GameStore.Api.Controllers
             return Ok(response);
         }
 
-        [Authorize(Policy = "RequireAdmin")]
+        [Authorize]
         [HttpPut("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestDto userData)
         {
-            var user = await _users.FindByEmailAsync(userData.Email);
-            if (user is null) return NotFound("Usuario no encontrado");
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId is null)
+                return Unauthorized();
+
+            var user = await _users.FindByIdAsync(userId);
+            if (user is null)
+                return Unauthorized();
 
             var result = await _users.ChangePasswordAsync(
                  user,

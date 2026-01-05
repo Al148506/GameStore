@@ -47,7 +47,7 @@ namespace GameStore.Api.Controllers
             return StatusCode(201);
         }
 
-        [HttpGet]
+        [HttpGet("check-email")]
         public async Task<IActionResult> EmailExists([FromQuery] string email)
         {
             if (string.IsNullOrWhiteSpace(email))

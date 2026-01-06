@@ -8,6 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 type Props = {
   label: string;
+  passwordType: string;
   value: string;
   onChange: (value: string) => void;
   isValid?: boolean;
@@ -20,7 +21,13 @@ type Props = {
 };
 import "../../styles/passwordInput.css";
 
-export const PasswordInput = ({ label, value, onChange, isValid }: Props) => {
+export const PasswordInput = ({
+  label,
+  passwordType,
+  value,
+  onChange,
+  isValid,
+}: Props) => {
   const [focus, setFocus] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -62,19 +69,19 @@ export const PasswordInput = ({ label, value, onChange, isValid }: Props) => {
         className={focus && value && !isValid ? "instructions" : "offscreen"}
       >
         <FontAwesomeIcon icon={faInfoCircle} />
-        {label === "Password" || label === "Nueva contraseña" ? (
+        {passwordType === "password" || passwordType === "newPassword" ? (
           <>
-            Your password must meet the following criteria:
+            Tu contraseña debe cumplir con los siguientes criterios:
             <br />
-            - At least 8 characters long
+            - Tener al menos 8 caracteres
             <br />
-            - Contains at least one uppercase letter
+            - Contener al menos una letra mayúscula
             <br />
-            - Contains at least one digit
-            <br />- Contains at least one special character
+            - Contener al menos un número
+            <br />- Contener al menos un carácter especial
           </>
         ) : (
-          "Please make sure the passwords match."
+          "Por favor asegurate de que tus contraseñas coinciden."
         )}
       </p>
     </div>

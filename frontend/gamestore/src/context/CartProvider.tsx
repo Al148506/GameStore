@@ -7,6 +7,7 @@ import type {
 } from "../types/cart/cartItem.ts";
 import { CartContext } from "./CartContext.ts";
 import { useAuth } from "@hooks/useAuth";
+import { clearCartStorage } from "@utils/clearCartStorage";
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -116,9 +117,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const clearCart = useCallback(() => {
     setCart(null);
-    Object.keys(localStorage)
-      .filter((key) => key.startsWith("shopping-cart-"))
-      .forEach((key) => localStorage.removeItem(key));
+    clearCartStorage();
   }, []);
 
   return (

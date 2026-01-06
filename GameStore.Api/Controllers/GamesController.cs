@@ -23,7 +23,6 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet]
-    [HttpGet]
     public async Task<IActionResult> List(
         int page = 1,
         int pageSize = 20,

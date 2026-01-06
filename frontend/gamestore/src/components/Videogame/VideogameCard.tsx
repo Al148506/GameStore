@@ -77,11 +77,11 @@ export function VideogameCard({
               text={
                 isProductInCart ? (
                   <>
-                    <RemoveFromCartIcon></RemoveFromCartIcon>Remove
+                    <RemoveFromCartIcon></RemoveFromCartIcon>Remover
                   </>
                 ) : (
                   <>
-                    <AddToCartIcon></AddToCartIcon>Add
+                    <AddToCartIcon></AddToCartIcon>Agregar
                   </>
                 )
               }
@@ -104,7 +104,7 @@ export function VideogameCard({
           <Button
             text={
               <>
-                <EditIcon /> Edit
+                <EditIcon /> Editar
               </>
             }
             variant="edit"
@@ -116,7 +116,7 @@ export function VideogameCard({
           <Button
             text={
               <>
-                <DeleteIcon /> Delete
+                <DeleteIcon /> Eliminar
               </>
             }
             variant="delete"

@@ -6,6 +6,7 @@ import { EmailInput } from "@components/auth/EmailInput";
 import { PasswordInput } from "@components/auth/PasswordInput";
 import { useEmailValidation } from "@hooks/useEmailValidation";
 import { usePasswordValidation } from "@hooks/usePasswordValidation";
+import DemoCredentials from "@components/auth/DemoCredentials";
 
 const Login = () => {
   const emailRef = useRef<HTMLInputElement>(null);
@@ -18,9 +19,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const validEmail = useEmailValidation(email);
-  const {
-    isValid: validPassword
-  } = usePasswordValidation(password);
+  const { isValid: validPassword } = usePasswordValidation(password);
 
   // Focus inicial
   useEffect(() => {
@@ -53,13 +52,20 @@ const Login = () => {
           {error}
         </p>
 
-        <h1>Sign In</h1>
+        <h1>Iniciar Sesión</h1>
 
         <form onSubmit={handleSubmit}>
-          <EmailInput value={email} onChange={setEmail} isValid={validEmail} />
+          <EmailInput
+            value={email}
+            onChange={setEmail}
+            isValid={validEmail}
+            isAvailable={null}
+            isChecking={false}
+          />
 
           <PasswordInput
-            label="Password"
+            label="Contraseña"
+            passwordType="password"
             value={password}
             onChange={setPassword}
             isValid={validPassword}
@@ -72,24 +78,33 @@ const Login = () => {
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
             />
-            <label htmlFor="rememberMe">Remember me</label>
+            <label htmlFor="rememberMe">Recordarme</label>
           </div>
 
           <button
             className="action-btn"
             disabled={!validEmail || !validPassword || loading}
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? "Ingresando..." : "Iniciar sesión"}
           </button>
 
           <p>
-            Need an account?
+            ¿Necesitas una cuenta?
             <br />
             <span className="line">
-              <Link to="/register">Sign Up</Link>
+              <Link to="/register">Registrate</Link>
             </span>
           </p>
         </form>
+
+        <DemoCredentials
+          email="demo@yourapplication.com"
+          password="Demo@1234"
+          onFillCredentials={(email, password) => {
+            setEmail(email);
+            setPassword(password);
+          }}
+        />
       </section>
     </div>
   );

@@ -10,7 +10,7 @@ export function NavbarGeneral() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { logout, user } = useAuth();
+  const { logout, user, isAdmin } = useAuth();
   const { clearCart } = useCart();
 
   const handleLogout = async () => {
@@ -81,6 +81,7 @@ export function NavbarGeneral() {
           >
             Mi Cuenta
           </Link>
+           {isAdmin && ( 
           <Link
             to="/account-managment"
             className={
@@ -90,6 +91,7 @@ export function NavbarGeneral() {
           >
             Manejo de cuentas
           </Link>
+           )}
         </div>
 
         <Button

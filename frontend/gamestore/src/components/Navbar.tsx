@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
-import Button from "./Button";
+import Button from "@components/Button";
 import Swal from "sweetalert2";
 import { useAuth } from "@hooks/useAuth";
 import "../styles/navbarGeneral.css";

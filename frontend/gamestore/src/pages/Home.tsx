@@ -14,6 +14,7 @@ import "../styles/modal.css";
 import Button from "@components/Button";
 import { CartButton } from "@components/cart/CartButton";
 import { Cart } from "@components/cart/Cart";
+import { useAuth } from "@hooks/useAuth";
 
 export function Home() {
   const navigate = useNavigate();
@@ -42,6 +43,7 @@ export function Home() {
   const [editingGame, setEditingGame] = useState<VideogameDto | null>(null);
   const [showFormModal, setShowCreateModal] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { isAdmin } = useAuth();
   useEffect(() => {
     const token =
       localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -66,11 +68,13 @@ export function Home() {
       {/* 👇 Navbar fuera del container */}
       <Searchbar filters={filters} onFiltersChange={setFilters} />
       <div className="videogames-list-container">
+           {isAdmin && ( 
         <Button
           text={<>Agregar videojuego</>}
           variant="create"
           onClick={() => setShowCreateModal(true)}
         />
+           )}
         <CartButton onClick={() => setIsOpen(!isOpen)} />
         <Cart isOpen={isOpen} mode="sidebar" />
 

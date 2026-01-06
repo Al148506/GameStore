@@ -30,6 +30,8 @@
   min-width: 44px;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+
+  margin-bottom:12px;
 }
 
 /* Efecto ripple sutil */

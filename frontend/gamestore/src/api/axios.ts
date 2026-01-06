@@ -1,12 +1,14 @@
-// src/api/axios.js
 import axios from "axios";
+import { clearAuthStorage } from "@utils/clearAuthStorage";
+import { clearCartStorage } from "@utils/clearCartStorage";
 
 const baseURL = "http://localhost:5200/api/";
+const PUBLIC_ROUTES = ["/auth/login", "/auth/register"];
 
 const api = axios.create({
   baseURL,
   headers: { "Content-Type": "application/json" },
-  withCredentials: false, // JWT se manejará en frontend
+  withCredentials: false,
   timeout: 10000, // 10s
 });
 
@@ -21,12 +23,17 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Opcional: interceptor de respuesta para refresco de token en 401
+// Interceptor de respuesta para refresco de token en 401
 api.interceptors.response.use(
   (resp) => resp,
   async (error) => {
-    if (error.response?.status === 401) {
-      // aquí podrías intentar refresh token o redirigir al login
+    const status = error.response?.status;
+    const url = error.config?.url ?? "";
+    const isPublicRoute = PUBLIC_ROUTES.some((route) => url.includes(route));
+    if (status === 401 && !isPublicRoute) {
+      clearAuthStorage();
+      clearCartStorage();
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }

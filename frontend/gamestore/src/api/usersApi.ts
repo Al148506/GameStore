@@ -19,6 +19,6 @@ export const updateUserRole = async (userId: string) => {
 };
 
 export const changePassword = async (payload: changePasswordRequestDto) => {
-  const res = await api.put("Auth/change-password", { payload });
+  const res = await api.put("/Auth/change-password", payload);
   return res.data;
 };

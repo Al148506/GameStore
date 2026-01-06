@@ -237,10 +237,11 @@
   background: rgba(239, 68, 68, 0.95);
   color: #ffffff;
   font-weight: 600;
-  padding: 1rem;
+  padding: 0.5rem;
   margin-bottom: 1rem;
   border-radius: 12px;
   border-left: 4px solid #dc2626;
+  font-size: 1rem;
 }
 
 .action-btn {

@@ -1,34 +1,43 @@
 import { useState } from "react";
-import { changePassword } from "../../api/usersApi";
 import { useAuth } from "@hooks/useAuth";
 import type { changePasswordRequestDto } from "../../types/auth/auth";
 import { PasswordInput } from "@components/auth/PasswordInput";
 import { usePasswordValidation } from "@hooks/usePasswordValidation";
+import { useChangePassword } from "@hooks/useChangePassword";
+
 export const ChangePasswordForm = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const { user } = useAuth();
-  const { rules, isValid: validPassword } = usePasswordValidation(newPassword);
+  const { rules, isValid: isNewPasswordValid } =
+    usePasswordValidation(newPassword);
+
+  const { loading, submitChangePassword } = useChangePassword();
+
+  const passwordsMatch = newPassword === confirmPassword;
+
+  const canSubmit =
+    currentPassword.length > 0 &&
+    isNewPasswordValid &&
+    passwordsMatch &&
+    !loading;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user?.email) return;
+    if (!user?.email || !canSubmit) return;
 
     const payload: changePasswordRequestDto = {
-      email: user.email,
       password: currentPassword,
-      newPassword: newPassword,
+      newPassword,
     };
 
-    try {
-      await changePassword(payload);
-      alert("Contraseña actualizada correctamente");
+    await submitChangePassword(payload, () => {
       setCurrentPassword("");
       setNewPassword("");
-    } catch (error) {
-      console.error(error);
-      alert("Error al cambiar la contraseña");
-    }
+      setConfirmPassword("");
+    });
   };
 
   return (
@@ -40,19 +49,27 @@ export const ChangePasswordForm = () => {
           label="Contraseña actual"
           value={currentPassword}
           onChange={setCurrentPassword}
-          isValid={validPassword}
-          rules={rules}
+          isValid={currentPassword.length > 0}
         />
 
         <PasswordInput
           label="Nueva contraseña"
           value={newPassword}
           onChange={setNewPassword}
-          isValid={validPassword}
+          isValid={isNewPasswordValid}
           rules={rules}
         />
 
-        <button type="submit" disabled={!validPassword }>Actualizar contraseña</button>
+        <PasswordInput
+          label="Confirmar nueva contraseña"
+          value={confirmPassword}
+          onChange={setConfirmPassword}
+          isValid={passwordsMatch && confirmPassword.length > 0}
+        />
+
+        <button type="submit" disabled={!canSubmit}>
+          {loading ? "Actualizando..." : "Actualizar contraseña"}
+        </button>
       </form>
     </section>
   );

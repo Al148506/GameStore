@@ -62,6 +62,7 @@ builder.Services.AddAuthentication(opt =>
 builder.Services.AddAuthorization(opt =>
 {
     opt.AddPolicy("RequireAdmin", p => p.RequireRole("Admin"));
+    opt.AddPolicy("RequiereUser", p => p.RequireRole("User"));
 });
 
 builder.Services.AddCors(options =>

@@ -11,6 +11,7 @@ import {
   DeleteIcon,
   EditIcon,
 } from "../cart/Icons";
+import { useAuth } from "@hooks/useAuth";
 
 interface VideogameCardProps {
   game: VideogameDto;
@@ -26,6 +27,7 @@ export function VideogameCard({
   onDelete,
 }: VideogameCardProps) {
   const { addItem, removeItem, cart } = useCart();
+  const { isAdmin } = useAuth();
   const isProductInCart = React.useMemo(() => {
     return cart?.items?.some((item) => item.videogameId === game.id) ?? false;
   }, [cart, game.id]);
@@ -97,6 +99,7 @@ export function VideogameCard({
             />
           </>
         )}
+        {isAdmin && ( 
         <div className="card-admin-actions">
           <Button
             text={
@@ -122,7 +125,7 @@ export function VideogameCard({
               onDelete(game.id);
             }}
           />
-        </div>
+        </div>)}
       </div>
     </div>
   );

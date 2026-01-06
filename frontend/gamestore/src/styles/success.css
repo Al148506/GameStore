@@ -210,3 +210,17 @@
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
+
+.empty-orders {
+  text-align: center;
+  padding: 2rem;
+  opacity: 0.9;
+}
+
+.empty-orders h2 {
+  margin-bottom: 0.5rem;
+}
+
+.empty-orders p {
+  margin-bottom: 1.5rem;
+}

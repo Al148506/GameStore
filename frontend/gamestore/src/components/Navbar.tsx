@@ -1,9 +1,8 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
-import Button from "./Button";
+import Button from "@components/Button";
 import Swal from "sweetalert2";
 import { useAuth } from "@hooks/useAuth";
-import { useCart } from "@hooks/useCart";
 import "../styles/navbarGeneral.css";
 
 export function NavbarGeneral() {
@@ -11,7 +10,6 @@ export function NavbarGeneral() {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { logout, user, isAdmin } = useAuth();
-  const { clearCart } = useCart();
 
   const handleLogout = async () => {
     const result = await Swal.fire({
@@ -26,7 +24,6 @@ export function NavbarGeneral() {
     if (!result.isConfirmed) return;
 
     logout();
-    clearCart();
     setIsMenuOpen(false);
     navigate("/login");
   };

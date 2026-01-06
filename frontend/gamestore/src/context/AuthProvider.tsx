@@ -2,8 +2,8 @@ import { useMemo, useState, type ReactNode } from "react";
 import { AuthContext, type User } from "./AuthContext";
 import { authApi } from "../api/authApi";
 import type { AxiosError } from "axios";
-
-
+import { clearAuthStorage } from "@utils/clearAuthStorage";
+import { clearCartStorage } from "@utils/clearCartStorage";
 
 /* =========================
    Helpers de almacenamiento
@@ -55,27 +55,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return false;
   }, [user]);
 
-    /* =========================
+  /* =========================
       REGISTER
   ========================= */
   const registerRequest = async (
     email: string,
-    password: string,
+    password: string
   ): Promise<boolean> => {
     setLoading(true);
     setError(null);
     try {
       await authApi.register({
         email,
-        password
+        password,
       });
       return true;
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       console.error("Registration error:", error);
-      setError(
-        error.response?.data?.message ?? "Error during registration"
-      );
+      setError(error.response?.data?.message ?? "Error during registration");
       return false;
     } finally {
       setLoading(false);
@@ -137,19 +135,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       LOGOUT
   ========================= */
 
-const logout = () => {
-  setToken(null);
-  setUser(null);
-
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-
-  sessionStorage.removeItem("token");
-  sessionStorage.removeItem("user");
-};
+  const logout = () => {
+    clearAuthStorage();
+    clearCartStorage();
+    setToken(null);
+    setUser(null);
+  };
   return (
     <AuthContext.Provider
-      value={{ token, user, loading, error,isAuthenticated,isAdmin,loginRequest,registerRequest,logout }}
+      value={{
+        token,
+        user,
+        loading,
+        error,
+        isAuthenticated,
+        isAdmin,
+        loginRequest,
+        registerRequest,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>

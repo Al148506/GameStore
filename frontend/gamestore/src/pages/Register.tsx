@@ -51,7 +51,7 @@ const Register = () => {
           {error}
         </p>
 
-        <h1>Sign Up</h1>
+        <h1>Registro</h1>
 
         <form onSubmit={handleSubmit}>
           <EmailInput
@@ -63,7 +63,8 @@ const Register = () => {
           />
 
           <PasswordInput
-            label="Password"
+            label="Contraseña"
+            passwordType="password"
             value={password}
             onChange={setPassword}
             isValid={validPassword}
@@ -71,7 +72,8 @@ const Register = () => {
           />
 
           <PasswordInput
-            label="Confirm Password"
+            label="Confirmar contraseña"
+            passwordType="confirmPassword"
             value={confirmPassword}
             onChange={setConfirmPassword}
             isValid={passwordMatch}
@@ -83,14 +85,14 @@ const Register = () => {
               !validEmail || !validPassword || !passwordMatch || loading
             }
           >
-            {loading ? "Signing Up..." : "Sign Up"}
+            {loading ? "Creando cuenta..." : "Crear cuenta"}
           </button>
 
           <p>
-            Already have an account?
+            ¿Ya tienes una cuenta?
             <br />
             <span className="line">
-              <Link to="/login">Sign In</Link>
+              <Link to="/login">Inicia sesión</Link>
             </span>
           </p>
         </form>

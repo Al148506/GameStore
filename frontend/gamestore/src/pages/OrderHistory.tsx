@@ -63,49 +63,64 @@ export default function OrderHistory() {
           <div className="success-header">
             <h1 className="success-title">Historial de Pedidos</h1>
             <p className="success-message">Revisa tus compras anteriores 🎮</p>
-
-            {/* SORT SELECT */}
-            <div className="sort-container">
-              <label>Ordenar por:</label>
-              <select
-                value={sort}
-                onChange={(e) => {
-                  setSort(e.target.value);
-                  setCurrentPage(1); // Reset page when sorting
-                }}
-                className="sort-select"
-              >
-                <option value="date_desc">Más recientes</option>
-                <option value="date_asc">Más antiguos</option>
-                <option value="total_desc">Total descendente</option>
-                <option value="total_asc">Total ascendente</option>
-              </select>
-            </div>
+            {orders.length !== 0 && (
+              <div className="sort-container">
+                <label>Ordenar por:</label>
+                <select
+                  value={sort}
+                  onChange={(e) => {
+                    setSort(e.target.value);
+                    setCurrentPage(1); // Reset page when sorting
+                  }}
+                  className="sort-select"
+                >
+                  <option value="date_desc">Más recientes</option>
+                  <option value="date_asc">Más antiguos</option>
+                  <option value="total_desc">Total descendente</option>
+                  <option value="total_asc">Total ascendente</option>
+                </select>
+              </div>
+            )}
           </div>
 
           <div className="success-content">
-            {orders.map((order) => {
-              const isExpanded = expandedOrders[order.id] ?? false;
+            {orders.length === 0 ? (
+              <div className="empty-orders">
+                <h2>No tienes pedidos aún 📦</h2>
+                <p>Cuando realices una compra, aquí aparecerá tu historial.</p>
 
-              return (
-                <div key={order.id} className="order-history-item">
-                  <OrderSummary order={order} />
+                <Button
+                  text="Ir a la tienda"
+                  onClick={() => (window.location.href = "/home")}
+                  variant="default"
+                />
+              </div>
+            ) : (
+              orders.map((order) => {
+                const isExpanded = expandedOrders[order.id] ?? false;
 
-                  <Button
-                    text={isExpanded ? "Ocultar detalles" : "Ver más detalles"}
-                    onClick={() => toggleOrderDetails(order.id)}
-                    variant="default"
-                  ></Button>
+                return (
+                  <div key={order.id} className="order-history-item">
+                    <OrderSummary order={order} />
 
-                  {isExpanded && (
-                    <OrderItems
-                      items={order.items}
-                      title={`Artículos del pedido #${order.id}`}
+                    <Button
+                      text={
+                        isExpanded ? "Ocultar detalles" : "Ver más detalles"
+                      }
+                      onClick={() => toggleOrderDetails(order.id)}
+                      variant="edit"
                     />
-                  )}
-                </div>
-              );
-            })}
+
+                    {isExpanded && (
+                      <OrderItems
+                        items={order.items}
+                        title={`Artículos del pedido #${order.id}`}
+                      />
+                    )}
+                  </div>
+                );
+              })
+            )}
           </div>
 
           <div className="pagination">

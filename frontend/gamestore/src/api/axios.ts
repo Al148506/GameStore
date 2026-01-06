@@ -2,7 +2,7 @@ import axios from "axios";
 import { clearAuthStorage } from "@utils/clearAuthStorage";
 import { clearCartStorage } from "@utils/clearCartStorage";
 
-const baseURL = "http://localhost:5200/api/";
+const baseURL = import.meta.env.VITE_API_URL;
 const PUBLIC_ROUTES = ["/auth/login", "/auth/register"];
 
 const api = axios.create({

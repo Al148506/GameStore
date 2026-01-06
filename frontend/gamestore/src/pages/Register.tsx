@@ -1,12 +1,13 @@
-import { useRef, useState} from "react";
+import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { EmailInput } from "@components/auth/EmailInput";
 import { PasswordInput } from "@components/auth/PasswordInput";
 import { useAuth } from "@hooks/useAuth";
 import { usePasswordValidation } from "@hooks/usePasswordValidation";
-import "../styles/auth.css";
 import { useEmailValidation } from "@hooks/useEmailValidation";
-
+import { useEmailAvailability } from "@hooks/useEmailAvailability";
+import Swal from "sweetalert2";
+import "../styles/auth.css";
 const Register = () => {
   const errRef = useRef<HTMLParagraphElement>(null);
   const navigate = useNavigate();
@@ -15,14 +16,24 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const validEmail = useEmailValidation(email);
-  const { rules, isValid: validPassword, match: passwordMatch } =
-  usePasswordValidation(password, confirmPassword);
+  const { isAvailable, isChecking } = useEmailAvailability(email, validEmail);
 
+  const {
+    rules,
+    isValid: validPassword,
+    match: passwordMatch,
+  } = usePasswordValidation(password, confirmPassword);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const success = await registerRequest(email, password);
     if (success) {
+      await Swal.fire({
+        title: "Registro Exitoso",
+        text: "Tu cuenta ha sido registrada exitosamente.",
+        icon: "success",
+        confirmButtonText: "Aceptar",
+      });
       navigate("/login");
     } else {
       errRef.current?.focus();
@@ -43,7 +54,13 @@ const Register = () => {
         <h1>Sign Up</h1>
 
         <form onSubmit={handleSubmit}>
-          <EmailInput value={email} onChange={setEmail} isValid={validEmail} />
+          <EmailInput
+            value={email}
+            onChange={setEmail}
+            isValid={validEmail}
+            isAvailable={isAvailable}
+            isChecking={isChecking}
+          />
 
           <PasswordInput
             label="Password"

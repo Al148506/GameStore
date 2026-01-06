@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using GameStore.Api.Dtos.Auth;
@@ -44,6 +45,18 @@ namespace GameStore.Api.Controllers
 
             await _users.AddToRoleAsync(user, "User");
             return StatusCode(201);
+        }
+
+        [HttpGet("check-email")]
+        public async Task<IActionResult> EmailExists([FromQuery] string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return BadRequest();
+            var user = await _users.FindByEmailAsync(email);
+            return Ok(new
+            {
+                exists = user != null
+            });
         }
 
         [HttpPost("login")]
@@ -187,17 +200,23 @@ namespace GameStore.Api.Controllers
             return Ok(response);
         }
 
-        [Authorize(Policy = "RequireAdmin")]
+        [Authorize]
         [HttpPut("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestDto userData)
         {
-            var user = await _users.FindByEmailAsync(userData.email);
-            if (user is null) return NotFound("Usuario no encontrado");
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId is null)
+                return Unauthorized();
+
+            var user = await _users.FindByIdAsync(userId);
+            if (user is null)
+                return Unauthorized();
 
             var result = await _users.ChangePasswordAsync(
                  user,
-                 userData.password,      
-                 userData.newPassword    
+                 userData.Password,      
+                 userData.NewPassword    
              );
 
             if (!result.Succeeded)

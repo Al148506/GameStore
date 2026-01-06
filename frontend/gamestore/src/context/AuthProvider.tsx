@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { AuthContext, type User } from "./AuthContext";
 import { authApi } from "../api/authApi";
 import type { AxiosError } from "axios";
@@ -39,6 +39,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(() => getStoredUser());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  /* =========================
+     DERIVED STATE 
+  ========================= */
+
+  const isAuthenticated = !!token && !!user;
+
+  const isAdmin = useMemo(() => {
+    if (!user) return false;
+
+    if ("roles" in user && Array.isArray(user.roles)) {
+      return user.roles.includes("Admin");
+    }
+    return false;
+  }, [user]);
 
     /* =========================
       REGISTER
@@ -132,11 +147,9 @@ const logout = () => {
   sessionStorage.removeItem("token");
   sessionStorage.removeItem("user");
 };
-
-
   return (
     <AuthContext.Provider
-      value={{ token, user, loading, error, loginRequest,registerRequest,logout }}
+      value={{ token, user, loading, error,isAuthenticated,isAdmin,loginRequest,registerRequest,logout }}
     >
       {children}
     </AuthContext.Provider>

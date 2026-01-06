@@ -15,7 +15,8 @@ import OrderHistory from "./pages/OrderHistory";
 import CancelPage from "./pages/Cancel";
 import ManageUsers from "./pages/ManageUsers";
 import { Profile } from "./pages/Profile";
-import ProtectedLayout from "./ProtectedLayout";
+import ProtectedLayout from "./routes/ProtectedRoute";
+import GuestRoute from "./routes/GuestRoute";
 
 function App() {
   return (
@@ -24,8 +25,22 @@ function App() {
         <Routes>
           {/* Rutas públicas */}
           <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route
+            path="/login"
+            element={
+              <GuestRoute>
+                <Login />
+              </GuestRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <GuestRoute>
+                <Register />
+              </GuestRoute>
+            }
+          />
 
           {/* Rutas protegidas */}
           <Route element={<ProtectedLayout />}>

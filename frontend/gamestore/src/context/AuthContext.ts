@@ -12,6 +12,8 @@ export interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: string | null;
+  isAuthenticated: boolean;
+  isAdmin: boolean;
 
   loginRequest: (
     email: string,

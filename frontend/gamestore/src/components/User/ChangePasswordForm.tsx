@@ -47,6 +47,7 @@ export const ChangePasswordForm = () => {
       <form onSubmit={handleSubmit}>
         <PasswordInput
           label="Contraseña actual"
+          passwordType="currentPassword"
           value={currentPassword}
           onChange={setCurrentPassword}
           isValid={currentPassword.length > 0}
@@ -54,6 +55,7 @@ export const ChangePasswordForm = () => {
 
         <PasswordInput
           label="Nueva contraseña"
+          passwordType="password"
           value={newPassword}
           onChange={setNewPassword}
           isValid={isNewPasswordValid}
@@ -62,6 +64,7 @@ export const ChangePasswordForm = () => {
 
         <PasswordInput
           label="Confirmar nueva contraseña"
+          passwordType="confirmPassword"
           value={confirmPassword}
           onChange={setConfirmPassword}
           isValid={passwordsMatch && confirmPassword.length > 0}

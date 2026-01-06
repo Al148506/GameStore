@@ -115,7 +115,7 @@
 }
 /* 🔘 Contenedor de botones oculto por defecto */
 .card-actions {
-  margin-top: -1rem;
+  margin-top: 0rem;
   position: static; /* Quitar absolute */
   bottom: auto;
   left: auto;
@@ -131,7 +131,7 @@
 }
 
 .card-admin-actions {
-  margin-top: 1rem;
+  margin-top: 0rem !important;
   display: flex;
   justify-content: center; /* Centra horizontalmente */
   align-items: center; /* Centra verticalmente */

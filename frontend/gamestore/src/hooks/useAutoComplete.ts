@@ -12,7 +12,7 @@ export function useVideogameAutoComplete({
 }: VideogameAutoComplete) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const baseURL = import.meta.env.VITE_API_URL;
   function normalizeRating(raw: string): string {
     if (!raw || raw.trim() === "") return "RP";
     const v = raw.trim().toLowerCase();
@@ -41,9 +41,7 @@ export function useVideogameAutoComplete({
 
     try {
       const response = await fetch(
-        `http://localhost:5200/api/autoComplete?name=${encodeURIComponent(
-          name
-        )}`
+        `${baseURL}autoComplete?name=${encodeURIComponent(name)}`
       );
 
       if (!response.ok) {

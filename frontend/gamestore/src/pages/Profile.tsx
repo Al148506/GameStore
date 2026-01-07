@@ -1,4 +1,3 @@
-import React from "react";
 import NavbarGeneral from "@components/Navbar";
 import { ProfileInfo } from "../components/user/ProfileInfo";
 import { ChangePasswordForm } from "../components/user/ChangePasswordForm";

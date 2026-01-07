@@ -9,6 +9,11 @@ A **videogame e-commerce system** developed as a **full-stack portfolio project*
 
 ---
 
+## 📸 Screenshots
+
+### Home / Product Catalog
+![Home Screen](./screenshots/home.png)
+
 ## 🚀 Tech Stack
 
 ### Backend

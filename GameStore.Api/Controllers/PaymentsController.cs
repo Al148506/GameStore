@@ -4,6 +4,7 @@ using GameStore.Infrastructure.Persistence.Videogames;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
+using Microsoft.AspNetCore.Hosting;
 
 namespace GameStore.Api.Controllers
 {
@@ -14,16 +15,20 @@ namespace GameStore.Api.Controllers
         private readonly ILogger<PaymentsController> _logger;
         private readonly VideogamesDbContext _context;
         private readonly IConfiguration _config;
+        private readonly IWebHostEnvironment _env;
+
 
         public PaymentsController(
             IConfiguration config,
             VideogamesDbContext context,
-            ILogger<PaymentsController> logger
+            ILogger<PaymentsController> logger,
+            IWebHostEnvironment env
         )
         {
             _config = config;
             _context = context;
             _logger = logger;
+            _env = env;
         }
 
         [HttpPost("create-payment-link")]
@@ -68,6 +73,7 @@ namespace GameStore.Api.Controllers
                 "Creando Payment Link con metadata: {@Metadata}",
                 new Dictionary<string, string> { { "userId", userId }, { "cart", serializedCart } }
             );
+            var successUrl = _config["FrontendUrls:PaymentSuccess"];
 
             // Crear Payment Link
             var options = new PaymentLinkCreateOptions
@@ -93,7 +99,7 @@ namespace GameStore.Api.Controllers
                     Type = "redirect",
                     Redirect = new PaymentLinkAfterCompletionRedirectOptions
                     {
-                        Url = "http://localhost:5173/success",
+                        Url = successUrl
                     },
                 },
 

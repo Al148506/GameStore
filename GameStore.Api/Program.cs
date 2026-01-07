@@ -64,15 +64,17 @@ builder.Services.AddAuthorization(opt =>
     opt.AddPolicy("RequireAdmin", p => p.RequireRole("Admin"));
     opt.AddPolicy("RequiereUser", p => p.RequireRole("User"));
 });
-
+var allowedOrigins = builder.Configuration
+    .GetValue<string>("AllowedOrigins")!
+    .Split(",", StringSplitOptions.RemoveEmptyEntries);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // or use appsettings
+        policy.WithOrigins(allowedOrigins) 
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials(); // si usas cookies / credenciales
+              .AllowCredentials(); 
     });
 });
 

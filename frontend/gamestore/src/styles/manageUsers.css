@@ -539,6 +539,11 @@
   height: 0;
 }
 
+.switch-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .slider {
   position: absolute;
   cursor: pointer;

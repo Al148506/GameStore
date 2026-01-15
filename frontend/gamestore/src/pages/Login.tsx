@@ -7,14 +7,13 @@ import { PasswordInput } from "@components/auth/PasswordInput";
 import { useEmailValidation } from "@hooks/useEmailValidation";
 import { usePasswordValidation } from "@hooks/usePasswordValidation";
 import DemoCredentials from "@components/auth/DemoCredentials";
-
+import { healthApi } from "../api/healthApi";
 const Login = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const errRef = useRef<HTMLParagraphElement>(null);
 
   const navigate = useNavigate();
   const { loginRequest, loading, error } = useAuth();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -24,6 +23,10 @@ const Login = () => {
   // Focus inicial
   useEffect(() => {
     emailRef.current?.focus();
+    if (!sessionStorage.getItem("dbWarmedUp")) {
+      healthApi.warmUp();
+      sessionStorage.setItem("dbWarmedUp", "true");
+    }
   }, []);
 
   // Manejo de submit

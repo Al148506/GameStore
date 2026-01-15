@@ -36,7 +36,6 @@ namespace GameStore.Api.Controllers
             {
                 UserName = req.email,
                 Email = req.email,
-                EmailConfirmed = true
             };
 
             var result = await _users.CreateAsync(user, req.password);
@@ -63,11 +62,8 @@ namespace GameStore.Api.Controllers
         public async Task<ActionResult<AuthResponseDto>> Login(LoginRequestDto req)
         {
             var user = await _users.FindByEmailAsync(req.email);
-            if (user is null) return Unauthorized();
-
-            var ok = await _users.CheckPasswordAsync(user, req.password);
-            if (!ok) return Unauthorized();
-
+            if (user is null || !await _users.CheckPasswordAsync(user, req.password))
+                return Unauthorized("Credenciales inválidas");
             var roles = await _users.GetRolesAsync(user);
             var token = CreateJwt(user, roles);
 
@@ -88,27 +84,39 @@ namespace GameStore.Api.Controllers
 
         //Endpoint toggle-admin
         [Authorize(Policy = "RequireAdmin")]
-        [HttpPut("toggle-admin/{userId}")]
-        public async Task<IActionResult> ToogleAdminRole(string userId)
+        [HttpPut("toggle-admin/{email}")]
+        public async Task<IActionResult> ToggleAdminRole(string email)
         {
-            var user = await _users.FindByEmailAsync(userId);
-            if (user == null)
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (currentUserId is null)
+                return Unauthorized();
+
+            var currentUser = await _users.FindByIdAsync(currentUserId);
+            if (currentUser is null)
+                return Unauthorized();
+
+            var targetUser = await _users.FindByEmailAsync(email);
+            if (targetUser is null)
                 return NotFound("Usuario no encontrado.");
-            var isAdmin = await _users.IsInRoleAsync(user, "Admin");
+
+            // 🔒 Bloqueo real
+            if (currentUser.Id == targetUser.Id)
+                return BadRequest("No puedes cambiar tu propio rol.");
+
+            var isAdmin = await _users.IsInRoleAsync(targetUser, "Admin");
             IdentityResult result;
 
             if (isAdmin)
-            {
-                result = await _users.RemoveFromRoleAsync(user, "Admin");
-            }
+                result = await _users.RemoveFromRoleAsync(targetUser, "Admin");
             else
-            {
-                result = await _users.AddToRoleAsync(user, "Admin");
-            }
+                result = await _users.AddToRoleAsync(targetUser, "Admin");
+
             if (!result.Succeeded)
-                return BadRequest("No se pudo actualizar el rol del usuario.");
+                return BadRequest(result.Errors);
+
             return NoContent();
         }
+
 
         private string CreateJwt(ApplicationUser user, IList<string> roles)
         {

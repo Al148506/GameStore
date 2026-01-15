@@ -4,9 +4,12 @@ import type { PaginatedResponse } from "../types/pagination/paginatedResponse";
 import type { UserWithRoles } from "../types/auth/auth";
 import Navbar from "@components/Navbar";
 import { Pagination } from "@components/Pagination";
+import { useAuth } from "@hooks/useAuth";
 import "../styles/manageUsers.css";
 
 function UserList() {
+  const { user: currentUser } = useAuth();
+
   const [users, setUsers] = useState<UserWithRoles[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
@@ -59,10 +62,10 @@ function UserList() {
     return roleMap[role.toLowerCase()] || "role-badge-default";
   };
 
-  const toggleAdmin = async (userId: string) => {
+  const toggleAdmin = async (email: string) => {
     try {
-      await updateUserRole(userId); // API que tú creas
-      loadUsers(); // refrescar
+      await updateUserRole(email);
+      loadUsers();
     } catch (error) {
       console.error("Error actualizando rol:", error);
     }
@@ -71,24 +74,10 @@ function UserList() {
   return (
     <>
       <Navbar />
+
       <div className="users-container">
         <div className="users-controls">
           <div className="search-wrapper">
-            <svg
-              className="search-icon"
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-            >
-              <path
-                d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM18 18l-4-4"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
             <input
               type="text"
               className="search-input"
@@ -119,7 +108,6 @@ function UserList() {
             </div>
           ) : users.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-icon">🔍</div>
               <h3>No se encontraron usuarios</h3>
               <p>Intenta ajustar los filtros de búsqueda</p>
             </div>
@@ -127,25 +115,11 @@ function UserList() {
             <table className="users-table">
               <thead>
                 <tr>
-                  <th
-                    onClick={() => handleSort("username")}
-                    className="sortable"
-                  >
-                    <div className="th-content">
-                      <span>Usuario</span>
-                      <span className="sort-indicator">
-                        {sortBy === "username" &&
-                          (sortDir === "asc" ? "↑" : "↓")}
-                      </span>
-                    </div>
+                  <th onClick={() => handleSort("username")} className="sortable">
+                    Usuario
                   </th>
                   <th onClick={() => handleSort("email")} className="sortable">
-                    <div className="th-content">
-                      <span>Email</span>
-                      <span className="sort-indicator">
-                        {sortBy === "email" && (sortDir === "asc" ? "↑" : "↓")}
-                      </span>
-                    </div>
+                    Email
                   </th>
                   <th>Roles</th>
                   <th>Admin</th>
@@ -153,48 +127,73 @@ function UserList() {
               </thead>
 
               <tbody>
-                {users.map((user) => (
-                  <tr key={user.id}>
-                    <td>
-                      <div className="user-cell">
-                        <div className="user-avatar">
-                          {user.username.charAt(0).toUpperCase()}
+                {users.map((user) => {
+                  const isCurrentUser =
+                    currentUser?.email === user.email;
+
+                  const isAdmin = user.roles.some(
+                    (role) => role.toLowerCase() === "admin"
+                  );
+
+                  return (
+                    <tr key={user.id}>
+                      <td>
+                        <div className="user-cell">
+                          <div className="user-avatar">
+                            {user.username.charAt(0).toUpperCase()}
+                          </div>
+                          <span className="user-name">{user.username}</span>
                         </div>
-                        <span className="user-name">{user.username}</span>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="user-email">{user.email}</span>
-                    </td>
-                    <td>
-                      <div className="roles-container">
-                        {user.roles.map((role, index) => (
-                          <span
-                            key={index}
-                            className={`role-badge ${getRoleBadgeClass(role)}`}
-                          >
-                            {role}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td>
-                      <label className="switch">
-                        <input
-                          type="checkbox"
-                          checked={user.roles.some(
-                            (role) => role.toLowerCase() === "admin"
-                          )}
-                          onChange={() => toggleAdmin(user.email)}
-                        />
-                        <span className="slider"></span>
-                      </label>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+
+                      <td>
+                        <span className="user-email">{user.email}</span>
+                      </td>
+
+                      <td>
+                        <div className="roles-container">
+                          {user.roles.map((role, index) => (
+                            <span
+                              key={index}
+                              className={`role-badge ${getRoleBadgeClass(role)}`}
+                            >
+                              {role}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+
+                      <td>
+                        <label
+                          className={`switch ${
+                            isCurrentUser ? "switch-disabled" : ""
+                          }`}
+                          title={
+                            isCurrentUser
+                              ? "No puedes modificar tu propio rol"
+                              : ""
+                          }
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isAdmin}
+                            disabled={isCurrentUser}
+                            onChange={() => {
+                              if (!isCurrentUser) {
+                                toggleAdmin(user.email);
+                              }
+                            }}
+                          />
+                          <span className="slider"></span>
+                        </label>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           )}
+
           <div className="results-info">
             Mostrando {users.length} de {users.length * totalPages} usuarios
           </div>

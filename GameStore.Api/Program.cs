@@ -148,7 +148,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-await app.PromoteAdminFromConfigAsync();
-
+if (app.Environment.IsDevelopment())
+{
+    await app.PromoteAdminFromConfigAsync();
+}
 app.Run();
 

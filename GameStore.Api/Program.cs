@@ -146,6 +146,7 @@ app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseExceptionHandler(_ => { });
 
 app.MapControllers();
 if (app.Environment.IsDevelopment())

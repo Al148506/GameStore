@@ -8,6 +8,7 @@ import { useEmailValidation } from "@hooks/useEmailValidation";
 import { useEmailAvailability } from "@hooks/useEmailAvailability";
 import Swal from "sweetalert2";
 import "../styles/auth.css";
+import { useServerWarmUp } from "@hooks/useServerWarmUp";
 const Register = () => {
   const errRef = useRef<HTMLParagraphElement>(null);
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const validEmail = useEmailValidation(email);
   const { isAvailable, isChecking } = useEmailAvailability(email, validEmail);
+  const { isWarmingUp } = useServerWarmUp();
 
   const {
     rules,
@@ -87,6 +89,12 @@ const Register = () => {
           >
             {loading ? "Creando cuenta..." : "Crear cuenta"}
           </button>
+
+          {isWarmingUp && (
+            <p className="warmup-info">
+              Preparando el servidor, esto puede tardar unos segundos…
+            </p>
+          )}
 
           <p>
             ¿Ya tienes una cuenta?

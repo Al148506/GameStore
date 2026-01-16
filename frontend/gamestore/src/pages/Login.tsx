@@ -7,11 +7,11 @@ import { PasswordInput } from "@components/auth/PasswordInput";
 import { useEmailValidation } from "@hooks/useEmailValidation";
 import { usePasswordValidation } from "@hooks/usePasswordValidation";
 import DemoCredentials from "@components/auth/DemoCredentials";
-import { healthApi } from "../api/healthApi";
+import { useServerWarmUp } from "@hooks/useServerWarmUp";
 const Login = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const errRef = useRef<HTMLParagraphElement>(null);
-
+  const { isWarmingUp } = useServerWarmUp();
   const navigate = useNavigate();
   const { loginRequest, loading, error } = useAuth();
   const [email, setEmail] = useState("");
@@ -23,10 +23,6 @@ const Login = () => {
   // Focus inicial
   useEffect(() => {
     emailRef.current?.focus();
-    if (!sessionStorage.getItem("dbWarmedUp")) {
-      healthApi.warmUp();
-      sessionStorage.setItem("dbWarmedUp", "true");
-    }
   }, []);
 
   // Manejo de submit
@@ -88,8 +84,18 @@ const Login = () => {
             className="action-btn"
             disabled={!validEmail || !validPassword || loading}
           >
-            {loading ? "Ingresando..." : "Iniciar sesión"}
+            {isWarmingUp
+              ? "Preparando el sistema..."
+              : loading
+                ? "Ingresando..."
+                : "Iniciar sesión"}
           </button>
+          {isWarmingUp && (
+            <p className="warmup-info">
+              El servidor está iniciando. Esto puede tardar unos segundos la
+              primera vez.
+            </p>
+          )}
 
           <p>
             ¿Necesitas una cuenta?

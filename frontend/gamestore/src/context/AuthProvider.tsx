@@ -92,30 +92,57 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setError(null);
 
+    const maxRetries = 2; // ⬅️ 2 reintentos
+    const retryDelay = 3000; // ⬅️ 3 segundos
+
+    const sleep = (ms: number) =>
+      new Promise((resolve) => setTimeout(resolve, ms));
+
+    const shouldRetry = (error: AxiosError) => {
+      // Reintentar solo en errores típicos de cold start
+      return (
+        error.code === "ECONNABORTED" ||
+        error.code === "ERR_NETWORK" ||
+        error.response?.status === 500
+      );
+    };
     try {
-      const response = await authApi.login({
-        email,
-        password,
-      });
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+          const response = await authApi.login({
+            email,
+            password,
+          });
 
-      const { accessToken, user } = response.data;
+          const { accessToken, user } = response.data;
 
-      setToken(accessToken);
-      setUser(user);
+          setToken(accessToken);
+          setUser(user);
 
-      const userStr = JSON.stringify(user);
+          const userStr = JSON.stringify(user);
 
-      if (remember) {
-        localStorage.setItem("token", accessToken);
-        localStorage.setItem("user", userStr);
-        sessionStorage.clear();
-      } else {
-        sessionStorage.setItem("token", accessToken);
-        sessionStorage.setItem("user", userStr);
-        localStorage.clear();
+          if (remember) {
+            localStorage.setItem("token", accessToken);
+            localStorage.setItem("user", userStr);
+            sessionStorage.clear();
+          } else {
+            sessionStorage.setItem("token", accessToken);
+            sessionStorage.setItem("user", userStr);
+            localStorage.clear();
+          }
+
+          return true; // ✅ éxito
+        } catch (err) {
+          const error = err as AxiosError<{ message: string }>;
+
+          if (attempt < maxRetries && shouldRetry(error)) {
+            await sleep(retryDelay);
+            continue; // ⬅️ reintentar
+          }
+          setError(error.response?.data?.message ?? "Credenciales incorrectas");
+        }
       }
-
-      return true;
+      return false;
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
 
@@ -123,8 +150,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setError(
         error.response?.data?.message ??
-          "Credenciales incorrectas o error de servidor"
+          "El servidor está iniciando, intenta de nuevo en unos segundos"
       );
+
       return false;
     } finally {
       setLoading(false);

@@ -21,10 +21,10 @@ builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(ctx.Configuration
 
 
 builder.Services.AddDbContext<VideogamesDbContext>(o =>
-    o.UseSqlServer(builder.Configuration.GetConnectionString("VideogamesDbConnection")));
+    o.UseSqlServer(builder.Configuration.GetConnectionString("VideogamesDbConnection"), sql => sql.CommandTimeout(60)));
 
 builder.Services.AddDbContext<ApplicationAuthDbContext>(o =>
-    o.UseSqlServer(builder.Configuration.GetConnectionString("AuthDbConnection")));
+    o.UseSqlServer(builder.Configuration.GetConnectionString("AuthDbConnection"), sql => sql.CommandTimeout(60)));
 
 // Identity Core + Roles
 builder.Services.AddIdentityCore<ApplicationUser>(o =>
@@ -67,6 +67,7 @@ builder.Services.AddAuthorization(opt =>
 var allowedOrigins = builder.Configuration
     .GetValue<string>("AllowedOrigins")!
     .Split(",", StringSplitOptions.RemoveEmptyEntries);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -78,8 +79,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddControllers();
-// Sustituir la línea problemática por la forma correcta de registrar múltiples perfiles de AutoMapper
 builder.Services.AddAutoMapper(
     typeof(VideogameProfile),
     typeof(OrdersProfile),
@@ -117,11 +116,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.WriteIndented = true;
 });
 
-Console.WriteLine("JWT KEY: " + builder.Configuration["Jwt:Key"]);
-Console.WriteLine("JWT ISSUER: " + builder.Configuration["Jwt:Issuer"]);
-Console.WriteLine("JWT AUDIENCE: " + builder.Configuration["Jwt:Audience"]);
-
-
 
 var app = builder.Build();
 
@@ -152,9 +146,12 @@ app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseExceptionHandler(_ => { });
 
 app.MapControllers();
-await app.PromoteAdminFromConfigAsync();
-
+if (app.Environment.IsDevelopment())
+{
+    await app.PromoteAdminFromConfigAsync();
+}
 app.Run();
 

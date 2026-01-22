@@ -23,6 +23,10 @@ public partial class VideogamesDbContext : DbContext
     public DbSet<CartItem> CartItems { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Discount> Discounts { get; set; }
+    public DbSet<Coupon> Coupons { get; set; }
+    public DbSet<DiscountScope> DiscountScopes { get; set; }
+
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -92,6 +96,16 @@ public partial class VideogamesDbContext : DbContext
             entity.Property(i => i.UnitPrice).HasColumnType("decimal(18,2)");
             entity.HasIndex(i => i.VideogameId);
         });
+
+        modelBuilder.Entity<Discount>(entity =>
+        {
+            entity.Property(d => d.Value)
+                  .HasPrecision(18, 2);
+        });
+
+        modelBuilder.Entity<Coupon>()
+            .HasIndex(c => c.Code)
+            .IsUnique();
 
 
         OnModelCreatingPartial(modelBuilder);

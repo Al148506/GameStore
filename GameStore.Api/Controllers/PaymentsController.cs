@@ -4,8 +4,7 @@ using GameStore.Infrastructure.Persistence.Videogames;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
-using Microsoft.AspNetCore.Hosting;
-
+using GameStore.Api.DTOs.Payment;
 namespace GameStore.Api.Controllers
 {
     [ApiController]
@@ -16,7 +15,7 @@ namespace GameStore.Api.Controllers
         private readonly VideogamesDbContext _context;
         private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
-
+        private readonly DiscountService _discountService = new DiscountService();
 
         public PaymentsController(
             IConfiguration config,
@@ -30,6 +29,21 @@ namespace GameStore.Api.Controllers
             _logger = logger;
             _env = env;
         }
+
+        [HttpPost("apply")]
+        public async Task<IActionResult> ApplyDiscount(
+        ApplyDiscountRequest request)
+            {
+               
+            var finalPrice = await _discountService.ApplyDiscountAsync(
+                    request.Videogame,
+                    request.Price,
+                    request.CouponCode
+                );
+
+                return Ok(new { finalPrice });
+            }
+
 
         [HttpPost("create-payment-link")]
         public async Task<IActionResult> CreatePaymentLink()

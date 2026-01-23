@@ -91,17 +91,15 @@ public partial class VideogamesDbContext : DbContext
                   .OnDelete(DeleteBehavior.Cascade); // elimina items al borrar order
         });
 
-        modelBuilder.Entity<OrderItem>(entity =>
-        {
-            entity.Property(i => i.UnitPrice).HasColumnType("decimal(18,2)");
-            entity.HasIndex(i => i.VideogameId);
-        });
+        modelBuilder.Entity<Discount>()
+              .HasMany(d => d.DiscountScopes)
+              .WithOne(s => s.Discount)
+              .HasForeignKey(s => s.DiscountId);
 
-        modelBuilder.Entity<Discount>(entity =>
-        {
-            entity.Property(d => d.Value)
-                  .HasPrecision(18, 2);
-        });
+        modelBuilder.Entity<Discount>()
+            .HasOne(d => d.Coupon)
+            .WithOne(c => c.Discount)
+            .HasForeignKey<Coupon>(c => c.DiscountId);
 
         modelBuilder.Entity<Coupon>()
             .HasIndex(c => c.Code)

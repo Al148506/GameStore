@@ -183,7 +183,7 @@ namespace GameStore.Tests.Test
             var result = await controller.Update(vg.Id, dto);
 
             var ok = Assert.IsType<OkObjectResult>(result);
-            var updated = Assert.IsType<Videogame>(ok.Value);
+            var updated = Assert.IsType<VideogameDTO>(ok.Value);
 
             Assert.Equal("Updated Game", updated.Name);
 

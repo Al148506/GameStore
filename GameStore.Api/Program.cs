@@ -10,6 +10,9 @@ using GameStore.Api.Helper;
 using GameStore.Api.AutoMapper;
 using System.Text.Json.Serialization;
 using Stripe;
+using GameStore.Infrastructure.Persistence.Videogames.Interfaces;
+using GameStore.Infrastructure.Persistence.Videogames.Repositories;
+using GameStore.Infrastructure.Persistence.Videogames.Seed;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -115,6 +118,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     options.JsonSerializerOptions.WriteIndented = true;
 });
+builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
 
 
 var app = builder.Build();
@@ -139,6 +143,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<VideogamesDbContext>();
+    await DiscountSeed.SeedAsync(context);
 }
 
 app.UseSerilogRequestLogging();

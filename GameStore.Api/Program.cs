@@ -13,6 +13,7 @@ using Stripe;
 using GameStore.Infrastructure.Persistence.Videogames.Interfaces;
 using GameStore.Infrastructure.Persistence.Videogames.Repositories;
 using GameStore.Infrastructure.Persistence.Videogames.Seed;
+using GameStore.Infrastructure.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -119,6 +120,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.WriteIndented = true;
 });
 builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
+builder.Services.AddScoped<ICouponValidator, CouponValidator>();
+builder.Services.AddScoped<DiscountAdminService>();
 
 
 var app = builder.Build();

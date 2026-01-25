@@ -1,9 +1,9 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
-import Button from "@components/Button";
+import Button from "@components/common/Button";
 import Swal from "sweetalert2";
 import { useAuth } from "@hooks/useAuth";
-import "../styles/navbarGeneral.css";
+import "../../styles/navbarGeneral.css";
 
 export function NavbarGeneral() {
   const navigate = useNavigate();
@@ -78,17 +78,28 @@ export function NavbarGeneral() {
           >
             Mi Cuenta
           </Link>
-           {isAdmin && ( 
-          <Link
-            to="/account-managment"
-            className={
-              location.pathname === "/account-managment" ? "active" : ""
-            }
-            onClick={handleLinkClick}
-          >
-            Manejo de cuentas
-          </Link>
-           )}
+          {isAdmin && (
+            <>
+              <Link
+                to="/account-managment"
+                className={
+                  location.pathname === "/account-managment" ? "active" : ""
+                }
+                onClick={handleLinkClick}
+              >
+                Manejo de cuentas
+              </Link>
+              <Link
+                to="/discount-managment"
+                className={
+                  location.pathname === "/discount-managment" ? "active" : ""
+                }
+                onClick={handleLinkClick}
+              >
+                Manejo de descuentos
+              </Link>
+            </>
+          )}
         </div>
 
         <Button

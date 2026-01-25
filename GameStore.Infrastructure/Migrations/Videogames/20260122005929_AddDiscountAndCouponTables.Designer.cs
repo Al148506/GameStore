@@ -4,16 +4,19 @@ using GameStore.Infrastructure.Persistence.Videogames;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace GameStore.Infrastructure.Migrations
+namespace GameStore.Infrastructure.Migrations.Videogames
 {
     [DbContext(typeof(VideogamesDbContext))]
-    partial class VideogamesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260122005929_AddDiscountAndCouponTables")]
+    partial class AddDiscountAndCouponTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,9 +111,6 @@ namespace GameStore.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid>("DiscountId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int?>("MaxUses")
                         .HasColumnType("int");
 
@@ -120,9 +120,6 @@ namespace GameStore.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.HasIndex("DiscountId")
                         .IsUnique();
 
                     b.ToTable("Coupons");
@@ -151,6 +148,7 @@ namespace GameStore.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Value")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ValueType")
@@ -167,18 +165,10 @@ namespace GameStore.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("DiscountId")
+                    b.Property<Guid?>("TargetId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("TargetId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TargetType")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("DiscountId");
 
                     b.ToTable("DiscountScopes");
                 });
@@ -374,28 +364,6 @@ namespace GameStore.Infrastructure.Migrations
                     b.Navigation("Videogame");
                 });
 
-            modelBuilder.Entity("GameStore.Infrastructure.Persistence.Videogames.Models.Coupon", b =>
-                {
-                    b.HasOne("GameStore.Infrastructure.Persistence.Videogames.Models.Discount", "Discount")
-                        .WithOne("Coupon")
-                        .HasForeignKey("GameStore.Infrastructure.Persistence.Videogames.Models.Coupon", "DiscountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Discount");
-                });
-
-            modelBuilder.Entity("GameStore.Infrastructure.Persistence.Videogames.Models.DiscountScope", b =>
-                {
-                    b.HasOne("GameStore.Infrastructure.Persistence.Videogames.Models.Discount", "Discount")
-                        .WithMany("DiscountScopes")
-                        .HasForeignKey("DiscountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Discount");
-                });
-
             modelBuilder.Entity("GameStore.Infrastructure.Persistence.Videogames.Models.OrderItem", b =>
                 {
                     b.HasOne("GameStore.Infrastructure.Persistence.Videogames.Models.Order", "Order")
@@ -448,13 +416,6 @@ namespace GameStore.Infrastructure.Migrations
             modelBuilder.Entity("GameStore.Infrastructure.Persistence.Videogames.Models.Cart", b =>
                 {
                     b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("GameStore.Infrastructure.Persistence.Videogames.Models.Discount", b =>
-                {
-                    b.Navigation("Coupon");
-
-                    b.Navigation("DiscountScopes");
                 });
 
             modelBuilder.Entity("GameStore.Infrastructure.Persistence.Videogames.Models.Order", b =>

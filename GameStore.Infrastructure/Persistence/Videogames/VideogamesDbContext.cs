@@ -23,6 +23,10 @@ public partial class VideogamesDbContext : DbContext
     public DbSet<CartItem> CartItems { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Discount> Discounts { get; set; }
+    public DbSet<Coupon> Coupons { get; set; }
+    public DbSet<DiscountScope> DiscountScopes { get; set; }
+
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -87,11 +91,19 @@ public partial class VideogamesDbContext : DbContext
                   .OnDelete(DeleteBehavior.Cascade); // elimina items al borrar order
         });
 
-        modelBuilder.Entity<OrderItem>(entity =>
-        {
-            entity.Property(i => i.UnitPrice).HasColumnType("decimal(18,2)");
-            entity.HasIndex(i => i.VideogameId);
-        });
+        modelBuilder.Entity<Discount>()
+              .HasMany(d => d.DiscountScopes)
+              .WithOne(s => s.Discount)
+              .HasForeignKey(s => s.DiscountId);
+
+        modelBuilder.Entity<Discount>()
+            .HasOne(d => d.Coupon)
+            .WithOne(c => c.Discount)
+            .HasForeignKey<Coupon>(c => c.DiscountId);
+
+        modelBuilder.Entity<Coupon>()
+            .HasIndex(c => c.Code)
+            .IsUnique();
 
 
         OnModelCreatingPartial(modelBuilder);

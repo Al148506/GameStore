@@ -3,7 +3,7 @@ import "../../styles/cart.css";
 import { useCart } from "../../hooks/useCart";
 import { CartItem } from "./CartItem";
 import { useEffect, useMemo } from "react";
-import Navbar from "@components/Navbar";
+import Navbar from "@components/common/Navbar";
 
 interface CartProps {
   mode?: "sidebar" | "fullscreen";
@@ -28,7 +28,7 @@ export function Cart({ mode = "sidebar", isOpen = false }: CartProps) {
     return (
       cart?.items?.reduce(
         (sum, item) => sum + item.unitPrice * item.quantity,
-        0
+        0,
       ) || 0
     );
   }, [cart]);

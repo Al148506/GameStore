@@ -44,17 +44,16 @@ namespace GameStore.Tests.Test
         // =========================================================
 
         [Fact]
-        public async Task GetCartByUser_ShouldReturnNotFound_WhenUserHasNoCart()
+        public async Task GetCartByUser_ShouldEmpyCart_WhenUserHasNoCart()
         {
             // Arrange
             var db = await VideogameRepositoryTest.GetDatabaseContext(Guid.NewGuid().ToString());
             var mapper = TestMapperFactory.CreateMapper();
             var controller = BuildController(db, mapper, "user123");
-
             // Act
             var result = await controller.GetCartByUser();
             // Assert
-            Assert.IsType<NotFoundObjectResult>(result.Result);
+            var ok = Assert.IsType<OkObjectResult>(result.Result);
         }
 
 

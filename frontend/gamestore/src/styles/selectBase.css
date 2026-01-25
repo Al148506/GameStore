@@ -1,0 +1,15 @@
+/* selectBase.css */
+.select-base {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 14px;
+  color: #111827;
+  border-radius: 8px;
+  margin-top: 1.4rem;
+}
+
+.select-base:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px #2563eb;
+}

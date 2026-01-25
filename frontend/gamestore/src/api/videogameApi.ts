@@ -1,5 +1,5 @@
 import api from "./axios";
-import type { Filters } from "../components/Searchbar";
+import type { Filters } from "../components/common/Searchbar";
 import type {
   VideogameDto,
   Genre,
@@ -18,7 +18,7 @@ interface Params {
 export const getVideogames = async (
   page = 1,
   pageSize = 20,
-  filters: Filters
+  filters: Filters,
 ): Promise<PaginatedResponse<VideogameDto>> => {
   // Definir sort
   let sort = "";
@@ -69,7 +69,7 @@ export const getPlatforms = async (): Promise<Platform[]> => {
 };
 
 export const createVideogame = async (
-  payload: Partial<VideogameDto>
+  payload: Partial<VideogameDto>,
 ): Promise<VideogameDto> => {
   const res = await api.post<VideogameDto>("games", payload);
   return res.data;
@@ -77,7 +77,7 @@ export const createVideogame = async (
 
 export const updateVideogame = async (
   id: number,
-  payload: Partial<VideogameDto>
+  payload: Partial<VideogameDto>,
 ): Promise<VideogameDto> => {
   const res = await api.put<VideogameDto>(`games/${id}`, payload);
   return res.data;

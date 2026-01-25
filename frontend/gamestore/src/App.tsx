@@ -17,6 +17,7 @@ import ManageUsers from "./pages/ManageUsers";
 import { Profile } from "./pages/Profile";
 import ProtectedLayout from "./routes/ProtectedRoute";
 import GuestRoute from "./routes/GuestRoute";
+import { DiscountForm } from "@components/discountForm/DiscountForm";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
             <Route path="/order-history" element={<OrderHistory />} />
             <Route path="/cancel" element={<CancelPage />} />
             <Route path="/account-managment" element={<ManageUsers />} />
+            <Route path="/discount-managment" element={<DiscountForm />} />
             <Route path="/profile" element={<Profile />} />
           </Route>
         </Routes>

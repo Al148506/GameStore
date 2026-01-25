@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import Select from "react-select";
-import type { MultiValue } from "react-select";
 import { useVideogameOptions } from "../../hooks/useVideogameOptions";
 import { useImageValidation } from "../../hooks/useImageValidation";
 import { mapGameToFormData } from "../../utils/mapGameToFormData";
 import { ratings } from "../../constants/videogameRatings";
-import { customSelectStyles } from "../../constants/selectCustomStyles";
 import type { VideogameDto } from "../../types/videogame/videogame";
 import { useVideogameAutoComplete } from "../../hooks/useAutoComplete";
+import { MultiSelectField } from "../common/MultiSelectField";
+
 import "../../styles/modal.css";
 interface VideogameModalProps {
   isOpen: boolean;
@@ -91,7 +90,7 @@ export function VideogameFormModal({
 
   // Maneja inputs normales
   function handleChange(
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) {
     const { name, value } = e.target;
 
@@ -101,17 +100,6 @@ export function VideogameFormModal({
     }));
 
     if (name === "imageUrl") validateImage(value);
-  }
-
-  // Maneja Multiselect con tipo correcto
-  function handleMultiSelect(
-    name: "genreIds" | "platformIds",
-    newVal: MultiValue<Option>
-  ) {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: newVal.map((v) => v.value),
-    }));
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -256,36 +244,28 @@ export function VideogameFormModal({
           </div>
 
           {/* Géneros */}
-          <div className="form-group">
-            <label>Géneros</label>
-            <Select
-              isMulti
-              name="genreIds"
-              options={genreOptions}
-              isLoading={loading}
-              value={genreOptions.filter((o) =>
-                formData.genreIds.includes(o.value)
-              )}
-              onChange={(val) => handleMultiSelect("genreIds", val)}
-              styles={customSelectStyles}
-            />
-          </div>
+          <MultiSelectField
+            label="Géneros"
+            name="genreIds"
+            options={genreOptions}
+            selectedValues={formData.genreIds}
+            isLoading={loading}
+            onChange={(values) =>
+              setFormData((prev) => ({ ...prev, genreIds: values }))
+            }
+          />
 
           {/* Plataformas */}
-          <div className="form-group">
-            <label>Plataformas</label>
-            <Select
-              isMulti
-              name="platformIds"
-              options={platformOptions}
-              isLoading={loading}
-              value={platformOptions.filter((o) =>
-                formData.platformIds.includes(o.value)
-              )}
-              onChange={(val) => handleMultiSelect("platformIds", val)}
-              styles={customSelectStyles}
-            />
-          </div>
+          <MultiSelectField
+            label="Plataformas"
+            name="platformIds"
+            options={platformOptions}
+            selectedValues={formData.platformIds}
+            isLoading={loading}
+            onChange={(values) =>
+              setFormData((prev) => ({ ...prev, platformIds: values }))
+            }
+          />
 
           {/* Imagen */}
           <div className="form-group">

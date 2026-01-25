@@ -3,7 +3,7 @@ import { OrderSummary } from "../components/orders/OrderSummary.tsx";
 import { OrderItems } from "../components/orders/OrderItems.tsx";
 import { orderApi } from "../api/orderApi.ts";
 import type { OrderDto } from "../types/order/order.ts";
-import Navbar from "@components/Navbar";
+import Navbar from "@components/common/Navbar.tsx";
 import "../styles/success.css";
 
 export default function SuccessPage() {

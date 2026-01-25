@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { getUsers, updateUserRole } from "../api/usersApi";
 import type { PaginatedResponse } from "../types/pagination/paginatedResponse";
 import type { UserWithRoles } from "../types/auth/auth";
-import Navbar from "@components/Navbar";
-import { Pagination } from "@components/Pagination";
+import Navbar from "@components/common/Navbar";
+import { Pagination } from "@components/common/Pagination";
 import { useAuth } from "@hooks/useAuth";
 import "../styles/manageUsers.css";
 
@@ -115,7 +115,10 @@ function UserList() {
             <table className="users-table">
               <thead>
                 <tr>
-                  <th onClick={() => handleSort("username")} className="sortable">
+                  <th
+                    onClick={() => handleSort("username")}
+                    className="sortable"
+                  >
                     Usuario
                   </th>
                   <th onClick={() => handleSort("email")} className="sortable">
@@ -128,11 +131,10 @@ function UserList() {
 
               <tbody>
                 {users.map((user) => {
-                  const isCurrentUser =
-                    currentUser?.email === user.email;
+                  const isCurrentUser = currentUser?.email === user.email;
 
                   const isAdmin = user.roles.some(
-                    (role) => role.toLowerCase() === "admin"
+                    (role) => role.toLowerCase() === "admin",
                   );
 
                   return (

@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/pagination.css"; // Importa los estilos
+import "../../styles/pagination.css"; // Importa los estilos
 
 interface PaginationProps {
   currentPage: number;

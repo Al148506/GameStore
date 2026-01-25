@@ -1,7 +1,7 @@
 // VideogameCard.tsx
 import React from "react";
 import type { VideogameDto } from "../../types/videogame/videogame";
-import Button from "@components/Button";
+import Button from "@components/common/Button";
 import "../../styles/videogameCard.css";
 import { useCart } from "../../hooks/useCart";
 import {
@@ -90,7 +90,7 @@ export function VideogameCard({
                 isProductInCart
                   ? () => {
                       const cartItem = cart?.items.find(
-                        (item) => item.videogameId === game.id
+                        (item) => item.videogameId === game.id,
                       );
                       if (cartItem) removeItem(cartItem.id);
                     }
@@ -99,33 +99,34 @@ export function VideogameCard({
             />
           </>
         )}
-        {isAdmin && ( 
-        <div className="card-admin-actions">
-          <Button
-            text={
-              <>
-                <EditIcon /> Editar
-              </>
-            }
-            variant="edit"
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit(game);
-            }}
-          />
-          <Button
-            text={
-              <>
-                <DeleteIcon /> Eliminar
-              </>
-            }
-            variant="delete"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete(game.id);
-            }}
-          />
-        </div>)}
+        {isAdmin && (
+          <div className="card-admin-actions">
+            <Button
+              text={
+                <>
+                  <EditIcon /> Editar
+                </>
+              }
+              variant="edit"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(game);
+              }}
+            />
+            <Button
+              text={
+                <>
+                  <DeleteIcon /> Eliminar
+                </>
+              }
+              variant="delete"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(game.id);
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

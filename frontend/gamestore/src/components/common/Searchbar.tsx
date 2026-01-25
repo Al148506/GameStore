@@ -1,8 +1,8 @@
 import { useVideogameOptions } from "@hooks/useVideogameOptions";
-import "../styles/searchbar.css";
-import { CleanIcon } from "./cart/Icons";
+import "../../styles/searchbar.css";
+import { CleanIcon } from "../cart/Icons";
 import Select, { type MultiValue } from "react-select";
-import { customSelectStyles } from "../constants/selectCustomStyles";
+import { customSelectStyles } from "../../constants/selectCustomStyles";
 
 export interface Filters {
   searchTerm: string;
@@ -51,7 +51,7 @@ export function Searchbar({ filters, onFiltersChange }: SearchbarProps) {
 
   function handleMultiSelect(
     key: "genreIds" | "platformIds",
-    value: MultiValue<Option>
+    value: MultiValue<Option>,
   ) {
     const selectedIds = value.map((option) => option.value);
     onFiltersChange({ ...filters, [key]: selectedIds });
@@ -135,7 +135,7 @@ export function Searchbar({ filters, onFiltersChange }: SearchbarProps) {
                 isLoading={loading}
                 placeholder="Seleccionar géneros..."
                 value={genreOptions.filter((o) =>
-                  filters.genreIds.includes(o.value)
+                  filters.genreIds.includes(o.value),
                 )}
                 onChange={(val) => handleMultiSelect("genreIds", val)}
                 styles={customSelectStyles}
@@ -155,7 +155,7 @@ export function Searchbar({ filters, onFiltersChange }: SearchbarProps) {
                 isLoading={loading}
                 placeholder="Seleccionar plataformas..."
                 value={platformOptions.filter((o) =>
-                  filters.platformIds.includes(o.value)
+                  filters.platformIds.includes(o.value),
                 )}
                 onChange={(val) => handleMultiSelect("platformIds", val)}
                 styles={customSelectStyles}

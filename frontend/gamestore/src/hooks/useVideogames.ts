@@ -7,7 +7,7 @@ import {
 } from "../api/videogameApi";
 
 import type { VideogameDto } from "../types/videogame/videogame";
-import type { Filters } from "../components/Searchbar";
+import type { Filters } from "../components/common/Searchbar";
 
 import Swal from "sweetalert2";
 import axios from "axios";
@@ -85,7 +85,7 @@ export function useVideogames(filters: Filters, pageSize = 20) {
       Swal.fire(
         "Creado",
         "El videojuego ha sido creado exitosamente",
-        "success"
+        "success",
       );
     } catch (err) {
       console.error("Error creating videogame:", err);
@@ -105,19 +105,19 @@ export function useVideogames(filters: Filters, pageSize = 20) {
 
   const updateVideogame = async (
     id: number,
-    updatedData: Partial<VideogameDto>
+    updatedData: Partial<VideogameDto>,
   ) => {
     try {
       const updatedGame = await updateVideogameApi(id, updatedData);
 
       setVideogames((prev) =>
-        prev.map((game) => (game.id === id ? updatedGame : game))
+        prev.map((game) => (game.id === id ? updatedGame : game)),
       );
 
       Swal.fire(
         "Actualizado",
         "El videojuego ha sido actualizado correctamente",
-        "success"
+        "success",
       );
     } catch (err) {
       console.error("Error updating videogame:", err);

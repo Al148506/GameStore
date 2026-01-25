@@ -19,7 +19,7 @@ namespace GameStore.Api.Controllers.Admin
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateDiscountRequest request)
+        public async Task<IActionResult> Create([FromBody]CreateDiscountRequest request)
         {
             var scopes = request.Scopes.Select(s => new DiscountScope
             {

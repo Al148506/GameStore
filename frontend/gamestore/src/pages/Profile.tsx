@@ -1,4 +1,4 @@
-import NavbarGeneral from "@components/Navbar";
+import NavbarGeneral from "@components/common/Navbar";
 import { ProfileInfo } from "../components/user/ProfileInfo";
 import { ChangePasswordForm } from "../components/user/ChangePasswordForm";
 import "../styles/profile.css";

@@ -3,15 +3,15 @@ import { OrderSummary } from "../components/orders/OrderSummary.tsx";
 import { OrderItems } from "../components/orders/OrderItems.tsx";
 import { orderApi } from "../api/orderApi.ts";
 import type { OrderDto } from "../types/order/order.ts";
-import Navbar from "@components/Navbar";
+import Navbar from "@components/common/Navbar.tsx";
 import "../styles/success.css";
-import { Pagination } from "@components/Pagination.tsx";
-import Button from "@components/Button.tsx";
+import { Pagination } from "@components/common/Pagination.tsx";
+import Button from "@components/common/Button.tsx";
 
 export default function OrderHistory() {
   const [orders, setOrders] = useState<OrderDto[]>([]);
   const [expandedOrders, setExpandedOrders] = useState<Record<number, boolean>>(
-    {}
+    {},
   );
 
   // Pagination from backend
@@ -37,7 +37,7 @@ export default function OrderHistory() {
         setTotalPages(
           res.total % pageSize === 0
             ? res.total / pageSize
-            : Math.floor(res.total / pageSize) + 1
+            : Math.floor(res.total / pageSize) + 1,
         );
       } catch (error) {
         console.error("Error fetching order history:", error);

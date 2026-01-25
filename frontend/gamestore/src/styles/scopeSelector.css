@@ -1,0 +1,116 @@
+/* Root container */
+.scope-selector {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  background-color: #ffffff;
+}
+
+/* Header */
+.scope-selector__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.scope-selector__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.scope-selector__count {
+  background-color: #2563eb;
+  color: #ffffff;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+/* Empty state */
+.scope-selector__empty {
+  font-size: 14px;
+  color: #6b7280;
+  padding: 12px;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+/* List */
+.scope-selector__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/* Scope item */
+.scope-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 10px;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
+
+/* Select */
+.scope-item__select {
+  padding: 8px 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  color: #111827;
+}
+
+.scope-item__select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px #2563eb;
+}
+
+/* Remove button */
+.scope-item__remove {
+  background-color: transparent;
+  border: none;
+  color: #dc2626;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+.scope-item__remove:hover {
+  background-color: #fee2e2;
+}
+
+/* Add button */
+.scope-selector__add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px dashed #2563eb;
+  background-color: #eff6ff;
+  color: #2563eb;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.scope-selector__add-button:hover {
+  background-color: #dbeafe;
+}
+
+.scope-selector__add-icon {
+  font-size: 18px;
+  line-height: 1;
+}

@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useVideogames } from "@hooks/useVideogames";
-import { Pagination } from "@components/Pagination";
+import { Pagination } from "@components/common/Pagination";
 import type { VideogameDto } from "../types/videogame/videogame";
-import { Searchbar } from "@components/Searchbar";
+import { Searchbar } from "@components/common/Searchbar";
 import { VideogameDetailsModal } from "@components/videogame/VideogameDetailsModal";
 import { VideogamesGrid } from "@components/videogame/VideogamesGrid";
 import { VideogameFormModal } from "@components/videogame/VideogameFormModal";
-import NavbarGeneral from "@components/Navbar";
-import type { Filters } from "@components/Searchbar";
+import NavbarGeneral from "@components/common/Navbar";
+import type { Filters } from "@components/common/Searchbar";
 import "../styles/home.css";
 import "../styles/modal.css";
-import Button from "@components/Button";
+import Button from "@components/common/Button";
 import { CartButton } from "@components/cart/CartButton";
 import { Cart } from "@components/cart/Cart";
 import { useAuth } from "@hooks/useAuth";
@@ -68,13 +68,13 @@ export function Home() {
       {/* 👇 Navbar fuera del container */}
       <Searchbar filters={filters} onFiltersChange={setFilters} />
       <div className="videogames-list-container">
-           {isAdmin && ( 
-        <Button
-          text={<>Agregar videojuego</>}
-          variant="create"
-          onClick={() => setShowCreateModal(true)}
-        />
-           )}
+        {isAdmin && (
+          <Button
+            text={<>Agregar videojuego</>}
+            variant="create"
+            onClick={() => setShowCreateModal(true)}
+          />
+        )}
         <CartButton onClick={() => setIsOpen(!isOpen)} />
         <Cart isOpen={isOpen} mode="sidebar" />
 

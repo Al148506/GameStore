@@ -1,0 +1,25 @@
+export type DiscountTargetType = "All" | "Videogame" | "Genre" | "Platform";
+export type DiscountType = "Seasonal" | "Coupon";
+export type DiscountValueType = "Percentage" | "Fixed";
+
+export interface DiscountScopeDto {
+  targetType: DiscountTargetType;
+  targetId?: number;
+}
+
+export interface CreateCouponDto {
+  code: string;
+  maxUses?: number;
+}
+
+export interface CreateDiscountRequest {
+  name: string;
+  type: DiscountType;
+  valueType: DiscountValueType;
+  value: number;
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+  scopes: DiscountScopeDto[];
+  coupon?: CreateCouponDto;
+}

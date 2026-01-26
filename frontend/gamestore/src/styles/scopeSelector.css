@@ -1,9 +1,8 @@
 /* Root container */
 .scope-selector {
-  border: 1px solid #e5e7eb;
   border-radius: 12px;
-  padding: 16px;
-  background-color: #ffffff;
+  padding: 0px;
+
 }
 
 /* Header */
@@ -17,7 +16,7 @@
 .scope-selector__title {
   font-size: 16px;
   font-weight: 600;
-  color: #111827;
+  color: white;
   margin: 0;
 }
 
@@ -77,9 +76,9 @@
 
 /* Remove button */
 .scope-item__remove {
-  background-color: transparent;
+  background-color: #b91c1c;
   border: none;
-  color: #dc2626;
+  color: white;
   font-size: 13px;
   cursor: pointer;
   padding: 6px 8px;
@@ -87,7 +86,7 @@
 }
 
 .scope-item__remove:hover {
-  background-color: #fee2e2;
+  background-color: #dc2626;
 }
 
 /* Add button */

@@ -23,6 +23,7 @@ namespace GameStore.Api.AutoMapper
             CreateMap<Genre, GenreDTO>();
 
             CreateMap<Platform,PlataformDto>();
+
         }
     }
 }

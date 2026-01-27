@@ -23,3 +23,14 @@ export interface CreateDiscountRequest {
   scopes: DiscountScopeDto[];
   coupon?: CreateCouponDto;
 }
+
+export interface DiscountListItem {
+  id: string;
+  name: string;
+  type: string;
+  valueType: string;
+  value: number;
+  isActive: boolean;
+  startDate: string;
+  endDate: string;
+}

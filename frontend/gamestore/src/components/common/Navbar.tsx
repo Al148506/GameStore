@@ -36,7 +36,7 @@ export function NavbarGeneral() {
     <nav className="navbar-general">
       <div className="navbar-general-container">
         <Link to="/home" className="nav-logo">
-          🎮 GameStore
+           VideogameStore 
         </Link>
 
         <button

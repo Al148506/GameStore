@@ -1,6 +1,7 @@
 ﻿using GameStore.Infrastructure.Persistence.Videogames.Enums;
 using GameStore.Infrastructure.Persistence.Videogames.Interfaces;
 using GameStore.Infrastructure.Persistence.Videogames.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Infrastructure.Services
 {
@@ -40,6 +41,28 @@ namespace GameStore.Infrastructure.Services
 
             await _discountRepository.AddAsync(discount);
             return discount.Id;
+        }
+
+        public async Task<List<Discount>> GetAllAsync()
+        {
+            return await _discountRepository.GetAllAsync();
+        }
+
+        public IQueryable<Discount> GetAll()
+        {
+            return  _discountRepository.GetAll();
+        }
+
+
+        public async Task ToggleActiveAsync(Guid id)
+        {
+            var discount = await _discountRepository.GetByIdAsync(id);
+            if (discount == null)
+            {
+                throw new KeyNotFoundException("Discount not found.");
+            }
+            discount.IsActive = !discount.IsActive;
+            await _discountRepository.UpdateAsync(discount);
         }
     }
 }

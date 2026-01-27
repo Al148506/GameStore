@@ -86,7 +86,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddAutoMapper(
     typeof(VideogameProfile),
     typeof(OrdersProfile),
-    typeof(CartProfile)
+    typeof(CartProfile),
+    typeof(DiscountsProfile)
 );
 
 // Swagger + esquema Bearer

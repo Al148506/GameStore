@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createDiscount } from "../api/discountsApi";
-import type { createDiscountRequest } from "../api/discountsApi";
+import type { CreateDiscountRequest } from "../types/discount/discount";
 
 export const useDiscountAdmin = () => {
   const [loading, setLoading] = useState(false);

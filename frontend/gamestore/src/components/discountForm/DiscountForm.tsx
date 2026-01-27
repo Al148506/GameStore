@@ -3,9 +3,10 @@ import { useDiscountAdmin } from "../../hooks/useDiscountAdmin";
 import { ScopeSelector } from "./ScopeSelector";
 import { CouponFields } from "./CouponFields";
 import type { CreateDiscountRequest } from "../../types/discount/discount";
-
 import "../../styles/discountForm.css";
 import { useVideogameOptions } from "@hooks/useVideogameOptions";
+
+
 
 export const DiscountForm = () => {
   const { submit, loading, error, success } = useDiscountAdmin();

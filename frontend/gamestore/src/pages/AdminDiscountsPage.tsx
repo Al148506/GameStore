@@ -16,6 +16,7 @@ export const AdminDiscountsPage = () => {
   const { data, loading, page, totalPages, setPage, toggle } =
     useDiscountList();
 
+
   const stats = useMemo(
     () => ({
       total: data.length,
@@ -23,7 +24,7 @@ export const AdminDiscountsPage = () => {
     }),
     [data],
   );
-
+ 
   const handleCreateDiscount = async (data: CreateDiscountRequest) => {
     try {
       await createDiscount(data);
@@ -114,9 +115,6 @@ export const AdminDiscountsPage = () => {
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="admin-discounts-page__divider" />
-
         {/* Content */}
         <div className="admin-discounts-page__content">
           <DiscountList
@@ -124,6 +122,7 @@ export const AdminDiscountsPage = () => {
             data={data}
             loading={loading}
             onToggle={toggle}
+            onEdit={console.log("Pendiente")}
           />
         </div>
 

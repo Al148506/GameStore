@@ -153,8 +153,18 @@ if (app.Environment.IsDevelopment())
 
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<VideogamesDbContext>();
-    await DiscountSeed.SeedAsync(context);
+    var services = scope.ServiceProvider;
+
+    try
+    {
+        var context = services.GetRequiredService<VideogamesDbContext>();
+        await DiscountSeed.SeedAsync(context);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Error during database seeding");
+    }
 }
 
 app.UseSerilogRequestLogging();

@@ -1,12 +1,13 @@
 ﻿using GameStore.Infrastructure.Persistence.Videogames.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace GameStore.Api.DTOs.Discounts
 {
-    public class CreateDiscountRequest
+    public class UpdateDiscountRequest
     {
         [Required(ErrorMessage = "El nombre es obligatorio")]
-        [StringLength(200, MinimumLength = 3, ErrorMessage = "El nombre debe tener entre 3 y 200 caracteres")]
+        [StringLength(200, MinimumLength = 3)]
         public string Name { get; set; }
 
         [Required]
@@ -27,8 +28,9 @@ namespace GameStore.Api.DTOs.Discounts
         public bool IsActive { get; set; }
 
         [Required(ErrorMessage = "Debe especificar al menos un scope")]
-        [MinLength(1, ErrorMessage = "Debe tener al menos un scope")]
-        public List<DiscountScopeDto> DiscountScopes { get; set; }
+        [MinLength(1, ErrorMessage = "Debe tener al menos un scope")] // ⬅️ CRÍTICO
+        [JsonPropertyName("discountScopes")]// ⬅️ Acepta "discountScopes" del JSON
+        public List<DiscountScopeDto> Scopes { get; set; } = new();
         public CouponDto? Coupon { get; set; }
     }
 }

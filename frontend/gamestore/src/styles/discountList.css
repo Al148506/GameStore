@@ -62,29 +62,38 @@
 }
 
 /* Table */
+
+.table-wrapper {
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  margin-bottom: 24px;
+  margin-left: 5rem;
+  margin-right: 5rem;
+  animation: slideUp 0.5s ease-out 0.1s backwards;
+}
 .discount-list__table {
   width: 100%;
-  border-collapse: separate;
+  border-collapse: collapse;
   border-spacing: 0;
-  background-color: whitesmoke;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .discount-list__table thead {
-  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  background: var(--color-background);
+  border-bottom: 2px solid var(--color-card-border);
 }
 
 .discount-list__table th {
-  padding: 1rem 1.25rem;
+   padding: 20px 24px;
   text-align: left;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #6b7280;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-primary);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 2px solid #e5e7eb;
+  letter-spacing: 0.5px;
+  user-select: none;
 }
 
 .discount-list__table tbody tr {
@@ -93,8 +102,12 @@
 }
 
 .discount-list__table tbody tr:hover {
-  background-color: #f9fafb;
+  background-color: #36383a;
+
 }
+
+
+
 
 .discount-list__table tbody tr:last-child {
   border-bottom: none;
@@ -109,7 +122,7 @@
 /* Name Column */
 .discount-list__name {
   font-weight: 600;
-  color: #111827;
+  color: white;
 }
 
 /* Type Badge */

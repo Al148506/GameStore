@@ -6,7 +6,6 @@
   gap: var(--space-8, 8px);
   padding: var(--space-16, 1rem);
   user-select: none;
-  background-color: #138496;
   border-radius: 8px;
 }
 

@@ -6,6 +6,8 @@ import {
   faTimes,
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
+import "../../styles/passwordInput.css";
+
 type Props = {
   label: string;
   passwordType: string;
@@ -19,7 +21,6 @@ type Props = {
     hasNonAlphanumeric: boolean;
   };
 };
-import "../../styles/passwordInput.css";
 
 export const PasswordInput = ({
   label,
@@ -27,63 +28,97 @@ export const PasswordInput = ({
   value,
   onChange,
   isValid,
+  rules,
 }: Props) => {
   const [focus, setFocus] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  const showInstructions = focus && value && !isValid;
+  const isPasswordField = passwordType === "password" || passwordType === "newPassword";
+
   return (
     <div className="password-input">
-      <label>
-        {label}
-        <span className={isValid ? "valid" : "hide"}>
-          <FontAwesomeIcon icon={faCheck} />
-        </span>
-        <span className={!isValid && value ? "invalid" : "hide"}>
-          <FontAwesomeIcon icon={faTimes} />
+      <label htmlFor={`password-${label}`} className="password-label">
+        <span className="label-text">{label}</span>
+        
+        <span className="validation-icons">
+          {isValid && (
+            <span className="validation-icon valid" aria-label="Válido">
+              <FontAwesomeIcon icon={faCheck} />
+            </span>
+          )}
+          {!isValid && value && (
+            <span className="validation-icon invalid" aria-label="Inválido">
+              <FontAwesomeIcon icon={faTimes} />
+            </span>
+          )}
         </span>
       </label>
 
-      <div className="password-container">
+      <div className="password-field">
         <input
           type={showPassword ? "text" : "password"}
-          id={label}
+          id={`password-${label}`}
+          className={`password-input-field ${!isValid && value ? 'invalid-input' : ''}`}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           required
           aria-invalid={!isValid}
-          aria-describedby="passwordnote"
+          aria-describedby={`${label}-note`}
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}
+          placeholder="Ingresa tu contraseña"
         />
 
         <button
           type="button"
           className="password-toggle"
           onClick={() => setShowPassword(!showPassword)}
+          aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+          tabIndex={-1}
         >
           <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
         </button>
       </div>
-      <p
-        id="passwordnote"
-        className={focus && value && !isValid ? "instructions" : "offscreen"}
+
+      <div 
+        id={`${label}-note`}
+        className={`password-instructions ${showInstructions ? 'visible' : ''}`}
+        role="alert"
+        aria-live="polite"
       >
-        <FontAwesomeIcon icon={faInfoCircle} />
-        {passwordType === "password" || passwordType === "newPassword" ? (
-          <>
-            Tu contraseña debe cumplir con los siguientes criterios:
-            <br />
-            - Tener al menos 8 caracteres
-            <br />
-            - Contener al menos una letra mayúscula
-            <br />
-            - Contener al menos un número
-            <br />- Contener al menos un carácter especial
-          </>
+        <div className="instructions-header">
+          <FontAwesomeIcon icon={faInfoCircle} className="info-icon" />
+          <span className="instructions-title">
+            {isPasswordField ? 'Requisitos de contraseña' : 'Confirmación de contraseña'}
+          </span>
+        </div>
+
+        {isPasswordField && rules ? (
+          <ul className="requirements-list">
+            <li className={rules.minLength ? 'met' : 'unmet'}>
+              <FontAwesomeIcon icon={rules.minLength ? faCheck : faTimes} />
+              <span>Mínimo 8 caracteres</span>
+            </li>
+            <li className={rules.hasUppercase ? 'met' : 'unmet'}>
+              <FontAwesomeIcon icon={rules.hasUppercase ? faCheck : faTimes} />
+              <span>Una letra mayúscula</span>
+            </li>
+            <li className={rules.hasDigit ? 'met' : 'unmet'}>
+              <FontAwesomeIcon icon={rules.hasDigit ? faCheck : faTimes} />
+              <span>Un número</span>
+            </li>
+            <li className={rules.hasNonAlphanumeric ? 'met' : 'unmet'}>
+              <FontAwesomeIcon icon={rules.hasNonAlphanumeric ? faCheck : faTimes} />
+              <span>Un carácter especial</span>
+            </li>
+          </ul>
         ) : (
-          "Por favor asegurate de que tus contraseñas coinciden."
+          <p className="confirmation-text">
+            Asegúrate de que ambas contraseñas coincidan
+          </p>
         )}
-      </p>
+      </div>
     </div>
   );
 };

@@ -94,12 +94,15 @@ public partial class VideogamesDbContext : DbContext
         modelBuilder.Entity<Discount>()
               .HasMany(d => d.DiscountScopes)
               .WithOne(s => s.Discount)
-              .HasForeignKey(s => s.DiscountId);
+              .HasForeignKey(s => s.DiscountId)
+              .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Discount>()
             .HasOne(d => d.Coupon)
             .WithOne(c => c.Discount)
-            .HasForeignKey<Coupon>(c => c.DiscountId);
+            .HasForeignKey<Coupon>(c => c.DiscountId)
+            .OnDelete(DeleteBehavior.Cascade);
+
 
         modelBuilder.Entity<Coupon>()
             .HasIndex(c => c.Code)

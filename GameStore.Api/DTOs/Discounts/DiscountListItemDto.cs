@@ -12,5 +12,8 @@ namespace GameStore.Api.DTOs.Discounts
         public bool IsActive { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+
+        public string? CouponCode { get; set; } // Solo el código
+        public int ScopesCount { get; set; } 
     }
 }

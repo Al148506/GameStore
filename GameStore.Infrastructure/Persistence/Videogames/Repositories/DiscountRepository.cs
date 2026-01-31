@@ -60,19 +60,15 @@ namespace GameStore.Infrastructure.Persistence.Videogames.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<Discount>> GetAllAsync()
-        {
-            return await _context.Discounts
-                .Include(d => d.Coupon)
-                .AsNoTracking()
-                .ToListAsync();
-        }
-
         public IQueryable<Discount> GetAll()
         {
             return _context.Discounts
                 .Include(d => d.Coupon)
-                .AsNoTracking();
+                .Include(d => d.DiscountScopes);
+
         }
+
+
+        
     }
 }

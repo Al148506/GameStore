@@ -19,8 +19,7 @@ namespace GameStore.Infrastructure.Persistence.Videogames.Interfaces
 
         Task UpdateAsync(Discount discount);
 
-        Task<List<Discount>> GetAllAsync();
-
         IQueryable<Discount> GetAll();
+
     }
 }

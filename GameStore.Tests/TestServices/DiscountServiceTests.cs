@@ -1,28 +1,48 @@
 ﻿using GameStore.Infrastructure.Persistence.Videogames.Interfaces;
 using GameStore.Infrastructure.Persistence.Videogames.Models;
 using GameStore.Infrastructure.Persistence.Videogames.Enums;
+using GameStore.Infrastructure.Services;
 using Moq;
 using Xunit;
 using GameStore.Infrastructure.Persistence.Videogames;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace GameStore.Tests.Services
+namespace GameStore.Tests.TestServices
 {
     public class DiscountServiceTests
     {
         private readonly Mock<IDiscountRepository> _discountRepositoryMock;
+        private readonly Mock<ICouponValidator> _couponValidatorMock;
         private readonly DiscountService _discountService;
 
         public DiscountServiceTests()
         {
             _discountRepositoryMock = new Mock<IDiscountRepository>();
-            _discountService = new DiscountService(_discountRepositoryMock.Object);
+            _couponValidatorMock = new Mock<ICouponValidator>();
+
+            // Por defecto, ningún cupón válido
+            _couponValidatorMock
+                .Setup(c => c.ValidateAsync(It.IsAny<string>()))
+                .ReturnsAsync((Discount?)null);
+
+            _discountService = new DiscountService(
+                _discountRepositoryMock.Object,
+                _couponValidatorMock.Object
+            );
         }
 
         [Fact]
         public async Task ApplyDiscountAsync_GlobalDiscount_ShouldApply()
         {
             // Arrange
-            var videogame = new Videogame { Id = 1, Price = 100 };
+            var videogame = new Videogame
+            {
+                Id = 1,
+                Price = 100,
+                Genres = new List<Genre>(),
+                Platforms = new List<Platform>()
+            };
 
             var discount = new Discount
             {
@@ -53,11 +73,16 @@ namespace GameStore.Tests.Services
             Assert.Equal(80, finalPrice);
         }
 
-
         [Fact]
         public async Task ApplyDiscountAsync_WrongScope_ShouldNotApply()
         {
-            var videogame = new Videogame { Id = 1, Price = 100 };
+            var videogame = new Videogame
+            {
+                Id = 1,
+                Price = 100,
+                Genres = new List<Genre>(),
+                Platforms = new List<Platform>()
+            };
 
             var discount = new Discount
             {
@@ -90,7 +115,13 @@ namespace GameStore.Tests.Services
         [Fact]
         public async Task ApplyDiscountAsync_MultipleDiscounts_ShouldPickBest()
         {
-            var videogame = new Videogame { Id = 1, Price = 100 };
+            var videogame = new Videogame
+            {
+                Id = 1,
+                Price = 100,
+                Genres = new List<Genre>(),
+                Platforms = new List<Platform>()
+            };
 
             var discount10 = new Discount
             {
@@ -124,8 +155,5 @@ namespace GameStore.Tests.Services
 
             Assert.Equal(70, finalPrice);
         }
-
-
-
     }
 }

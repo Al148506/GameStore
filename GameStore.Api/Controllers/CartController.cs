@@ -81,7 +81,6 @@ namespace GameStore.Api.Controllers
                     return BadRequest($"El videojuego con id {item.VideogameId} no existe.");
 
                 item.UnitPrice = game.Price;
-                item.Total = game.Price * item.Quantity;
             }
 
             _context.Carts.Add(cart);

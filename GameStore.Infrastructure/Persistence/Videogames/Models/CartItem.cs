@@ -13,9 +13,11 @@ namespace GameStore.Infrastructure.Persistence.Videogames.Models
         public int VideogameId { get; set; }
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
-        public decimal Total { get; set; }
+        public decimal DiscountedUnitPrice { get; set; }
+        public decimal Total =>UnitPrice * Quantity;
+        public decimal TotalDiscounted => DiscountedUnitPrice * Quantity;
 
-        public required Cart Cart { get; set; }
-        public required Videogame Videogame { get; set; }
+        public Cart Cart { get; set; } = null!;
+        public Videogame? Videogame { get; set; }
     }
 }

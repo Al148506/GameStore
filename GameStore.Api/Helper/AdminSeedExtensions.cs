@@ -1,5 +1,6 @@
 ﻿using GameStore.Infrastructure.Persistence.Auth;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 
 namespace GameStore.Api.Helper
 {
@@ -7,23 +8,44 @@ namespace GameStore.Api.Helper
     {
         public static async Task PromoteAdminFromConfigAsync(this IHost app)
         {
-            using var scope = app.Services.CreateScope();
-            var cfg = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-            var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            try
+            {
+                using var scope = app.Services.CreateScope();
 
-            // Asegura que existan los roles
-            foreach (var r in new[] { "Admin", "User" })
-                if (!await roleMgr.RoleExistsAsync(r)) await roleMgr.CreateAsync(new IdentityRole(r));
+                var logger = scope.ServiceProvider
+                    .GetRequiredService<ILoggerFactory>()
+                    .CreateLogger("AdminSeed");
 
-            var email = cfg["AdminUser:Email"];
-            if (string.IsNullOrWhiteSpace(email)) return;
+                var cfg = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+                var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            var user = await userMgr.FindByEmailAsync(email);
-            if (user is null) return; // o crear el usuario si quieres
+                // Asegura que existan los roles
+                foreach (var r in new[] { "Admin", "User" })
+                {
+                    if (!await roleMgr.RoleExistsAsync(r))
+                        await roleMgr.CreateAsync(new IdentityRole(r));
+                }
 
-            if (!await userMgr.IsInRoleAsync(user, "Admin"))
-                await userMgr.AddToRoleAsync(user, "Admin");
+                var email = cfg["AdminUser:Email"];
+                if (string.IsNullOrWhiteSpace(email)) return;
+
+                var user = await userMgr.FindByEmailAsync(email);
+                if (user is null) return;
+
+                if (!await userMgr.IsInRoleAsync(user, "Admin"))
+                    await userMgr.AddToRoleAsync(user, "Admin");
+            }
+            catch (SqlException ex)
+            {
+                // Error típico: base de datos no disponible
+                Console.WriteLine($"[AdminSeed] DB no disponible: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Cualquier otro error inesperado
+                Console.WriteLine($"[AdminSeed] Error inesperado: {ex}");
+            }
         }
     }
 }

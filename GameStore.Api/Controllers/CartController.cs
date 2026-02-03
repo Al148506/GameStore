@@ -1,7 +1,9 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
 using GameStore.Api.DTOs.Cart;
+using GameStore.Api.DTOs.Discounts;
 using GameStore.Infrastructure.Persistence.Videogames;
+using GameStore.Infrastructure.Persistence.Videogames.Interfaces;
 using GameStore.Infrastructure.Persistence.Videogames.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +18,14 @@ namespace GameStore.Api.Controllers
     {
         private readonly VideogamesDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IDiscountService _discountService;
 
-        public CartController(VideogamesDbContext context, IMapper mapper)
+
+        public CartController(VideogamesDbContext context, IMapper mapper, IDiscountService discountService)
         {
             _context = context;
             _mapper = mapper;
+            _discountService = discountService;
         }
 
         // GET: api/cart/myCart
@@ -152,5 +157,39 @@ namespace GameStore.Api.Controllers
 
             return NoContent();
         }
+
+        [HttpPost("apply-coupon")]
+        public async Task<ActionResult<CartReadDto>> ApplyCoupon(
+    [FromBody] ApplyCouponDto dto)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return Unauthorized();
+
+            var cart = await _context.Carts
+                .Include(c => c.Items)
+                    .ThenInclude(i => i.Videogame)
+                .FirstOrDefaultAsync(c =>
+                    c.UserId == userId && !c.IsCheckedOut);
+
+            if (cart == null)
+                return NotFound("No hay carrito activo.");
+
+            foreach (var item in cart.Items)
+            {
+                var discountedPrice = await _discountService.ApplyDiscountAsync(
+                    item.Videogame!,
+                    item.UnitPrice,
+                    dto.CouponCode
+                );
+
+                item.DiscountedUnitPrice = discountedPrice;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(_mapper.Map<CartReadDto>(cart));
+        }
+
     }
 }

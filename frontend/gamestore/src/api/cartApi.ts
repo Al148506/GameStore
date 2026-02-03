@@ -1,55 +1,58 @@
 import api from "./axios";
-import type { CartCreateDto, CartReadDto } from "../types/cart/cart";
+import type { CartReadDto } from "../types/cart/cart";
 import type {
   CartItemCreateDto,
   CartItemUpdateDto,
 } from "../types/cart/cartItem";
 
 export const cartApi = {
-  // Obtiene el carrito activo del usuario autenticado
+  // Obtiene (o crea) el carrito activo del usuario autenticado
   getCart: async (): Promise<CartReadDto> => {
-    const res = await api.get("/Cart/myCart");
+    const res = await api.get("cart/myCart");
     return res.data;
   },
 
-  // Crea un carrito nuevo
-  createCart: async (data: CartCreateDto): Promise<CartReadDto> => {
-    const res = await api.post("/Cart", data);
+  // Checkout del carrito activo
+  checkoutCart: async (): Promise<{ orderId: number; message: string }> => {
+    const res = await api.post("cart/checkout");
     return res.data;
   },
 
-  // Marca el carrito como checkout
-  checkoutCart: async () => {
-    const res = await api.post("/payments/create-payment-link");
-    return res; // <-- FUNDAMENTAL
+  // Limpia todos los ítems del carrito activo
+  clearCart: async (): Promise<void> => {
+    await api.delete("cart/clear");
   },
 
-  //Disminuye la cantidad de un ítem en el carrito
-  decreaseItemQuantity: async (itemId: number): Promise<void> => {
-    await api.patch(`/CartItem/decrease/${itemId}`);
-  },
-
-  // Elimina un carrito
-  deleteCart: async (cartId: number): Promise<void> => {
-    await api.delete(`Cart/${cartId}`);
-  },
-
-  // Agrega un ítem al carrito activo del usuario
+  // Agrega un ítem al carrito activo
   addItem: async (item: CartItemCreateDto): Promise<CartReadDto> => {
-    const res = await api.post("CartItem/items", item);
+    const res = await api.post("cart/items", {
+      videogameId: item.videogameId,
+      quantity: item.quantity,
+    });
     return res.data;
   },
 
-  // Actualiza un ítem específico del carrito
+  // Actualiza la cantidad de un ítem
   updateItem: async (
     itemId: number,
-    item: CartItemUpdateDto
+    item: CartItemUpdateDto,
   ): Promise<void> => {
-    await api.put(`CartItem/items/${itemId}`, item);
+    await api.put(`cart/items/${itemId}`, item);
   },
 
-  // Elimina un ítem específico del carrito
-  deleteItem: async (itemId: number): Promise<void> => {
-    await api.delete(`CartItem/items/${itemId}`);
+  // Disminuye la cantidad de un ítem en 1
+  decreaseItemQuantity: async (itemId: number): Promise<void> => {
+    await api.patch(`cart/items/decrease/${itemId}`);
   },
+
+  // Elimina un ítem del carrito
+  deleteItem: async (itemId: number): Promise<void> => {
+    await api.delete(`cart/items/${itemId}`);
+  },
+
+  applyCoupon: async (couponCode: string): Promise<CartReadDto> => {
+  const res = await api.post("cart/apply-coupon", { couponCode });
+  return res.data;
+},
+
 };

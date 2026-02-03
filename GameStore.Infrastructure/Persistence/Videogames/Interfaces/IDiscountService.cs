@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameStore.Infrastructure.Persistence.Videogames.Interfeces
+namespace GameStore.Infrastructure.Persistence.Videogames.Interfaces
 {
     public interface IDiscountService
     {

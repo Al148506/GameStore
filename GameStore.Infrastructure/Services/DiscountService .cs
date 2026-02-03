@@ -1,9 +1,7 @@
 ﻿using GameStore.Infrastructure.Persistence.Videogames.Enums;
-using GameStore.Infrastructure.Persistence.Videogames.Interfeces;
 using GameStore.Infrastructure.Persistence.Videogames.Models;
 using GameStore.Infrastructure.Persistence.Videogames;
 using GameStore.Infrastructure.Persistence.Videogames.Interfaces;
-using GameStore.Infrastructure.Services;
 
 public class DiscountService : IDiscountService
 {

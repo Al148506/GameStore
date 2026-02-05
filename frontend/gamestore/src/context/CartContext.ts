@@ -15,10 +15,12 @@ export interface CartContextType {
   checkoutCart: () => Promise<void>;
   decreaseItemQuantity: (itemId: number) => Promise<void>;
   clearCart: () => void;
-  applyCoupon: (couponCode: string) =>Promise<CartReadDto>;
+  applyCoupon: (couponCode: string) => Promise<CartReadDto>;
   couponError: string | null;
+  clearCouponError: () => void;
+  isCouponLoading: boolean;
 }
 
 export const CartContext = createContext<CartContextType | undefined>(
-  undefined
+  undefined,
 );

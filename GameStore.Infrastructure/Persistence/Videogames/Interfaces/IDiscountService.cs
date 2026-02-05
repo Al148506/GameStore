@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GameStore.Infrastructure.Persistence.Videogames;
 
-namespace GameStore.Infrastructure.Persistence.Videogames.Interfaces
+public interface IDiscountService
 {
-    public interface IDiscountService
-    {
-        Task<decimal> ApplyDiscountAsync(
-            Videogame videogame,
-            decimal originalPrice,
-            string? couponCode = null
-        );
-    }
+    Task<decimal> ApplyAutomaticDiscountsAsync(
+        Videogame videogame,
+        decimal originalPrice
+    );
 
+    Task<decimal> ApplyCouponAsync(
+        Videogame videogame,
+        decimal originalPrice,
+        string couponCode
+    );
 }

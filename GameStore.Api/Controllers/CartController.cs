@@ -177,13 +177,20 @@ namespace GameStore.Api.Controllers
 
             foreach (var item in cart.Items)
             {
-                var discountedPrice = await _discountService.ApplyDiscountAsync(
-                    item.Videogame!,
-                    item.UnitPrice,
-                    dto.CouponCode
-                );
+                try
+                {
+                    item.DiscountedUnitPrice =
+                        await _discountService.ApplyCouponAsync(
+                            item.Videogame!,
+                            item.UnitPrice,
+                            dto.CouponCode
+                        );
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return BadRequest(ex.Message);
+                }
 
-                item.DiscountedUnitPrice = discountedPrice;
             }
 
             await _context.SaveChangesAsync();

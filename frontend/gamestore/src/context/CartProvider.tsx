@@ -8,6 +8,7 @@ import type {
 import { CartContext } from "./CartContext";
 import { useAuth } from "@hooks/useAuth";
 import { clearCartStorage } from "@utils/clearCartStorage";
+import type { AxiosError } from "axios";
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -17,6 +18,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   const [cart, setCart] = useState<CartReadDto | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [couponError, setCouponError] = useState<string | null>(null);
+  const [isCouponLoading, setIsCouponLoading] = useState(false);
 
   const CART_STORAGE_KEY = user ? `shopping-cart-${user.id}` : null;
 
@@ -99,7 +101,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error("Error updating item:", error);
       }
     },
-    [fetchCart]
+    [fetchCart],
   );
 
   const decreaseItemQuantity = useCallback(
@@ -111,7 +113,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error("Error decreasing item quantity:", error);
       }
     },
-    [fetchCart]
+    [fetchCart],
   );
 
   const removeItem = useCallback(
@@ -123,7 +125,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error("Error removing item:", error);
       }
     },
-    [fetchCart]
+    [fetchCart],
   );
 
   const clearCart = useCallback(async () => {
@@ -139,26 +141,30 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   // =========================
   // COUPONS
   // =========================
-const applyCoupon = useCallback(
-  async (code: string): Promise<CartReadDto> => {
-    try {
-      setIsLoading(true);
-      const updatedCart = await cartApi.applyCoupon(code);
-      setCart(updatedCart);
-      setCouponError(null);
-      return updatedCart; // ✅ éxito
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Cupón inválido o expirado";
-      setCouponError(message);
-      throw new Error(message); // 🚨 CLAVE
-    } finally {
-      setIsLoading(false);
-    }
-  },
-  []
-);
 
+  const applyCoupon = useCallback(
+    async (code: string): Promise<CartReadDto> => {
+      try {
+        setIsCouponLoading(true);
+        const updatedCart = await cartApi.applyCoupon(code);
+        setCart(updatedCart);
+        setCouponError(null);
+        return updatedCart;
+      } catch (err) {
+        // Tipado correcto para Axios
+        const axiosError = err as AxiosError<{ data?: string }>;
+
+        const errorMessage = typeof axiosError.response?.data === "string" 
+          ? axiosError.response.data 
+          : "Error applying coupon";
+        setCouponError(errorMessage);
+        throw new Error(errorMessage);
+      } finally {
+        setIsCouponLoading(false);
+      }
+    },
+    [],
+  );
 
   // =========================
   // CHECKOUT
@@ -178,6 +184,10 @@ const applyCoupon = useCallback(
     }
   }, []);
 
+  const clearCouponError = useCallback(() => {
+    setCouponError(null);
+  }, []);
+
   return (
     <CartContext.Provider
       value={{
@@ -192,6 +202,8 @@ const applyCoupon = useCallback(
         clearCart,
         applyCoupon,
         checkoutCart,
+        clearCouponError,
+        isCouponLoading,
       }}
     >
       {children}

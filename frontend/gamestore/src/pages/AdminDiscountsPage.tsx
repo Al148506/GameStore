@@ -9,6 +9,7 @@ import type { CreateDiscountRequest } from "types/discount/discount";
 import NavbarGeneral from "@components/common/Navbar";
 import { useDiscountList } from "../hooks/useDiscountList";
 import { Pagination } from "@components/common/Pagination";
+import type { AxiosError } from "axios";
 
 export const AdminDiscountsPage = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -16,6 +17,7 @@ export const AdminDiscountsPage = () => {
   const { data, loading, page, totalPages, setPage, toggle } =
     useDiscountList();
 
+  const [formErrors, setFormErrors] = useState<Record<string, string[]>>({});
 
   const stats = useMemo(
     () => ({
@@ -24,38 +26,31 @@ export const AdminDiscountsPage = () => {
     }),
     [data],
   );
- 
+
   const handleCreateDiscount = async (data: CreateDiscountRequest) => {
     try {
+      setFormErrors({}); // limpiar errores previos
       await createDiscount(data);
 
       await Swal.fire({
         title: "¡Descuento Creado!",
-        html: `
-          <p style="margin: 0.5rem 0; color: #374151;">
-            El descuento <strong>${data.name}</strong> ha sido creado exitosamente.
-          </p>
-        `,
+        text: `El descuento "${data.name}" fue creado exitosamente.`,
         icon: "success",
-        confirmButtonText: "Entendido",
-        confirmButtonColor: "#3b82f6",
-        showClass: {
-          popup: "animate__animated animate__fadeInDown animate__faster",
-        },
-        hideClass: {
-          popup: "animate__animated animate__fadeOutUp animate__faster",
-        },
       });
 
       setShowCreateModal(false);
-      setRefreshKey((prev) => prev + 1); // Trigger refresh of discount list
-    } catch {
+      setRefreshKey((prev) => prev + 1);
+    } catch (err) {
+      const axiosError = err as AxiosError<{ [key: string]: string[] }>;
+      if (axiosError.response?.status === 400 && axiosError.response?.data) {
+        setFormErrors(axiosError.response.data);
+        return;
+      }
+
       Swal.fire({
         title: "Error",
-        text: "Hubo un problema al crear el descuento. Por favor, intenta nuevamente.",
+        text: "Ocurrió un error inesperado.",
         icon: "error",
-        confirmButtonText: "Cerrar",
-        confirmButtonColor: "#dc2626",
       });
     }
   };
@@ -132,6 +127,7 @@ export const AdminDiscountsPage = () => {
           mode="create"
           onClose={() => setShowCreateModal(false)}
           onCreate={handleCreateDiscount}
+          errors={formErrors}
         />
 
         <div className="pagination">

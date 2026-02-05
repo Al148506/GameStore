@@ -4,30 +4,27 @@ import "../../styles/cartCoupon.css";
 
 const CartCoupon = () => {
   const [couponCode, setCouponCode] = useState("");
-  const [couponError, setCouponError] = useState<string | null>(null);
   const [couponSuccess, setCouponSuccess] = useState<string | null>(null);
-  const { isLoading, applyCoupon } = useCart();
+  const { isCouponLoading, applyCoupon, couponError , clearCouponError} = useCart();
 
   const handleApplyCoupon = async () => {
     const code = couponCode.trim();
     if (!code) return;
 
-    setCouponError(null); // Limpiar error previo
     setCouponSuccess(null);
 
     try {
       await applyCoupon(code);
       setCouponSuccess("🎉 Cupón aplicado correctamente");
-      setCouponCode(""); // Limpiar input después del éxito
-    } catch (error) {
-      setCouponError(
-        error instanceof Error ? error.message : "Error al aplicar el cupón",
-      );
+      setCouponCode("");
+      setTimeout(() => setCouponSuccess(null), 3000);
+    } catch {
+      // error ya mostrado por couponError
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && couponCode.trim() && !isLoading) {
+    if (e.key === "Enter" && couponCode.trim() && !isCouponLoading) {
       handleApplyCoupon();
     }
   };
@@ -40,9 +37,12 @@ const CartCoupon = () => {
           className="coupon-input"
           placeholder="Ingresa tu código de cupón"
           value={couponCode}
-          onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+          onChange={(e) => {
+            setCouponCode(e.target.value.toUpperCase());
+            clearCouponError();
+          }}
           onKeyPress={handleKeyPress}
-          disabled={isLoading}
+          disabled={isCouponLoading}
           maxLength={20}
           aria-label="Código de cupón"
           aria-invalid={!!couponError}
@@ -52,10 +52,10 @@ const CartCoupon = () => {
         <button
           className="coupon-btn"
           onClick={handleApplyCoupon}
-          disabled={!couponCode.trim() || isLoading}
+          disabled={!couponCode.trim() || isCouponLoading}
           aria-label="Aplicar cupón"
         >
-          {isLoading ? (
+          {isCouponLoading ? (
             <>
               <span className="coupon-btn-spinner"></span>
               Aplicando...
@@ -72,7 +72,7 @@ const CartCoupon = () => {
         </small>
       )}
       {couponSuccess && (
-        <small className="coupon-success" id="coupon-error" role="information">
+        <small className="coupon-success" role="status">
           {couponSuccess}
         </small>
       )}

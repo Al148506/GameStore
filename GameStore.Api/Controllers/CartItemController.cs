@@ -66,10 +66,9 @@ namespace GameStore.Api.Controllers
             }
             else
             {
-                var discountedPrice = await _discountService.ApplyDiscountAsync(
+                var discountedPrice = await _discountService.ApplyAutomaticDiscountsAsync(
                     videogame,
-                    videogame.Price,
-                    null // cupón a nivel item (opcional)
+                    videogame.Price
                 );
 
                 var newItem = _mapper.Map<CartItem>(dto);

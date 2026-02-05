@@ -1,51 +1,29 @@
 ﻿using GameStore.Infrastructure.Persistence.Videogames.Enums;
+using GameStore.Infrastructure.Persistence.Videogames.Interfaces;
 using GameStore.Infrastructure.Persistence.Videogames.Models;
 using GameStore.Infrastructure.Persistence.Videogames;
-using GameStore.Infrastructure.Persistence.Videogames.Interfaces;
 
 public class DiscountService : IDiscountService
 {
     private readonly IDiscountRepository _discountRepository;
     private readonly ICouponValidator _couponValidator;
 
-
-    public DiscountService(IDiscountRepository discountRepository, ICouponValidator couponValidator)
+    public DiscountService(
+        IDiscountRepository discountRepository,
+        ICouponValidator couponValidator)
     {
         _discountRepository = discountRepository;
         _couponValidator = couponValidator;
     }
 
-    public DiscountService()
-    {
-    }
-
-    public async Task<decimal> ApplyDiscountAsync(
-    Videogame videogame,
-    decimal originalPrice,
-    string? couponCode)
+    // =========================
+    // AUTOMATIC DISCOUNTS
+    // =========================
+    public async Task<decimal> ApplyAutomaticDiscountsAsync(
+        Videogame videogame,
+        decimal originalPrice)
     {
         var discounts = await _discountRepository.GetActiveDiscountsAsync();
-
-        //  Validar cupón (si existe)
-        if (!string.IsNullOrWhiteSpace(couponCode))
-        {
-            var couponDiscount = await _couponValidator.ValidateAsync(couponCode);
-
-            if (couponDiscount != null &&
-                IsApplicable(couponDiscount, videogame))
-            {
-                var finalPrice = CalculateBestDiscount(
-                    new List<Discount> { couponDiscount },
-                    originalPrice
-                );
-
-                await _couponValidator.RegisterUsageAsync(
-                    couponDiscount.Coupon!.Id
-                );
-
-                return finalPrice;
-            }
-        }
 
         var applicableDiscounts = discounts
             .Where(d => IsApplicable(d, videogame))
@@ -54,34 +32,55 @@ public class DiscountService : IDiscountService
         return CalculateBestDiscount(applicableDiscounts, originalPrice);
     }
 
+    // =========================
+    // COUPON DISCOUNT
+    // =========================
+    public async Task<decimal> ApplyCouponAsync(
+        Videogame videogame,
+        decimal originalPrice,
+        string couponCode)
+    {
+        var couponDiscount = await _couponValidator.ValidateAsync(couponCode);
 
+        if (couponDiscount == null)
+            throw new InvalidOperationException("Cupón inválido o expirado");
+
+        if (!IsApplicable(couponDiscount, videogame))
+            throw new InvalidOperationException("El cupón no aplica a este producto");
+
+        await _couponValidator.RegisterUsageAsync(
+            couponDiscount.Coupon!.Id
+        );
+
+        return CalculateBestDiscount(
+            new List<Discount> { couponDiscount },
+            originalPrice
+        );
+    }
+
+    // =========================
+    // SHARED LOGIC
+    // =========================
     private bool IsApplicable(Discount discount, Videogame videogame)
     {
-        foreach (var scope in discount.DiscountScopes)
-        {
-            switch (scope.TargetType)
+        return discount.DiscountScopes.Any(scope =>
+            scope.TargetType switch
             {
-                case DiscountTargetType.All:
-                    return true;
+                DiscountTargetType.All => true,
 
-                case DiscountTargetType.Videogame:
-                    if (scope.TargetId == videogame.Id)
-                        return true;
-                    break;
+                DiscountTargetType.Videogame =>
+                    scope.TargetId == videogame.Id,
 
-                case DiscountTargetType.Genre:
-                    if (scope.TargetId.HasValue && videogame.Genres.Any(g => scope.TargetId.Value == (g.Id)))
-                        return true;
-                    break;
+                DiscountTargetType.Genre =>
+                    scope.TargetId.HasValue &&
+                    videogame.Genres.Any(g => g.Id == scope.TargetId),
 
-                case DiscountTargetType.Platform:
-                    if (scope.TargetId.HasValue && videogame.Platforms.Any(p => scope.TargetId.Value == p.Id))
-                        return true;
-                    break;
-            }
-        }
+                DiscountTargetType.Platform =>
+                    scope.TargetId.HasValue &&
+                    videogame.Platforms.Any(p => p.Id == scope.TargetId),
 
-        return false;
+                _ => false
+            });
     }
 
     private decimal CalculateBestDiscount(
@@ -92,16 +91,16 @@ public class DiscountService : IDiscountService
 
         foreach (var discount in discounts)
         {
-            decimal discountedPrice = originalPrice;
+            decimal discountedPrice = discount.ValueType switch
+            {
+                DiscountValueType.Percentage =>
+                    originalPrice - (originalPrice * discount.Value / 100m),
 
-            if (discount.ValueType == DiscountValueType.Percentage)
-            {
-                discountedPrice -= originalPrice * (discount.Value / 100m);
-            }
-            else if (discount.ValueType == DiscountValueType.Fixed)
-            {
-                discountedPrice -= discount.Value;
-            }
+                DiscountValueType.Fixed =>
+                    originalPrice - discount.Value,
+
+                _ => originalPrice
+            };
 
             if (discountedPrice < 0)
                 discountedPrice = 0;

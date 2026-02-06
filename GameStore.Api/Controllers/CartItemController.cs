@@ -1,9 +1,9 @@
-﻿// PUT: api/cart/items/{itemId}
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using AutoMapper;
 using GameStore.Api.Dtos.Cart;
 using GameStore.Api.DTOs.Cart;
 using GameStore.Infrastructure.Persistence.Videogames;
+using GameStore.Infrastructure.Persistence.Videogames.Interfaces;
 using GameStore.Infrastructure.Persistence.Videogames.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,54 +12,71 @@ using Microsoft.EntityFrameworkCore;
 namespace GameStore.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/cart")]
     [Authorize]
     public class CartItemController : ControllerBase
     {
         private readonly VideogamesDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IDiscountService _discountService;
 
-        public CartItemController(VideogamesDbContext context, IMapper mapper)
+        public CartItemController(
+            VideogamesDbContext context,
+            IMapper mapper,
+            IDiscountService discountService)
         {
             _context = context;
             _mapper = mapper;
+            _discountService = discountService;
         }
 
         // POST: api/cart/items
         [HttpPost("items")]
-        public async Task<ActionResult<CartReadDto>> AddItemToCart([FromBody] CartItemCreateDto dto)
+        public async Task<ActionResult<CartReadDto>> AddItemToCart(
+            [FromBody] CartItemCreateDto dto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
                 return Unauthorized();
 
-            var cart = await _context
-                .Carts.Include(c => c.Items)
+            var cart = await _context.Carts
+                .Include(c => c.Items)
                     .ThenInclude(i => i.Videogame)
-                .FirstOrDefaultAsync(c => c.UserId == userId && !c.IsCheckedOut);
+                .FirstOrDefaultAsync(c =>
+                    c.UserId == userId && !c.IsCheckedOut);
 
             if (cart == null)
                 return NotFound("No se encontró un carrito activo.");
 
-            var videogame = await _context.Videogames.FirstOrDefaultAsync(v =>
-                v.Id == dto.VideogameId
-            );
+            var videogame = await _context.Videogames
+                .Include(v => v.Genres)
+                .Include(v => v.Platforms)
+                .FirstOrDefaultAsync(v => v.Id == dto.VideogameId);
+
             if (videogame == null)
                 return NotFound("El videojuego especificado no existe.");
 
-            // Verificar si el producto ya está en el carrito
-            var existingItem = cart.Items.FirstOrDefault(i => i.VideogameId == dto.VideogameId);
+            var existingItem = cart.Items
+                .FirstOrDefault(i => i.VideogameId == dto.VideogameId);
+
             if (existingItem != null)
             {
+                // Solo aumenta cantidad (precio congelado)
                 existingItem.Quantity += dto.Quantity;
-                existingItem.Total = existingItem.Quantity * existingItem.UnitPrice;
             }
             else
             {
+                var discountedPrice = await _discountService.ApplyAutomaticDiscountsAsync(
+                    videogame,
+                    videogame.Price
+                );
+
                 var newItem = _mapper.Map<CartItem>(dto);
                 newItem.CartId = cart.Id;
+
                 newItem.UnitPrice = videogame.Price;
-                newItem.Total = newItem.UnitPrice * newItem.Quantity;
+                newItem.DiscountedUnitPrice = discountedPrice;
+
                 _context.CartItems.Add(newItem);
             }
 
@@ -70,56 +87,54 @@ namespace GameStore.Api.Controllers
             return Ok(cartReadDto);
         }
 
+        // PUT: api/cart/items/{itemId}
         [HttpPut("items/{itemId}")]
         public async Task<IActionResult> UpdateCartItem(
             int itemId,
-            [FromBody] CartItemUpdateDto dto
-        )
+            [FromBody] CartItemUpdateDto dto)
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(ModelState);
-            }
+
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
                 return Unauthorized();
 
-            var cartItem = await _context
-                .CartItems.Include(i => i.Cart)
+            var cartItem = await _context.CartItems
+                .Include(i => i.Cart)
                 .FirstOrDefaultAsync(i =>
-                    i.Id == itemId && i.Cart.UserId == userId && !i.Cart.IsCheckedOut
-                );
+                    i.Id == itemId &&
+                    i.Cart.UserId == userId &&
+                    !i.Cart.IsCheckedOut);
 
             if (cartItem == null)
                 return NotFound("No se encontró el producto en el carrito.");
 
-            // Actualizar cantidad y precio total
             cartItem.Quantity = dto.Quantity;
-            cartItem.Total = cartItem.Quantity * cartItem.UnitPrice;
             cartItem.Cart.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
             return NoContent();
         }
 
-        // PATCH: api/CartItem/decrease/{itemId}
-        [HttpPatch("decrease/{itemId}")]
+        // PATCH: api/cart/items/decrease/{itemId}
+        [HttpPatch("items/decrease/{itemId}")]
         public async Task<IActionResult> DecreaseItemQuantity(int itemId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
                 return Unauthorized();
 
-            var cartItem = await _context
-                .CartItems.Include(i => i.Cart)
+            var cartItem = await _context.CartItems
+                .Include(i => i.Cart)
                 .FirstOrDefaultAsync(i =>
-                    i.Id == itemId && i.Cart.UserId == userId && !i.Cart.IsCheckedOut
-                );
+                    i.Id == itemId &&
+                    i.Cart.UserId == userId &&
+                    !i.Cart.IsCheckedOut);
 
             if (cartItem == null)
                 return NotFound("No se encontró el producto en el carrito.");
 
-            // Disminuir 1 por defecto
             cartItem.Quantity -= 1;
 
             if (cartItem.Quantity <= 0)
@@ -128,24 +143,19 @@ namespace GameStore.Api.Controllers
                 cartItem.Cart.UpdatedAt = DateTime.UtcNow;
 
                 await _context.SaveChangesAsync();
-
                 return Ok(new { removed = true });
             }
 
-            // Si solo disminuyó
-            cartItem.Total = cartItem.Quantity * cartItem.UnitPrice;
             cartItem.Cart.UpdatedAt = DateTime.UtcNow;
-
             await _context.SaveChangesAsync();
 
-            return Ok(
-                new
-                {
-                    removed = false,
-                    quantity = cartItem.Quantity,
-                    total = cartItem.Total,
-                }
-            );
+            return Ok(new
+            {
+                removed = false,
+                quantity = cartItem.Quantity,
+                totalOriginal = cartItem.UnitPrice * cartItem.Quantity,
+                totalDiscounted = cartItem.DiscountedUnitPrice * cartItem.Quantity
+            });
         }
 
         // DELETE: api/cart/items/{itemId}
@@ -156,11 +166,12 @@ namespace GameStore.Api.Controllers
             if (userId == null)
                 return Unauthorized();
 
-            var item = await _context
-                .CartItems.Include(i => i.Cart)
+            var item = await _context.CartItems
+                .Include(i => i.Cart)
                 .FirstOrDefaultAsync(i =>
-                    i.Id == itemId && i.Cart.UserId == userId && !i.Cart.IsCheckedOut
-                );
+                    i.Id == itemId &&
+                    i.Cart.UserId == userId &&
+                    !i.Cart.IsCheckedOut);
 
             if (item == null)
                 return NotFound("No se encontró el producto en el carrito.");

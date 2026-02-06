@@ -68,7 +68,7 @@ public class DiscountsAdminController : ControllerBase
 
         try
         {
-            var scopes = request.DiscountScopes.Select(s => new DiscountScope
+            var scopes = request.Scopes.Select(s => new DiscountScope
             {
                 Id = Guid.NewGuid(),
                 TargetType = s.TargetType,

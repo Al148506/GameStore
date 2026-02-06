@@ -17,8 +17,8 @@ export interface CreateDiscountRequest {
   type: DiscountType;
   valueType: DiscountValueType;
   value: number;
-  startDate: string;
-  endDate: string;
+  startDate: string | null;
+  endDate: string | null;
   isActive: boolean;
   scopes: DiscountScopeDto[];
   coupon?: CreateCouponDto;
@@ -34,3 +34,41 @@ export interface DiscountListItem {
   startDate: string;
   endDate: string;
 }
+
+export interface UpdateDiscountScopeRequest {
+  id?: string;
+  targetType: string;
+  targetId: string;
+}
+
+export interface UpdateCouponRequest {
+  id?: string;
+  code: string;
+  maxUses?: number;
+}
+
+export interface UpdateDiscountRequest {
+  name: string;
+  type: string;
+  valueType: string;
+  value: number;
+  startDate: string;
+  endDate?: string;
+  isActive: boolean;
+  scopes: UpdateDiscountScopeRequest[];
+  coupon?: UpdateCouponRequest;
+}
+
+export interface DiscountDetailDto {
+  id: string;
+  name: string;
+  type: DiscountType;
+  valueType: DiscountValueType;
+  value: number;
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+  discountScopes: DiscountScopeDto[];
+  coupon?: CreateCouponDto;
+}
+

@@ -3,14 +3,14 @@ import "../../styles/scopeSelector.css";
 import { SingleSelectField } from "../common/SingleSelectField";
 
 type Props = {
-  scopes: DiscountScopeDto[];
+  scopes?: DiscountScopeDto[];
   genres: { id: number; name: string }[];
   platforms: { id: number; name: string }[];
   onChange: (scopes: DiscountScopeDto[]) => void;
 };
 
 export const ScopeSelector = ({
-  scopes,
+   scopes = [],
   genres,
   platforms,
   onChange,

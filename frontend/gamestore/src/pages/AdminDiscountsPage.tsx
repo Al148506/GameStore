@@ -8,26 +8,34 @@ import NavbarGeneral from "@components/common/Navbar";
 import { useDiscountList } from "../hooks/useDiscountList";
 import { Pagination } from "@components/common/Pagination";
 import { useDiscountAdmin } from "@hooks/useDiscountAdmin";
+import type { DiscountDetailDto } from "../types/discount/discount";
+import { getDiscountById } from "../api/discountsApi";
 
 export const AdminDiscountsPage = () => {
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [modalState, setModalState] = useState<{
+    open: boolean;
+    mode: "create" | "edit";
+    discount?: DiscountDetailDto;
+  }>({
+    open: false,
+    mode: "create",
+  });
 
-const {
-  data,
-  loading: listLoading,
-  page,
-  totalPages,
-  setPage,
-  toggle,
-} = useDiscountList();
+  const {
+    data,
+    loading: listLoading,
+    page,
+    totalPages,
+    setPage,
+    toggle,
+  } = useDiscountList();
 
-const {
-  submit,
-  loading: submitLoading,
-  fieldErrors,
-  success,
-} = useDiscountAdmin();
-
+  const {
+    submit,
+    loading: submitLoading,
+    fieldErrors,
+    success,
+  } = useDiscountAdmin();
 
   const stats = useMemo(
     () => ({
@@ -46,7 +54,10 @@ const {
       icon: "success",
     });
 
-    setShowCreateModal(false);
+    setModalState((prevState) => ({
+      ...prevState,
+      open: false,
+    }));
   }, [success]);
 
   return (
@@ -69,20 +80,28 @@ const {
         {/* Actions */}
         <div className="admin-discounts-page__actions">
           <div className="admin-discounts-page__stats">
-            <div>
-              <span>Total</span>
-              <strong>{listLoading ? "—" : stats.total}</strong>
+            <div className="admin-discounts-page__stat">
+              <span className="admin-discounts-page__stat-label">Total</span>
+              <span className="admin-discounts-page__stat-value admin-discounts-page__stat-value--primary">
+                {listLoading ? "—" : stats.total}
+              </span>
             </div>
-            <div>
-              <span>Activos</span>
-              <strong>{listLoading ? "—" : stats.active}</strong>
+            <div className="admin-discounts-page__stat">
+              <span className="admin-discounts-page__stat-label">Activos</span>
+              <span className="admin-discounts-page__stat-value admin-discounts-page__stat-value--success">
+                {listLoading ? "—" : stats.active}
+              </span>
             </div>
           </div>
-
           <Button
             text="Nuevo Descuento"
             variant="create"
-            onClick={() => setShowCreateModal(true)}
+            onClick={() =>
+              setModalState({
+                open: true,
+                mode: "create",
+              })
+            }
           />
         </div>
 
@@ -91,17 +110,37 @@ const {
           data={data}
           loading={listLoading}
           onToggle={toggle}
+          onEdit={async (discount) => {
+            try {
+              const fullDiscount = await getDiscountById(discount.id);
+
+              setModalState({
+                open: true,
+                mode: "edit",
+                discount: fullDiscount,
+              });
+            } catch (error) {
+              console.error("Error cargando descuento", error);
+              Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "No se pudo cargar el descuento para editar",
+              });
+            }
+          }}
         />
 
         {/* Modal */}
         <DiscountFormModal
-          isOpen={showCreateModal}
-          mode="create"
-          onClose={() => setShowCreateModal(false)}
+          isOpen={modalState.open}
+          mode={modalState.mode}
+          discountToEdit={modalState.discount}
+          onClose={() =>
+            setModalState((prevState) => ({ ...prevState, open: false }))
+          }
           onCreate={submit}
           errors={fieldErrors}
-          loading = {submitLoading}
-
+          loading={submitLoading}
         />
 
         {/* Pagination */}

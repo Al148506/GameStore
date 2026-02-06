@@ -4,7 +4,7 @@ type Props = {
   data: DiscountListItem[];
   loading: boolean;
   onToggle: (id: string) => void;
-  onEdit: (discount: DiscountListItem) => void; // 👈 NUEVO
+  onEdit: (discount: DiscountListItem) => void;
 };
 
 export const DiscountList = ({ data, loading, onToggle, onEdit }: Props) => {

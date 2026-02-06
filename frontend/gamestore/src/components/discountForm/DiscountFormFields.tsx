@@ -97,8 +97,7 @@ export function DiscountFormFields({
       {/* Valor */}
       <div className="form-group">
         <label>
-          Valor del descuento{" "}
-          {form.valueType === "Percentage" ? "(%)" : "($)"}
+          Valor del descuento {form.valueType === "Percentage" ? "(%)" : "($)"}
         </label>
         <input
           type="number"
@@ -130,6 +129,8 @@ export function DiscountFormFields({
       {/* Cupón */}
       <CouponFields
         enabled={form.type === "Coupon"}
+        code={form.coupon?.code}
+        maxUses={form.coupon?.maxUses}
         onChange={(coupon) => setForm((prev) => ({ ...prev, coupon }))}
       />
 
@@ -141,7 +142,7 @@ export function DiscountFormFields({
             id="startDate"
             type="date"
             name="startDate"
-            value={form.startDate?? ""}
+            value={form.startDate ?? ""}
             onChange={handleChange}
             className={getError("startDate") ? "input-error" : ""}
             required
@@ -157,7 +158,7 @@ export function DiscountFormFields({
             id="endDate"
             type="date"
             name="endDate"
-            value={form.endDate?? ""}
+            value={form.endDate ?? ""}
             onChange={handleChange}
             className={getError("endDate") ? "input-error" : ""}
             required

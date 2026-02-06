@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 using GameStore.Api.DTOs.Payment;
+using GameStore.Infrastructure.Persistence.Videogames.Interfaces;
 namespace GameStore.Api.Controllers
 {
     [ApiController]
@@ -15,34 +16,36 @@ namespace GameStore.Api.Controllers
         private readonly VideogamesDbContext _context;
         private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
-        private readonly DiscountService _discountService = new DiscountService();
+        private readonly DiscountService _discountService;
 
         public PaymentsController(
             IConfiguration config,
             VideogamesDbContext context,
             ILogger<PaymentsController> logger,
-            IWebHostEnvironment env
+            IWebHostEnvironment env,
+            IDiscountRepository discountRepository,
+            ICouponValidator couponValidator
         )
         {
             _config = config;
             _context = context;
             _logger = logger;
             _env = env;
+            _discountService = new DiscountService(discountRepository, couponValidator);
         }
 
         [HttpPost("apply")]
         public async Task<IActionResult> ApplyDiscount(
         ApplyDiscountRequest request)
-            {
-               
-            var finalPrice = await _discountService.ApplyDiscountAsync(
+        {
+
+            var finalPrice = await _discountService.ApplyAutomaticDiscountsAsync(
                     request.Videogame,
-                    request.Price,
-                    request.CouponCode
+                    request.Price
                 );
 
-                return Ok(new { finalPrice });
-            }
+            return Ok(new { finalPrice });
+        }
 
 
         [HttpPost("create-payment-link")]
@@ -101,7 +104,7 @@ namespace GameStore.Api.Controllers
                             UnitAmount = (long)(item.UnitPrice * 100),
                             ProductData = new PaymentLinkLineItemPriceDataProductDataOptions
                             {
-                                Name = item.Videogame.Name,
+                                Name = item.Videogame?.Name ?? "Sin nombre",
                             },
                         },
                         Quantity = item.Quantity,
@@ -119,10 +122,10 @@ namespace GameStore.Api.Controllers
 
                 // METADATA que el webhook necesita
                 Metadata = new Dictionary<string, string>
-                {
-                    { "userId", userId },
-                    { "cart", serializedCart },
-                },
+                    {
+                        { "userId", userId },
+                        { "cart", serializedCart },
+                    },
             };
 
             var service = new PaymentLinkService();

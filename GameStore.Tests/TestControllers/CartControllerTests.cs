@@ -44,7 +44,7 @@ namespace GameStore.Tests.Test
         // =========================================================
 
         [Fact]
-        public async Task GetCartByUser_ShouldEmpyCart_WhenUserHasNoCart()
+        public async Task GetCartByUser_ShouldCreateCart_WhenUserHasNoActiveCart()
         {
             // Arrange
             var db = await VideogameRepositoryTest.GetDatabaseContext(Guid.NewGuid().ToString());
@@ -81,56 +81,7 @@ namespace GameStore.Tests.Test
             var ok = Assert.IsType<OkObjectResult>(result.Result);
             Assert.IsType<CartReadDto>(ok.Value);
         }
-        // =========================================================
-        //                      CREATE CART
-        // =========================================================
-
-        [Fact]
-        public async Task CreateCart_ShouldReturnBadRequest_WhenCartIsEmpty()
-        {
-            // Arrange
-            var db = await VideogameRepositoryTest.GetDatabaseContext(Guid.NewGuid().ToString());
-            var mapper = TestMapperFactory.CreateMapper();
-            var controller = BuildController(db, mapper, "user123");
-
-            var dto = new CartCreateDto
-            {
-                Items = new List<CartItemCreateDto>()
-            };
-
-            // Act
-            var result = await controller.CreateCart(dto);
-
-            // Assert
-            Assert.IsType<BadRequestObjectResult>(result.Result);
-        }
-
-        [Fact]
-        public async Task CreateCart_ShouldCreateCart_WhenValid()
-        {
-            // Arrange
-            var db = await VideogameRepositoryTest.GetDatabaseContext(Guid.NewGuid().ToString());
-            var mapper = TestMapperFactory.CreateMapper();
-
-            var controller = BuildController(db, mapper, "user123");
-
-            var dto = new CartCreateDto
-            {
-                Items = new()
-                {
-                    new CartItemCreateDto { VideogameId = 1, Quantity = 2 }
-                }
-            };
-
-            // Act
-            var result = await controller.CreateCart(dto);
-
-            // Assert
-            var created = Assert.IsType<CreatedAtActionResult>(result.Result);
-            var cartDto = Assert.IsType<CartReadDto>(created.Value);
-
-            Assert.Single(cartDto.Items);
-        }
+       
 
         // =========================================================
         //                        CHECKOUT
@@ -159,6 +110,78 @@ namespace GameStore.Tests.Test
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
         }
+
+
+        [Fact]
+        public async Task Checkout_ShouldCreateOrder_WhenCartHasItems()
+        {
+            var db = await VideogameRepositoryTest.GetDatabaseContext(Guid.NewGuid().ToString());
+            var mapper = TestMapperFactory.CreateMapper();
+
+            var cart = new Cart
+            {
+                UserId = "user123",
+                IsCheckedOut = false
+            };
+
+            cart.Items.Add(new CartItem
+            {
+                VideogameId = 1,
+                Quantity = 2,
+                UnitPrice = 100,
+                DiscountedUnitPrice = 80
+            });
+
+            db.Carts.Add(cart);
+            await db.SaveChangesAsync();
+
+            var controller = BuildController(db, mapper, "user123");
+
+            var result = await controller.Checkout();
+
+            var ok = Assert.IsType<OkObjectResult>(result);
+            Assert.Single(db.Orders);
+
+            var order = db.Orders.First();
+            Assert.Equal(160, order.TotalAmount); // 2 * 80
+        }
+
+
+        // =========================================================
+        //                        CLEAR CART
+        // =========================================================
+        [Fact]
+        public async Task ClearCart_ShouldRemoveAllItems_WhenCartHasItems()
+        {
+            var db = await VideogameRepositoryTest.GetDatabaseContext(Guid.NewGuid().ToString());
+            var mapper = TestMapperFactory.CreateMapper();
+
+            var cart = new Cart
+            {
+                UserId = "user123",
+                IsCheckedOut = false
+            };
+
+            cart.Items.Add(new CartItem
+            {
+                VideogameId = 1,
+                Quantity = 1,
+                UnitPrice = 100,
+                DiscountedUnitPrice = 80
+            });
+
+            db.Carts.Add(cart);
+            await db.SaveChangesAsync();
+
+            var controller = BuildController(db, mapper, "user123");
+
+            var result = await controller.ClearCart();
+
+            Assert.IsType<NoContentResult>(result);
+            Assert.Empty(db.CartItems);
+        }
+
+
 
     }
 }

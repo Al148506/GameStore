@@ -1,7 +1,6 @@
 export interface CartItemCreateDto {
   videogameId: number;
   quantity: number;
-  unitPrice: number;
 }
 
 export interface CartItemUpdateDto {
@@ -14,5 +13,6 @@ export interface CartItemReadDto {
   videogameName: string;
   quantity: number;
   unitPrice: number;
+  discountedUnitPrice: number;
   total: number;
 }

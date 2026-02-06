@@ -18,17 +18,37 @@ namespace GameStore.Api.DTOs.Discounts
         [Range(0, 100, ErrorMessage = "El valor debe estar entre 0 y 100")]
         public decimal Value { get; set; }
 
-        [Required]
-        public DateTime StartDate { get; set; }
+        [Required(ErrorMessage = "La fecha de inicio es obligatoria")]
+        public DateTime? StartDate { get; set; }
 
-        [Required]
-        public DateTime EndDate { get; set; }
+        [Required(ErrorMessage = "La fecha de fin es obligatoria")]
+        public DateTime? EndDate { get; set; }
+
+        [CustomValidation(typeof(CreateDiscountRequest), nameof(ValidateDates))]
+        public CreateDiscountRequest Self => this;
+
+        public static ValidationResult? ValidateDates(
+            CreateDiscountRequest request,
+            ValidationContext context)
+        {
+            if (request.StartDate.HasValue &&
+                request.EndDate.HasValue &&
+                request.EndDate < request.StartDate)
+            {
+                return new ValidationResult(
+                    "La fecha de fin no puede ser anterior a la fecha de inicio",
+                    new[] { nameof(EndDate) }
+                );
+            }
+
+            return ValidationResult.Success;
+        }
+
 
         public bool IsActive { get; set; }
 
         [Required(ErrorMessage = "Debe especificar al menos un scope")]
-        [MinLength(1, ErrorMessage = "Debe tener al menos un scope")]
-        public List<DiscountScopeDto> DiscountScopes { get; set; }
+        public List<DiscountScopeDto> Scopes { get; set; }
         public CouponDto? Coupon { get; set; }
     }
 }

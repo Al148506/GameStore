@@ -4,6 +4,7 @@ import { useCart } from "../../hooks/useCart";
 import { CartItem } from "./CartItem";
 import { useEffect, useMemo } from "react";
 import Navbar from "@components/common/Navbar";
+import CartCoupon from "./CartCoupon";
 
 interface CartProps {
   mode?: "sidebar" | "fullscreen";
@@ -44,7 +45,6 @@ export function Cart({ mode = "sidebar", isOpen = false }: CartProps) {
             addItem({
               videogameId: item.videogameId,
               quantity: 1,
-              unitPrice: item.unitPrice,
             })
           }
         />
@@ -99,6 +99,7 @@ export function Cart({ mode = "sidebar", isOpen = false }: CartProps) {
                 </div>
 
                 <div className="cart-summary-section">
+                  <CartCoupon />
                   <div className="cart-summary">
                     <div className="summary-row">
                       <span>Subtotal:</span>
@@ -124,6 +125,9 @@ export function Cart({ mode = "sidebar", isOpen = false }: CartProps) {
                     <span>Total:</span>
                     <strong>${totalPrice.toFixed(2)}</strong>
                   </div>
+                </div>
+                <div className="cart-copun">
+                <CartCoupon/>
                 </div>
                 <CheckoutButton />
               </>

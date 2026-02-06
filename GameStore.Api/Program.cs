@@ -125,6 +125,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
 builder.Services.AddScoped<ICouponValidator, CouponValidator>();
 builder.Services.AddScoped<DiscountAdminService>();
+builder.Services.AddScoped<IDiscountService, DiscountService>();
+
 
 
 var app = builder.Build();

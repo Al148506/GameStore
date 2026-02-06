@@ -103,6 +103,7 @@
   color: #2563eb;
   font-weight: 500;
   cursor: pointer;
+  margin-bottom: 1rem;
 }
 
 .scope-selector__add-button:hover {

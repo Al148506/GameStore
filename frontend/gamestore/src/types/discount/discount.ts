@@ -17,8 +17,8 @@ export interface CreateDiscountRequest {
   type: DiscountType;
   valueType: DiscountValueType;
   value: number;
-  startDate: string;
-  endDate: string;
+  startDate: string | null;
+  endDate: string | null;
   isActive: boolean;
   scopes: DiscountScopeDto[];
   coupon?: CreateCouponDto;

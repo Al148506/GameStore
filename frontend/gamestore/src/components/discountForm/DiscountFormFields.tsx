@@ -8,6 +8,7 @@ interface DiscountFormFieldsProps {
   setForm: React.Dispatch<React.SetStateAction<CreateDiscountRequest>>;
   genres: { id: number; name: string }[];
   platforms: { id: number; name: string }[];
+  errors?: Record<string, string[]>;
 }
 
 export function DiscountFormFields({
@@ -15,34 +16,41 @@ export function DiscountFormFields({
   setForm,
   genres,
   platforms,
+  errors = {},
 }: DiscountFormFieldsProps) {
-  function handleChange(
+  const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) {
+  ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-  }
+  };
+
+  const getError = (field: string) => errors[field]?.[0];
 
   return (
     <>
-      {/* Name */}
+      {/* Nombre */}
       <div className="form-group">
-        <label htmlFor="name">Discount Name</label>
+        <label htmlFor="name">Nombre del descuento</label>
         <input
           id="name"
           name="name"
           type="text"
           value={form.name}
           onChange={handleChange}
-          placeholder="e.g., Summer Sale"
+          placeholder="Ej. Oferta de verano"
+          className={getError("name") ? "input-error" : ""}
           required
         />
+        {getError("name") && (
+          <span className="form-error">{getError("name")}</span>
+        )}
       </div>
 
-      {/* Type & ValueType */}
+      {/* Tipo y tipo de valor */}
       <div className="form-row">
         <div className="form-group">
-          <label htmlFor="type">Discount Type</label>
+          <label htmlFor="type">Tipo de descuento</label>
           <select
             id="type"
             name="type"
@@ -53,14 +61,18 @@ export function DiscountFormFields({
                 type: e.target.value as CreateDiscountRequest["type"],
               }))
             }
+            className={getError("type") ? "input-error" : ""}
           >
-            <option value="Seasonal">Seasonal</option>
-            <option value="Coupon">Coupon</option>
+            <option value="Seasonal">Temporada</option>
+            <option value="Coupon">Cupón</option>
           </select>
+          {getError("type") && (
+            <span className="form-error">{getError("type")}</span>
+          )}
         </div>
 
         <div className="form-group">
-          <label htmlFor="valueType">Value Type</label>
+          <label htmlFor="valueType">Tipo de valor</label>
           <select
             id="valueType"
             name="valueType"
@@ -68,21 +80,25 @@ export function DiscountFormFields({
             onChange={(e) =>
               setForm((prev) => ({
                 ...prev,
-                valueType:
-                  e.target.value as CreateDiscountRequest["valueType"],
+                valueType: e.target.value as CreateDiscountRequest["valueType"],
               }))
             }
+            className={getError("valueType") ? "input-error" : ""}
           >
-            <option value="Percentage">Percentage</option>
-            <option value="Fixed">Fixed</option>
+            <option value="Percentage">Porcentaje</option>
+            <option value="Fixed">Monto fijo</option>
           </select>
+          {getError("valueType") && (
+            <span className="form-error">{getError("valueType")}</span>
+          )}
         </div>
       </div>
 
-      {/* Value */}
+      {/* Valor */}
       <div className="form-group">
         <label>
-          Discount Value {form.valueType === "Percentage" ? "(%)" : "($)"}
+          Valor del descuento{" "}
+          {form.valueType === "Percentage" ? "(%)" : "($)"}
         </label>
         <input
           type="number"
@@ -95,8 +111,12 @@ export function DiscountFormFields({
               value: Number(e.target.value),
             }))
           }
+          className={getError("value") ? "input-error" : ""}
           required
         />
+        {getError("value") && (
+          <span className="form-error">{getError("value")}</span>
+        )}
       </div>
 
       {/* Scopes */}
@@ -104,43 +124,47 @@ export function DiscountFormFields({
         scopes={form.scopes}
         genres={genres}
         platforms={platforms}
-        onChange={(scopes) =>
-          setForm((prev) => ({ ...prev, scopes }))
-        }
+        onChange={(scopes) => setForm((prev) => ({ ...prev, scopes }))}
       />
 
-      {/* Coupon */}
+      {/* Cupón */}
       <CouponFields
         enabled={form.type === "Coupon"}
-        onChange={(coupon) =>
-          setForm((prev) => ({ ...prev, coupon }))
-        }
+        onChange={(coupon) => setForm((prev) => ({ ...prev, coupon }))}
       />
 
-      {/* Dates */}
+      {/* Fechas */}
       <div className="form-row">
         <div className="form-group">
-          <label htmlFor="startDate">Start Date</label>
+          <label htmlFor="startDate">Fecha de inicio</label>
           <input
             id="startDate"
             type="date"
             name="startDate"
-            value={form.startDate}
+            value={form.startDate?? ""}
             onChange={handleChange}
+            className={getError("startDate") ? "input-error" : ""}
             required
           />
+          {getError("startDate") && (
+            <span className="form-error">{getError("startDate")}</span>
+          )}
         </div>
 
         <div className="form-group">
-          <label htmlFor="endDate">End Date</label>
+          <label htmlFor="endDate">Fecha de fin</label>
           <input
             id="endDate"
             type="date"
             name="endDate"
-            value={form.endDate}
+            value={form.endDate?? ""}
             onChange={handleChange}
+            className={getError("endDate") ? "input-error" : ""}
             required
           />
+          {getError("endDate") && (
+            <span className="form-error">{getError("endDate")}</span>
+          )}
         </div>
       </div>
     </>

@@ -1,6 +1,9 @@
 import { useState } from "react";
-import type { CreateDiscountRequest } from "../types/discount/discount";
-import { createDiscount } from "../api/discountsApi";
+import type {
+  CreateDiscountRequest,
+  UpdateDiscountRequest,
+} from "../types/discount/discount";
+import { createDiscount, updateDiscount } from "../api/discountsApi";
 import { AxiosError } from "axios";
 
 export const useDiscountAdmin = () => {
@@ -48,11 +51,7 @@ export const useDiscountAdmin = () => {
           setFieldErrors(normalized);
         }
 
-        setError(
-          data.title ??
-            data.message ??
-            "Error al crear el descuento",
-        );
+        setError(data.title ?? data.message ?? "Error al crear el descuento");
       } else {
         setError("Error de conexión o error inesperado");
       }
@@ -62,5 +61,35 @@ export const useDiscountAdmin = () => {
     }
   };
 
-  return { submit, loading, error, fieldErrors, success };
+  const update = async (id: string, payload: UpdateDiscountRequest) => {
+    try {
+      setLoading(true);
+      setFieldErrors({});
+      setSuccess(false);
+
+      await updateDiscount(id, payload); // API
+
+      setSuccess(true);
+    } catch (e) {
+      if (e instanceof AxiosError && e.response?.data) {
+        const data = e.response.data;
+
+        console.log("📛 Response data:", data);
+
+        if (data.errors) {
+          const normalized = normalizeErrors(data.errors);
+          console.log("🧩 Errores normalizados:", normalized);
+          setFieldErrors(normalized);
+        }
+
+        setError(data.title ?? data.message ?? "Error al crear el descuento");
+      } else {
+        setError("Error de conexión o error inesperado");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { submit, update, loading, error, fieldErrors, success };
 };

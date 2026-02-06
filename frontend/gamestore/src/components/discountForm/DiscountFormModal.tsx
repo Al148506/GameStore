@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { CreateDiscountRequest } from "../../types/discount/discount";
+import type { CreateDiscountRequest, DiscountDetailDto, DiscountType, DiscountValueType } from "../../types/discount/discount";
 import { useVideogameOptions } from "@hooks/useVideogameOptions";
 import { DiscountFormFields } from "./DiscountFormFields";
 import Button from "@components/common/Button";
@@ -7,7 +7,7 @@ import "../../styles/discountFormModal.css";
 export interface DiscountFormModalProps {
   isOpen: boolean;
   mode: "create" | "edit";
-  discountToEdit?: CreateDiscountRequest & { id: string };
+  discountToEdit?: DiscountDetailDto;
   onClose: () => void;
   onCreate?: (data: CreateDiscountRequest) => Promise<void>;
   onSave?: (id: string, data: CreateDiscountRequest) => Promise<void>;
@@ -49,39 +49,57 @@ export function DiscountFormModal({
 useEffect(() => {
   if (!isOpen) return;
 
-  if (mode === "edit" && discountToEdit) {
-    setForm({
-      ...discountToEdit,
-      startDate: discountToEdit.startDate
-        ? discountToEdit.startDate.slice(0, 10)
-        : "",
-      endDate: discountToEdit.endDate
-        ? discountToEdit.endDate.slice(0, 10)
-        : "",
-    });
-  } else {
+ if (mode === "edit" && discountToEdit) {
+  setForm({
+    name: discountToEdit.name,
+    type: discountToEdit.type as DiscountType,
+    valueType: discountToEdit.valueType as DiscountValueType,
+    value: discountToEdit.value,
+    startDate: discountToEdit.startDate.slice(0, 10),
+    endDate: discountToEdit.endDate.slice(0, 10),
+    isActive: discountToEdit.isActive,
+
+    scopes: discountToEdit.discountScopes.map((s) => ({
+      targetType: s.targetType,
+      targetId: s.targetId ?? undefined,
+    })),
+
+    coupon: discountToEdit.coupon
+      ? {
+          code: discountToEdit.coupon.code,
+          maxUses: discountToEdit.coupon.maxUses ?? undefined,
+        }
+      : undefined,
+  });
+}
+
+
+  if (mode === "create") {
     setForm(defaultForm);
   }
 }, [isOpen, mode, discountToEdit]);
 
+
   if (!isOpen) return null;
+
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-     if (!form.startDate || !form.endDate) {
-    console.warn("⚠️ Fechas no seleccionadas");
-    errors = ({
-      startDate: ["La fecha de inicio es obligatoria"],
-      endDate: ["La fecha de fin es obligatoria"],
-    });
+    if (!form.startDate || !form.endDate) {
+      console.warn("⚠️ Fechas no seleccionadas");
+      errors = {
+        startDate: ["La fecha de inicio es obligatoria"],
+        endDate: ["La fecha de fin es obligatoria"],
+      };
 
-    return;
-  }
+      return;
+    }
 
     const payload: CreateDiscountRequest = {
       ...form,
-      
+
       startDate: new Date(form.startDate).toISOString(),
       endDate: new Date(form.endDate).toISOString(),
     };

@@ -18,12 +18,9 @@ export const CouponFields = ({
   const [localMaxUses, setLocalMaxUses] = useState<number | "">(maxUses ?? "");
 
   useEffect(() => {
-    setLocalCode(code);
-  }, [code]);
-
-  useEffect(() => {
+    setLocalCode(code ?? "");
     setLocalMaxUses(maxUses ?? "");
-  }, [maxUses]);
+  }, [code, maxUses]);
 
   const handleCodeChange = (value: string) => {
     const upperValue = value.toUpperCase();

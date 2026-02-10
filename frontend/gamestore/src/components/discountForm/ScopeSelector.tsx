@@ -7,13 +7,15 @@ type Props = {
   genres: { id: number; name: string }[];
   platforms: { id: number; name: string }[];
   onChange: (scopes: DiscountScopeDto[]) => void;
+  error?: string | null;
 };
 
 export const ScopeSelector = ({
-   scopes = [],
+  scopes = [],
   genres,
   platforms,
   onChange,
+  error 
 }: Props) => {
   const addScope = () => onChange([...scopes, { targetType: "All" }]);
 
@@ -51,6 +53,8 @@ export const ScopeSelector = ({
           <span className="scope-selector__count">{scopes.length}</span>
         )}
       </div>
+
+      {error && <div className="form-error scope-selector__error">{error}</div>}
 
       {scopes.length === 0 ? (
         <div className="scope-selector__empty">

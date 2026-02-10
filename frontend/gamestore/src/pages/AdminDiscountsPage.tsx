@@ -8,7 +8,10 @@ import NavbarGeneral from "@components/common/Navbar";
 import { useDiscountList } from "../hooks/useDiscountList";
 import { Pagination } from "@components/common/Pagination";
 import { useDiscountAdmin } from "@hooks/useDiscountAdmin";
-import type { DiscountDetailDto } from "../types/discount/discount";
+import type {
+  DiscountDetailDto,
+  UpdateDiscountRequest,
+} from "../types/discount/discount";
 import { getDiscountById } from "../api/discountsApi";
 
 export const AdminDiscountsPage = () => {
@@ -28,6 +31,7 @@ export const AdminDiscountsPage = () => {
     totalPages,
     setPage,
     toggle,
+    reload,
   } = useDiscountList();
 
   const {
@@ -35,7 +39,20 @@ export const AdminDiscountsPage = () => {
     loading: submitLoading,
     fieldErrors,
     success,
+    update,
   } = useDiscountAdmin();
+
+  const handleSave = async (id: string, data: UpdateDiscountRequest) => {
+    await update(id, data); // 👈 usa el hook
+    Swal.fire({
+      title: "¡Descuento actualizado!",
+      text: "Los cambios se guardaron correctamente.",
+      icon: "success",
+    });
+
+    reload(); // refresca lista
+    setModalState({ open: false, mode: "create" });
+  };
 
   const stats = useMemo(
     () => ({
@@ -54,10 +71,15 @@ export const AdminDiscountsPage = () => {
       icon: "success",
     });
 
-    setModalState((prevState) => ({
-      ...prevState,
+    setModalState((prev) => ({
+      ...prev,
       open: false,
     }));
+
+    // 🔥 Llamada directa
+    setTimeout(() => {
+      reload();
+    }, 0);
   }, [success]);
 
   return (
@@ -139,6 +161,7 @@ export const AdminDiscountsPage = () => {
             setModalState((prevState) => ({ ...prevState, open: false }))
           }
           onCreate={submit}
+          onSave={handleSave}
           errors={fieldErrors}
           loading={submitLoading}
         />

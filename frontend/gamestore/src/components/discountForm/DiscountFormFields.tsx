@@ -9,6 +9,7 @@ interface DiscountFormFieldsProps {
   genres: { id: number; name: string }[];
   platforms: { id: number; name: string }[];
   errors?: Record<string, string[]>;
+  globalError?: string | null;
 }
 
 export function DiscountFormFields({
@@ -17,12 +18,20 @@ export function DiscountFormFields({
   genres,
   platforms,
   errors = {},
+  globalError,
 }: DiscountFormFieldsProps) {
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+
+    setForm((prev) => ({
+      ...prev,
+      [name]:
+        (name === "startDate" || name === "endDate") && value === ""
+          ? null
+          : value,
+    }));
   };
 
   const getError = (field: string) => errors[field]?.[0];
@@ -124,6 +133,7 @@ export function DiscountFormFields({
         genres={genres}
         platforms={platforms}
         onChange={(scopes) => setForm((prev) => ({ ...prev, scopes }))}
+        error={globalError}
       />
 
       {/* Cupón */}
@@ -145,7 +155,6 @@ export function DiscountFormFields({
             value={form.startDate ?? ""}
             onChange={handleChange}
             className={getError("startDate") ? "input-error" : ""}
-            required
           />
           {getError("startDate") && (
             <span className="form-error">{getError("startDate")}</span>
@@ -161,7 +170,6 @@ export function DiscountFormFields({
             value={form.endDate ?? ""}
             onChange={handleChange}
             className={getError("endDate") ? "input-error" : ""}
-            required
           />
           {getError("endDate") && (
             <span className="form-error">{getError("endDate")}</span>

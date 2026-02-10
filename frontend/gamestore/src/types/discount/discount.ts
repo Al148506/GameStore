@@ -1,17 +1,41 @@
+// ==============================
+// Enums / Union Types
+// ==============================
 export type DiscountTargetType = "All" | "Videogame" | "Genre" | "Platform";
 export type DiscountType = "Seasonal" | "Coupon";
 export type DiscountValueType = "Percentage" | "Fixed";
 
-export interface DiscountScopeDto {
+// ==============================
+// Scopes
+// ==============================
+export interface DiscountScopeBase {
   targetType: DiscountTargetType;
   targetId?: number;
 }
 
-export interface CreateCouponDto {
+export type CreateDiscountScopeRequest = DiscountScopeBase;
+
+export type UpdateDiscountScopeRequest = DiscountScopeBase & {
+  id?: string;
+};
+
+// ==============================
+// Coupon
+// ==============================
+export interface CouponBase {
   code: string;
   maxUses?: number;
 }
 
+export type CreateCouponRequest = CouponBase;
+
+export type UpdateCouponRequest = CouponBase & {
+  id?: string;
+};
+
+// ==============================
+// Discount Requests
+// ==============================
 export interface CreateDiscountRequest {
   name: string;
   type: DiscountType;
@@ -20,43 +44,27 @@ export interface CreateDiscountRequest {
   startDate: string | null;
   endDate: string | null;
   isActive: boolean;
-  scopes: DiscountScopeDto[];
-  coupon?: CreateCouponDto;
+  scopes: CreateDiscountScopeRequest[];
+  coupon?: CreateCouponRequest;
 }
 
+export interface UpdateDiscountRequest extends CreateDiscountRequest {
+  scopes: UpdateDiscountScopeRequest[];
+  coupon?: UpdateCouponRequest;
+}
+
+// ==============================
+// List / Detail DTOs
+// ==============================
 export interface DiscountListItem {
   id: string;
   name: string;
-  type: string;
-  valueType: string;
+  type: DiscountType;
+  valueType: DiscountValueType;
   value: number;
   isActive: boolean;
   startDate: string;
   endDate: string;
-}
-
-export interface UpdateDiscountScopeRequest {
-  id?: string;
-  targetType: string;
-  targetId: string;
-}
-
-export interface UpdateCouponRequest {
-  id?: string;
-  code: string;
-  maxUses?: number;
-}
-
-export interface UpdateDiscountRequest {
-  name: string;
-  type: string;
-  valueType: string;
-  value: number;
-  startDate: string;
-  endDate?: string;
-  isActive: boolean;
-  scopes: UpdateDiscountScopeRequest[];
-  coupon?: UpdateCouponRequest;
 }
 
 export interface DiscountDetailDto {
@@ -68,7 +76,6 @@ export interface DiscountDetailDto {
   startDate: string;
   endDate: string;
   isActive: boolean;
-  discountScopes: DiscountScopeDto[];
-  coupon?: CreateCouponDto;
+  discountScopes: UpdateDiscountScopeRequest[];
+  coupon?: UpdateCouponRequest;
 }
-

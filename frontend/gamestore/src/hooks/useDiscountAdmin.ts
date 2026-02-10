@@ -4,7 +4,7 @@ import type {
   UpdateDiscountRequest,
 } from "../types/discount/discount";
 import { createDiscount, updateDiscount } from "../api/discountsApi";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 
 export const useDiscountAdmin = () => {
   const [loading, setLoading] = useState(false);
@@ -37,21 +37,30 @@ export const useDiscountAdmin = () => {
       console.log("✅ Descuento creado correctamente");
       setSuccess(true);
     } catch (e) {
-      console.error("❌ Error backend completo:", e);
+      if (axios.isAxiosError(e) && e.response?.data) {
+        const data = e.response.data as {
+          title?: string;
+          message?: string;
+          errors?: Record<string, string[]>;
+        };
 
-      // Type guard para AxiosError
-      if (e instanceof AxiosError && e.response?.data) {
-        const data = e.response.data;
-
-        console.log("📛 Response data:", data);
-
+        // 1️⃣ Errores por campo
         if (data.errors) {
           const normalized = normalizeErrors(data.errors);
-          console.log("🧩 Errores normalizados:", normalized);
           setFieldErrors(normalized);
+          setError(null);
+          return;
         }
 
-        setError(data.title ?? data.message ?? "Error al crear el descuento");
+        // 2️⃣ Error de negocio / global
+        if (data.message) {
+          setError(data.message);
+          setFieldErrors({});
+          return;
+        }
+
+        // 3️⃣ Fallback
+        setError(data.title ?? "Error al crear el descuento");
       } else {
         setError("Error de conexión o error inesperado");
       }

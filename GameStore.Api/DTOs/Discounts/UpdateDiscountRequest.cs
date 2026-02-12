@@ -29,8 +29,8 @@ namespace GameStore.Api.DTOs.Discounts
 
         [Required(ErrorMessage = "Debe especificar al menos un scope")]
         [MinLength(1, ErrorMessage = "Debe tener al menos un scope")] // ⬅️ CRÍTICO
-        [JsonPropertyName("discountScopes")]// ⬅️ Acepta "discountScopes" del JSON
-        public List<DiscountScopeDto> Scopes { get; set; } = new();
+        public List<DiscountScopeDto> DiscountScopes { get; set; } = new();
+
         public CouponDto? Coupon { get; set; }
     }
 }

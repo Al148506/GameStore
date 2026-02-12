@@ -129,10 +129,10 @@ export function DiscountFormFields({
 
       {/* Scopes */}
       <ScopeSelector
-        scopes={form.scopes}
+        scopes={form.discountScopes}
         genres={genres}
         platforms={platforms}
-        onChange={(scopes) => setForm((prev) => ({ ...prev, scopes }))}
+        onChange={(discountScopes) => setForm({ ...form, discountScopes })}
         error={globalError}
       />
 

@@ -44,12 +44,12 @@ export interface CreateDiscountRequest {
   startDate: string | null;
   endDate: string | null;
   isActive: boolean;
-  scopes: CreateDiscountScopeRequest[];
+  discountScopes: CreateDiscountScopeRequest[];
   coupon?: CreateCouponRequest;
 }
 
 export interface UpdateDiscountRequest extends CreateDiscountRequest {
-  scopes: UpdateDiscountScopeRequest[];
+  discountScopes: UpdateDiscountScopeRequest[];
   coupon?: UpdateCouponRequest;
 }
 

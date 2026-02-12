@@ -48,7 +48,8 @@ namespace GameStore.Api.DTOs.Discounts
         public bool IsActive { get; set; }
 
         [Required(ErrorMessage = "Debe especificar al menos un scope")]
-        public List<DiscountScopeDto> Scopes { get; set; }
+        [MinLength(1, ErrorMessage = "Debe tener al menos un scope")]
+        public List<DiscountScopeDto> DiscountScopes { get; set; } = new();
         public CouponDto? Coupon { get; set; }
     }
 }

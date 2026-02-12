@@ -1,12 +1,12 @@
-import type { DiscountScopeDto } from "../../types/discount/discount";
+import type { DiscountScopeBase } from "../../types/discount/discount";
 import "../../styles/scopeSelector.css";
 import { SingleSelectField } from "../common/SingleSelectField";
 
 type Props = {
-  scopes?: DiscountScopeDto[];
+  scopes?: DiscountScopeBase[];
   genres: { id: number; name: string }[];
   platforms: { id: number; name: string }[];
-  onChange: (scopes: DiscountScopeDto[]) => void;
+  onChange: (scopes: DiscountScopeBase[]) => void;
   error?: string | null;
 };
 
@@ -29,10 +29,10 @@ export const ScopeSelector = ({
     label: p.name,
   }));
 
-  const updateScope = <K extends keyof DiscountScopeDto>(
+  const updateScope = <K extends keyof DiscountScopeBase>(
     index: number,
     key: K,
-    value: DiscountScopeDto[K],
+    value: DiscountScopeBase[K],
   ) => {
     const copy = [...scopes];
     copy[index] = {
@@ -46,85 +46,85 @@ export const ScopeSelector = ({
     onChange(scopes.filter((_, idx) => idx !== i));
 
   return (
-    <div className="scope-selector">
-      <div className="scope-selector__header">
-        <h4 className="scope-selector__title">Discount Scopes</h4>
-        {scopes.length > 0 && (
-          <span className="scope-selector__count">{scopes.length}</span>
-        )}
-      </div>
+  <div className="scope-selector">
+  <div className="scope-selector__header">
+    <h4 className="scope-selector__title">Alcances del Descuento</h4>
+    {scopes.length > 0 && (
+      <span className="scope-selector__count">{scopes.length}</span>
+    )}
+  </div>
 
-      {error && <div className="form-error scope-selector__error">{error}</div>}
+  {error && <div className="form-error scope-selector__error">{error}</div>}
 
-      {scopes.length === 0 ? (
-        <div className="scope-selector__empty">
-          No scopes added yet. Click "Add Scope" to define where this discount
-          applies.
-        </div>
-      ) : (
-        <div className="scope-selector__list">
-          {scopes.map((s, i) => (
-            <div key={i} className="scope-item">
-              <select
-                className="scope-item__select"
-                value={s.targetType}
-                onChange={(e) =>
-                  updateScope(
-                    i,
-                    "targetType",
-                    e.target.value as
-                      | "All"
-                      | "Videogame"
-                      | "Genre"
-                      | "Platform",
-                  )
-                }
-                aria-label={`Scope ${i + 1} target type`}
-              >
-                <option value="All">All Products</option>
-                <option value="Videogame">Specific Videogame</option>
-                <option value="Genre">Genre</option>
-                <option value="Platform">Platform</option>
-              </select>
-
-              {s.targetType === "Genre" && (
-                <SingleSelectField
-                  options={genreOptions}
-                  value={s.targetId}
-                  placeholder="Select a genre"
-                  onChange={(val) => updateScope(i, "targetId", val)}
-                />
-              )}
-
-              {s.targetType === "Platform" && (
-                <SingleSelectField
-                  options={platformOptions}
-                  value={s.targetId}
-                  placeholder="Select a platform"
-                  onChange={(val) => updateScope(i, "targetId", val)}
-                />
-              )}
-
-              <button
-                className="scope-item__remove"
-                onClick={() => removeScope(i)}
-                aria-label={`Remove scope ${i + 1}`}
-              >
-                Remove
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <button
-        className="scope-selector__add-button"
-        onClick={addScope}
-        type="button"
-      >
-        <span className="scope-selector__add-icon">+</span>
-        Add Scope
-      </button>
+  {scopes.length === 0 ? (
+    <div className="scope-selector__empty">
+      Aún no se han agregado alcances. Haz clic en "Agregar alcance" para definir dónde se aplicará este descuento.
     </div>
+  ) : (
+    <div className="scope-selector__list">
+      {scopes.map((s, i) => (
+        <div key={i} className="scope-item">
+          <select
+            className="scope-item__select"
+            value={s.targetType}
+            onChange={(e) =>
+              updateScope(
+                i,
+                "targetType",
+                e.target.value as
+                  | "All"
+                  | "Videogame"
+                  | "Genre"
+                  | "Platform",
+              )
+            }
+            aria-label={`Tipo de alcance ${i + 1}`}
+          >
+            <option value="All">Todos los productos</option>
+            <option value="Videogame">Videojuego específico</option>
+            <option value="Genre">Género</option>
+            <option value="Platform">Plataforma</option>
+          </select>
+
+          {s.targetType === "Genre" && (
+            <SingleSelectField
+              options={genreOptions}
+              value={s.targetId}
+              placeholder="Selecciona un género"
+              onChange={(val) => updateScope(i, "targetId", val)}
+            />
+          )}
+
+          {s.targetType === "Platform" && (
+            <SingleSelectField
+              options={platformOptions}
+              value={s.targetId}
+              placeholder="Selecciona una plataforma"
+              onChange={(val) => updateScope(i, "targetId", val)}
+            />
+          )}
+
+          <button
+            className="scope-item__remove"
+            onClick={() => removeScope(i)}
+            aria-label={`Eliminar alcance ${i + 1}`}
+          >
+            Eliminar
+          </button>
+        </div>
+      ))}
+    </div>
+  )}
+
+  <button
+    className="scope-selector__add-button"
+    onClick={addScope}
+    type="button"
+  >
+    <span className="scope-selector__add-icon">+</span>
+    Agregar alcance
+  </button>
+</div>
+
   );
 };

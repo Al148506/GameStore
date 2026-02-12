@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import Button from "@components/common/Button";
 import { DiscountList } from "../components/discountList/DiscountList";
 import { DiscountFormModal } from "../components/discountForm/DiscountFormModal";
@@ -9,6 +9,7 @@ import { useDiscountList } from "../hooks/useDiscountList";
 import { Pagination } from "@components/common/Pagination";
 import { useDiscountAdmin } from "@hooks/useDiscountAdmin";
 import type {
+  CreateDiscountRequest,
   DiscountDetailDto,
   UpdateDiscountRequest,
 } from "../types/discount/discount";
@@ -38,18 +39,29 @@ export const AdminDiscountsPage = () => {
     submit,
     loading: submitLoading,
     fieldErrors,
-    success,
     update,
   } = useDiscountAdmin();
 
   const handleSave = async (id: string, data: UpdateDiscountRequest) => {
-    await update(id, data); // 👈 usa el hook
+    const ok = await update(id, data);
+    if (!ok) return;
     Swal.fire({
       title: "¡Descuento actualizado!",
       text: "Los cambios se guardaron correctamente.",
       icon: "success",
     });
+    reload(); // refresca lista
+    setModalState({ open: false, mode: "create" });
+  };
 
+  const handleCreate = async (data: CreateDiscountRequest) => {
+    const ok = await submit(data);
+    if (!ok) return;
+    Swal.fire({
+      title: "¡Descuento creado!",
+      text: "El descuento se ha creado correctamente.",
+      icon: "success",
+    });
     reload(); // refresca lista
     setModalState({ open: false, mode: "create" });
   };
@@ -61,26 +73,6 @@ export const AdminDiscountsPage = () => {
     }),
     [data],
   );
-
-  useEffect(() => {
-    if (!success) return;
-
-    Swal.fire({
-      title: "¡Descuento creado!",
-      text: "El descuento fue creado exitosamente.",
-      icon: "success",
-    });
-
-    setModalState((prev) => ({
-      ...prev,
-      open: false,
-    }));
-
-    // 🔥 Llamada directa
-    setTimeout(() => {
-      reload();
-    }, 0);
-  }, [success]);
 
   return (
     <>
@@ -160,7 +152,7 @@ export const AdminDiscountsPage = () => {
           onClose={() =>
             setModalState((prevState) => ({ ...prevState, open: false }))
           }
-          onCreate={submit}
+          onCreate={handleCreate}
           onSave={handleSave}
           errors={fieldErrors}
           loading={submitLoading}

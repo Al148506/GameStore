@@ -44,7 +44,7 @@ export function DiscountFormModal({
     startDate: null,
     endDate: null,
     isActive: true,
-    scopes: [],
+    discountScopes: [],
     coupon: undefined,
   };
 
@@ -66,9 +66,10 @@ export function DiscountFormModal({
           ? discountToEdit.endDate.slice(0, 10)
           : null,
         isActive: discountToEdit.isActive,
-        scopes: discountToEdit.discountScopes.map((s) => ({
+        discountScopes: discountToEdit.discountScopes.map((s) => ({
+          id:s.id,
           targetType: s.targetType,
-          targetId: s.targetId ?? undefined,
+          targetId: s.targetId,
         })),
         coupon: discountToEdit.coupon
           ? {

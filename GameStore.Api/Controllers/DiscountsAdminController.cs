@@ -68,7 +68,7 @@ public class DiscountsAdminController : ControllerBase
 
         try
         {
-            var scopes = request.Scopes.Select(s => new DiscountScope
+            var scopes = request.DiscountScopes.Select(s => new DiscountScope
             {
                 Id = Guid.NewGuid(),
                 TargetType = s.TargetType,
@@ -128,7 +128,7 @@ public class DiscountsAdminController : ControllerBase
                 StartDate = request.StartDate,
                 EndDate = request.EndDate,
                 IsActive = request.IsActive,
-                Scopes = request.Scopes.Select(s => new UpdateDiscountScopeCommand
+                Scopes = request.DiscountScopes.Select(s => new UpdateDiscountScopeCommand
                 {
                     Id = s.Id,
                     TargetType = s.TargetType,

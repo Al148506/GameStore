@@ -9,7 +9,9 @@ import axios, { AxiosError } from "axios";
 export const useDiscountAdmin = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [createSuccess, setCreateSuccess] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
   const normalizeErrors = (errors: Record<string, string[]>) => {
@@ -21,21 +23,17 @@ export const useDiscountAdmin = () => {
     );
   };
 
-  const submit = async (payload: CreateDiscountRequest) => {
+  const submit = async (payload: CreateDiscountRequest): Promise<boolean> => {
     console.group("🧪 useDiscountAdmin.submit");
 
     try {
       setLoading(true);
       setError(null);
       setFieldErrors({});
-      setSuccess(false);
-
-      console.log("📦 Payload enviado:", payload);
-
+      setCreateSuccess(false);
       await createDiscount(payload);
-
-      console.log("✅ Descuento creado correctamente");
-      setSuccess(true);
+      setCreateSuccess(true);
+      return true;
     } catch (e) {
       if (axios.isAxiosError(e) && e.response?.data) {
         const data = e.response.data as {
@@ -49,20 +47,19 @@ export const useDiscountAdmin = () => {
           const normalized = normalizeErrors(data.errors);
           setFieldErrors(normalized);
           setError(null);
-          return;
         }
 
         // 2️⃣ Error de negocio / global
         if (data.message) {
           setError(data.message);
           setFieldErrors({});
-          return;
         }
-
         // 3️⃣ Fallback
         setError(data.title ?? "Error al crear el descuento");
+        return false;
       } else {
         setError("Error de conexión o error inesperado");
+        return false;
       }
     } finally {
       setLoading(false);
@@ -70,15 +67,18 @@ export const useDiscountAdmin = () => {
     }
   };
 
-  const update = async (id: string, payload: UpdateDiscountRequest) => {
+  const update = async (
+    id: string,
+    payload: UpdateDiscountRequest,
+  ): Promise<boolean> => {
     try {
       setLoading(true);
       setFieldErrors({});
-      setSuccess(false);
+      setUpdateSuccess(false);
 
       await updateDiscount(id, payload); // API
-
-      setSuccess(true);
+      setUpdateSuccess(true);
+      return true;
     } catch (e) {
       if (e instanceof AxiosError && e.response?.data) {
         const data = e.response.data;
@@ -91,14 +91,26 @@ export const useDiscountAdmin = () => {
           setFieldErrors(normalized);
         }
 
-        setError(data.title ?? data.message ?? "Error al crear el descuento");
+        setError(
+          data.title ?? data.message ?? "Error al actualizar el descuento",
+        );
+        return false;
       } else {
         setError("Error de conexión o error inesperado");
+        return false;
       }
     } finally {
       setLoading(false);
     }
   };
 
-  return { submit, update, loading, error, fieldErrors, success };
+  return {
+    submit,
+    update,
+    loading,
+    error,
+    fieldErrors,
+    createSuccess,
+    updateSuccess,
+  };
 };

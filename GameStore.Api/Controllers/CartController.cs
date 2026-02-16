@@ -175,23 +175,9 @@ namespace GameStore.Api.Controllers
             if (cart == null)
                 return NotFound("No hay carrito activo.");
 
-            foreach (var item in cart.Items)
-            {
-                try
-                {
-                    item.DiscountedUnitPrice =
-                        await _discountService.ApplyCouponAsync(
-                            item.Videogame!,
-                            item.UnitPrice,
-                            dto.CouponCode
-                        );
-                }
-                catch (InvalidOperationException ex)
-                {
-                    return BadRequest(ex.Message);
-                }
-
-            }
+            decimal subtotal = cart.Items.Sum(i => i.Total);
+            decimal total = await _discountService
+    .ApplyCouponToCartAsync(subtotal, couponCode);
 
             await _context.SaveChangesAsync();
 

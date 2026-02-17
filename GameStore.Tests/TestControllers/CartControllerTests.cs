@@ -8,6 +8,7 @@ using GameStore.Tests.Mapper;
 using GameStore.Tests.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,9 +20,16 @@ namespace GameStore.Tests.Test
 {
     public class CartControllerTests
     {
+        private readonly Mock<IDiscountService> _discountServiceMock
+    = new Mock<IDiscountService>();
+
         private CartController BuildController(VideogamesDbContext db, IMapper mapper, string userId)
         {
-            var controller = new CartController(db, mapper);
+            var controller = new CartController(
+         db,
+         mapper,
+         _discountServiceMock.Object
+     );
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {

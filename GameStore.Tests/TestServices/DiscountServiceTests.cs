@@ -33,9 +33,8 @@ namespace GameStore.Tests.TestServices
         }
 
         [Fact]
-        public async Task ApplyDiscountAsync_GlobalDiscount_ShouldApply()
+        public async Task ApplyAutomaticDiscountsAsync_GlobalDiscount_ShouldApply()
         {
-            // Arrange
             var videogame = new Videogame
             {
                 Id = 1,
@@ -50,28 +49,24 @@ namespace GameStore.Tests.TestServices
                 Value = 20,
                 IsActive = true,
                 DiscountScopes = new List<DiscountScope>
-                {
-                    new DiscountScope
-                    {
-                        TargetType = DiscountTargetType.All
-                    }
-                }
+        {
+            new DiscountScope
+            {
+                TargetType = DiscountTargetType.All
+            }
+        }
             };
 
             _discountRepositoryMock
                 .Setup(r => r.GetActiveDiscountsAsync())
                 .ReturnsAsync(new List<Discount> { discount });
 
-            // Act
-            var finalPrice = await _discountService.ApplyDiscountAsync(
-                videogame,
-                videogame.Price,
-                null
-            );
+            var finalPrice = await _discountService
+                .ApplyAutomaticDiscountsAsync(videogame, videogame.Price);
 
-            // Assert
             Assert.Equal(80, finalPrice);
         }
+
 
         [Fact]
         public async Task ApplyDiscountAsync_WrongScope_ShouldNotApply()
@@ -103,11 +98,9 @@ namespace GameStore.Tests.TestServices
                 .Setup(r => r.GetActiveDiscountsAsync())
                 .ReturnsAsync(new List<Discount> { discount });
 
-            var finalPrice = await _discountService.ApplyDiscountAsync(
-                videogame,
-                videogame.Price,
-                null
-            );
+            var finalPrice = await _discountService
+      .ApplyAutomaticDiscountsAsync(videogame, videogame.Price);
+
 
             Assert.Equal(100, finalPrice);
         }
@@ -147,11 +140,9 @@ namespace GameStore.Tests.TestServices
                 .Setup(r => r.GetActiveDiscountsAsync())
                 .ReturnsAsync(new List<Discount> { discount10, discount30 });
 
-            var finalPrice = await _discountService.ApplyDiscountAsync(
-                videogame,
-                videogame.Price,
-                null
-            );
+            var finalPrice = await _discountService
+        .ApplyAutomaticDiscountsAsync(videogame, videogame.Price);
+
 
             Assert.Equal(70, finalPrice);
         }

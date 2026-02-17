@@ -177,7 +177,12 @@ namespace GameStore.Api.Controllers
 
             decimal subtotal = cart.Items.Sum(i => i.Total);
             decimal total = await _discountService
-    .ApplyCouponToCartAsync(subtotal, couponCode);
+    .ApplyCouponToCartAsync(subtotal, dto.CouponCode);
+
+            cart.Subtotal = subtotal;
+            cart.Total = total;
+            cart.DiscountAmount = subtotal - total;
+            cart.AppliedCouponCode = dto.CouponCode;
 
             await _context.SaveChangesAsync();
 

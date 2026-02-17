@@ -4,16 +4,19 @@ using GameStore.Infrastructure.Persistence.Videogames;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace GameStore.Infrastructure.Migrations
+namespace GameStore.Infrastructure.Migrations.Videogames
 {
     [DbContext(typeof(VideogamesDbContext))]
-    partial class VideogamesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260217205433_SyncCartFinancialFields")]
+    partial class SyncCartFinancialFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

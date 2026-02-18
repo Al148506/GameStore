@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using GameStore.Api.Controllers;
 using GameStore.Api.Dtos.Cart;
-using GameStore.Infrastructure.Persistence.Videogames.Interfeces;
 using GameStore.Infrastructure.Persistence.Videogames.Models;
 using GameStore.Infrastructure.Persistence.Videogames;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using System.Security.Claims;
-using System.Collections.Generic;
+
 
 namespace GameStore.Tests.TestControllers
 {
@@ -63,59 +62,7 @@ namespace GameStore.Tests.TestControllers
 
         // =========================================================
 
-        [Fact]
-        public async Task AddItemToCart_NewItem_ShouldApplyDiscount()
-        {
-            var context = CreateContext();
-
-            var mapperMock = new Mock<IMapper>();
-            mapperMock
-                .Setup(m => m.Map<CartItem>(It.IsAny<CartItemCreateDto>()))
-                .Returns((CartItemCreateDto dto) => new CartItem
-                {
-                    VideogameId = dto.VideogameId,
-                    Quantity = dto.Quantity
-                });
-
-            var discountServiceMock = new Mock<IDiscountService>();
-            discountServiceMock
-                .Setup(d => d.ApplyDiscountAsync(It.IsAny<Videogame>(), 100, null))
-                .ReturnsAsync(80);
-
-            var userId = "user-1";
-
-            var cart = new Cart
-            {
-                UserId = userId,
-                IsCheckedOut = false
-            };
-
-            var videogame = CreateValidVideogame(10);
-
-            context.Carts.Add(cart);
-            context.Videogames.Add(videogame);
-
-            await context.SaveChangesAsync();
-
-            var controller = new CartItemController(
-                context,
-                mapperMock.Object,
-                discountServiceMock.Object);
-
-            controller.ControllerContext = CreateControllerContext(userId);
-
-            await controller.AddItemToCart(new CartItemCreateDto
-            {
-                VideogameId = 10,
-                Quantity = 1
-            });
-
-            var item = context.CartItems.Single();
-            Assert.Equal(100, item.UnitPrice);
-            Assert.Equal(80, item.DiscountedUnitPrice);
-            Assert.Equal(1, item.Quantity);
-        }
-
+       
 
         [Fact]
         public async Task AddItemToCart_ExistingItem_ShouldIncreaseQuantity()

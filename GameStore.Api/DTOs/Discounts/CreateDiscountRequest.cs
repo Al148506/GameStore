@@ -19,10 +19,10 @@ namespace GameStore.Api.DTOs.Discounts
         public decimal Value { get; set; }
 
         [Required(ErrorMessage = "La fecha de inicio es obligatoria")]
-        public DateTime? StartDate { get; set; }
+        public DateTime StartDate { get; set; }
 
         [Required(ErrorMessage = "La fecha de fin es obligatoria")]
-        public DateTime? EndDate { get; set; }
+        public DateTime EndDate { get; set; }
 
         [CustomValidation(typeof(CreateDiscountRequest), nameof(ValidateDates))]
         public CreateDiscountRequest Self => this;
@@ -31,8 +31,7 @@ namespace GameStore.Api.DTOs.Discounts
             CreateDiscountRequest request,
             ValidationContext context)
         {
-            if (request.StartDate.HasValue &&
-                request.EndDate.HasValue &&
+            if (
                 request.EndDate < request.StartDate)
             {
                 return new ValidationResult(

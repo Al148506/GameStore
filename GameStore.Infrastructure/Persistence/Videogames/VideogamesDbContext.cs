@@ -97,11 +97,16 @@ public partial class VideogamesDbContext : DbContext
               .HasForeignKey(s => s.DiscountId)
               .OnDelete(DeleteBehavior.Cascade);
 
+
         modelBuilder.Entity<Discount>()
             .HasOne(d => d.Coupon)
             .WithOne(c => c.Discount)
             .HasForeignKey<Coupon>(c => c.DiscountId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Discount>()
+        .HasIndex(d => new { d.StartDate, d.EndDate })
+        .HasDatabaseName("IX_Discounts_StartDate_EndDate");
 
 
         modelBuilder.Entity<Coupon>()

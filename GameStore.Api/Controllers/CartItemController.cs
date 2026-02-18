@@ -78,9 +78,11 @@ namespace GameStore.Api.Controllers
                 newItem.DiscountedUnitPrice = discountedPrice;
 
                 _context.CartItems.Add(newItem);
+
             }
 
             cart.UpdatedAt = DateTime.UtcNow;
+            await RecalculateCartAsync(cart);
             await _context.SaveChangesAsync();
 
             var cartReadDto = _mapper.Map<CartReadDto>(cart);
@@ -112,7 +114,7 @@ namespace GameStore.Api.Controllers
 
             cartItem.Quantity = dto.Quantity;
             cartItem.Cart.UpdatedAt = DateTime.UtcNow;
-
+            await RecalculateCartAsync(cartItem.Cart);
             await _context.SaveChangesAsync();
             return NoContent();
         }
@@ -147,6 +149,8 @@ namespace GameStore.Api.Controllers
             }
 
             cartItem.Cart.UpdatedAt = DateTime.UtcNow;
+            await RecalculateCartAsync(cartItem.Cart);
+
             await _context.SaveChangesAsync();
 
             return Ok(new
@@ -177,9 +181,34 @@ namespace GameStore.Api.Controllers
                 return NotFound("No se encontró el producto en el carrito.");
 
             _context.CartItems.Remove(item);
+            await RecalculateCartAsync(item.Cart);
+
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
+
+        private async Task RecalculateCartAsync(Cart cart)
+        {
+            // Recalcular subtotal usando precio con descuento
+            cart.Subtotal = cart.Items
+                .Sum(i => i.DiscountedUnitPrice * i.Quantity);
+
+            // Si hay cupón aplicado, recalcular total
+            if (!string.IsNullOrEmpty(cart.AppliedCouponCode))
+            {
+                var newTotal = await _discountService
+                    .ApplyCouponToCartAsync(cart.Subtotal, cart.AppliedCouponCode);
+
+                cart.DiscountAmount = cart.Subtotal - newTotal;
+                cart.Total = newTotal;
+            }
+            else
+            {
+                cart.DiscountAmount = 0;
+                cart.Total = cart.Subtotal;
+            }
+        }
+
     }
 }

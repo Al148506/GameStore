@@ -33,6 +33,43 @@ namespace GameStore.Tests.TestServices
         }
 
         [Fact]
+        public async Task ApplyCouponToCartAsync_ShouldApplyOnlyOnceToSubtotal()
+        {
+            // Arrange
+            var coupon = new Discount
+            {
+                ValueType = DiscountValueType.Fixed,
+                Value = 10,
+                Coupon = new Coupon { Id = Guid.NewGuid() }
+            };
+
+            _couponValidatorMock
+                .Setup(c => c.ValidateAsync("SAVE10"))
+                .ReturnsAsync(coupon);
+
+            _couponValidatorMock
+                .Setup(c => c.RegisterUsageAsync(It.IsAny<Guid>()))
+                .Returns(Task.CompletedTask);
+
+            var cartItems = new List<CartItem>
+            {
+                new CartItem { UnitPrice = 40, Quantity = 1 },
+                new CartItem { UnitPrice = 30, Quantity = 2 } // 60
+            };
+
+            decimal subtotal = cartItems.Sum(i => i.UnitPrice * i.Quantity);
+
+
+            // Act
+            var total = await _discountService
+                .ApplyCouponToCartAsync(subtotal, "SAVE10");
+
+            // Assert
+            Assert.Equal(90, total);
+        }
+
+
+        [Fact]
         public async Task ApplyAutomaticDiscountsAsync_GlobalDiscount_ShouldApply()
         {
             var videogame = new Videogame

@@ -175,7 +175,7 @@ namespace GameStore.Api.Controllers
             if (cart == null)
                 return NotFound("No hay carrito activo.");
 
-            decimal subtotal = cart.Items.Sum(i => i.Total);
+            decimal subtotal = cart.Items.Sum(i => i.TotalDiscounted);
             decimal total = await _discountService
     .ApplyCouponToCartAsync(subtotal, dto.CouponCode);
 

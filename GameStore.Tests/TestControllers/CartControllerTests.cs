@@ -238,7 +238,7 @@ namespace GameStore.Tests.Test
 
             // Simular cupón fijo de 10
             discountServiceMock
-           .Setup(s => s.ApplyCouponToCartAsync(It.IsAny<decimal>(), "SAVE10"))
+           .Setup(s => s.TryApplyCouponAsync(It.IsAny<decimal>(), "SAVE10"))
            .ReturnsAsync((decimal subtotal, string code) => subtotal - 10);
 
             // Agregar item inicial
@@ -268,10 +268,19 @@ namespace GameStore.Tests.Test
             cart.Subtotal = cart.Items.Sum(i => i.DiscountedUnitPrice * i.Quantity);
 
             var newTotal = await discountServiceMock.Object
-                .ApplyCouponToCartAsync(cart.Subtotal, cart.AppliedCouponCode);
+                .TryApplyCouponAsync(cart.Subtotal, cart.AppliedCouponCode);
 
-            cart.Total = newTotal;
-            cart.DiscountAmount = cart.Subtotal - newTotal;
+            if (newTotal.HasValue)
+            {
+                cart.Total = newTotal.Value;
+                cart.DiscountAmount = cart.Subtotal - newTotal.Value;
+            }
+            else
+            {
+                cart.Total = cart.Subtotal;
+                cart.DiscountAmount = 0;
+            }
+          
 
             await context.SaveChangesAsync();
 

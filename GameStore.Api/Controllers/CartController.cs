@@ -160,7 +160,7 @@ namespace GameStore.Api.Controllers
 
         [HttpPost("apply-coupon")]
         public async Task<ActionResult<CartReadDto>> ApplyCoupon(
-    [FromBody] ApplyCouponDto dto)
+            [FromBody] ApplyCouponDto dto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
@@ -175,14 +175,26 @@ namespace GameStore.Api.Controllers
             if (cart == null)
                 return NotFound("No hay carrito activo.");
 
+            // 🔥 Caso: mismo cupón
+            if (!string.IsNullOrEmpty(cart.AppliedCouponCode) &&
+                cart.AppliedCouponCode.Equals(dto.CouponCode, StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest("Ese cupón ya está aplicado.");
+            }
+
             decimal subtotal = cart.Items.Sum(i => i.TotalDiscounted);
-            decimal total = await _discountService
-    .ApplyCouponToCartAsync(subtotal, dto.CouponCode);
+
+            var total = await _discountService
+                .TryApplyCouponAsync(subtotal, dto.CouponCode);
+
+            if (!total.HasValue)
+                return BadRequest("Cupón inválido o expirado.");
 
             cart.Subtotal = subtotal;
-            cart.Total = total;
-            cart.DiscountAmount = subtotal - total;
-            cart.AppliedCouponCode = dto.CouponCode;
+            cart.Total = total.Value;
+            cart.DiscountAmount = subtotal - total.Value;
+            cart.AppliedCouponCode = dto.CouponCode; // reemplaza si había otro
+            cart.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
 

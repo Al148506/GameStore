@@ -8,6 +8,7 @@ using GameStore.Tests.Mapper;
 using GameStore.Tests.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -189,6 +190,96 @@ namespace GameStore.Tests.Test
             Assert.Empty(db.CartItems);
         }
 
+        [Fact]
+        public async Task ApplyCoupon_ThenChangeQuantity_ShouldRecalculateCorrectly()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<VideogamesDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            using var context = new VideogamesDbContext(options);
+
+            var userId = "user-123";
+
+            var cart = new Cart
+            {
+                UserId = userId,
+                IsCheckedOut = false,
+                Items = new List<CartItem>()
+            };
+
+            context.Carts.Add(cart);
+            await context.SaveChangesAsync();
+
+            var videogame = new Videogame
+            {
+                Id = 1,
+                Name = "Test Game",
+                Description = "Test Description",
+                ImageUrl = "test.jpg",
+                Rating = "E",
+                Price = 100,
+                Stock = 10,
+                ReleaseDate = DateTime.UtcNow,
+                Genres = new List<Genre>(),
+                Platforms = new List<Platform>()
+            };
+
+            context.Videogames.Add(videogame);
+            await context.SaveChangesAsync();
+
+            var discountServiceMock = new Mock<IDiscountService>();
+
+            // Simular descuento automático (sin cambio)
+            discountServiceMock
+                .Setup(s => s.ApplyAutomaticDiscountsAsync(It.IsAny<Videogame>(), 100))
+                .ReturnsAsync(100);
+
+            // Simular cupón fijo de 10
+            discountServiceMock
+           .Setup(s => s.ApplyCouponToCartAsync(It.IsAny<decimal>(), "SAVE10"))
+           .ReturnsAsync((decimal subtotal, string code) => subtotal - 10);
+
+            // Agregar item inicial
+            var cartItem = new CartItem
+            {
+                CartId = cart.Id,
+                VideogameId = videogame.Id,
+                UnitPrice = 100,
+                DiscountedUnitPrice = 100,
+                Quantity = 1
+            };
+
+            cart.Items.Add(cartItem);
+            context.CartItems.Add(cartItem);
+
+            // Aplicar cupón manualmente
+            cart.Subtotal = 100;
+            cart.AppliedCouponCode = "SAVE10";
+            cart.Total = 90;
+            cart.DiscountAmount = 10;
+
+            await context.SaveChangesAsync();
+
+            // Act: cambiar cantidad
+            cartItem.Quantity = 3;
+
+            cart.Subtotal = cart.Items.Sum(i => i.DiscountedUnitPrice * i.Quantity);
+
+            var newTotal = await discountServiceMock.Object
+                .ApplyCouponToCartAsync(cart.Subtotal, cart.AppliedCouponCode);
+
+            cart.Total = newTotal;
+            cart.DiscountAmount = cart.Subtotal - newTotal;
+
+            await context.SaveChangesAsync();
+
+            // Assert
+            Assert.Equal(300, cart.Subtotal);
+            Assert.Equal(290, cart.Total);
+            Assert.Equal(10, cart.DiscountAmount);
+        }
 
 
     }

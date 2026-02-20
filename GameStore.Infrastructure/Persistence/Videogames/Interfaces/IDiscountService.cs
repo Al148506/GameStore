@@ -7,7 +7,7 @@ public interface IDiscountService
         decimal originalPrice
     );
 
-    Task<decimal> ApplyCouponToCartAsync(
+    Task<decimal?> TryApplyCouponAsync(
         decimal subtotal,
         string couponCode
     );

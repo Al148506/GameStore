@@ -2,7 +2,7 @@ import { ClearCartIcon } from "./Icons";
 import "../../styles/cart.css";
 import { useCart } from "../../hooks/useCart";
 import { CartItem } from "./CartItem";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import Navbar from "@components/common/Navbar";
 import CartCoupon from "./CartCoupon";
 
@@ -24,15 +24,6 @@ export function Cart({ mode = "sidebar", isOpen = false }: CartProps) {
   useEffect(() => {
     fetchCart();
   }, [fetchCart]);
-
-  const totalPrice = useMemo(() => {
-    return (
-      cart?.items?.reduce(
-        (sum, item) => sum + item.unitPrice * item.quantity,
-        0,
-      ) || 0
-    );
-  }, [cart]);
 
   const CartItemsList = () => (
     <ul>
@@ -103,15 +94,17 @@ export function Cart({ mode = "sidebar", isOpen = false }: CartProps) {
                   <div className="cart-summary">
                     <div className="summary-row">
                       <span>Subtotal:</span>
-                      <strong>${totalPrice.toFixed(2)}</strong>
+                      <strong>${cart?.subtotal?.toFixed(2) ?? "0.00"}</strong>
                     </div>
-                    <div className="summary-row">
-                      <span>Envío:</span>
-                      <span>Gratis</span>
-                    </div>
+                    {cart?.discountAmount > 0 && (
+                      <div className="summary-row discount">
+                        <span>Descuento ({cart.appliedCouponCode}):</span>
+                        <strong>- ${cart.discountAmount.toFixed(2)}</strong>
+                      </div>
+                    )}
                     <div className="summary-row">
                       <span>Total:</span>
-                      <strong>${totalPrice.toFixed(2)}</strong>
+                      <strong>${cart?.total?.toFixed(2) ?? "0.00"}</strong>
                     </div>
                   </div>
                   <CheckoutButton />
@@ -122,12 +115,17 @@ export function Cart({ mode = "sidebar", isOpen = false }: CartProps) {
                 <CartItemsList />
                 <div className="cart-summary">
                   <div className="summary-row">
+                    {cart?.appliedCouponCode &&
+                     <span>Cupon aplicado: </span>}
+                     <strong>{cart.appliedCouponCode}</strong>
+                    </div>
+                  <div className="summary-row">
                     <span>Total:</span>
-                    <strong>${totalPrice.toFixed(2)}</strong>
+                    <strong>${cart?.total?.toFixed(2) ?? "0.00"}</strong>
                   </div>
                 </div>
                 <div className="cart-copun">
-                <CartCoupon/>
+                  <CartCoupon />
                 </div>
                 <CheckoutButton />
               </>

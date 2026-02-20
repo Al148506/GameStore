@@ -26,6 +26,7 @@ public class DiscountService : IDiscountService
         var discounts = await _discountRepository.GetActiveDiscountsAsync();
 
         var applicableDiscounts = discounts
+            .Where(d => d.Type == DiscountType.Seasonal)
             .Where(d => IsApplicable(d, videogame))
             .ToList();
 
@@ -35,14 +36,14 @@ public class DiscountService : IDiscountService
     // =========================
     // COUPON DISCOUNT
     // =========================
-    public async Task<decimal> ApplyCouponToCartAsync(
+    public async Task<decimal?> TryApplyCouponAsync(
         decimal cartSubtotal,
         string couponCode)
     {
         var couponDiscount = await _couponValidator.ValidateAsync(couponCode);
 
         if (couponDiscount == null)
-            throw new InvalidOperationException("Cupón inválido o expirado");
+            return null;
 
         decimal finalTotal = couponDiscount.ValueType switch
         {
@@ -57,10 +58,6 @@ public class DiscountService : IDiscountService
 
         if (finalTotal < 0)
             finalTotal = 0;
-
-        await _couponValidator.RegisterUsageAsync(
-            couponDiscount.Coupon!.Id
-        );
 
         return finalTotal;
     }

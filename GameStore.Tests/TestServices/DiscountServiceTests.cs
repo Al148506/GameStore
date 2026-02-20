@@ -62,7 +62,7 @@ namespace GameStore.Tests.TestServices
 
             // Act
             var total = await _discountService
-                .ApplyCouponToCartAsync(subtotal, "SAVE10");
+                .TryApplyCouponAsync(subtotal, "SAVE10");
 
             // Assert
             Assert.Equal(90, total);

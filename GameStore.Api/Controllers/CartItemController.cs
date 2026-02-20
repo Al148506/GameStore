@@ -151,6 +151,7 @@ namespace GameStore.Api.Controllers
             cartItem.Cart.UpdatedAt = DateTime.UtcNow;
             await RecalculateCartAsync(cartItem.Cart);
 
+
             await _context.SaveChangesAsync();
 
             return Ok(new
@@ -190,18 +191,26 @@ namespace GameStore.Api.Controllers
 
         private async Task RecalculateCartAsync(Cart cart)
         {
-            // Recalcular subtotal usando precio con descuento
             cart.Subtotal = cart.Items
                 .Sum(i => i.DiscountedUnitPrice * i.Quantity);
 
-            // Si hay cupón aplicado, recalcular total
             if (!string.IsNullOrEmpty(cart.AppliedCouponCode))
             {
                 var newTotal = await _discountService
-                    .ApplyCouponToCartAsync(cart.Subtotal, cart.AppliedCouponCode);
+                    .TryApplyCouponAsync(cart.Subtotal, cart.AppliedCouponCode);
 
-                cart.DiscountAmount = cart.Subtotal - newTotal;
-                cart.Total = newTotal;
+                if (newTotal.HasValue)
+                {
+                    cart.Total = newTotal.Value;
+                    cart.DiscountAmount = cart.Subtotal - newTotal.Value;
+                }
+                else
+                {
+                    // Cupón expiró o ya no es válido
+                    cart.AppliedCouponCode = null;
+                    cart.DiscountAmount = 0;
+                    cart.Total = cart.Subtotal;
+                }
             }
             else
             {

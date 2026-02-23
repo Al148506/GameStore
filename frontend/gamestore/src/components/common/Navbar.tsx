@@ -33,83 +33,103 @@ export function NavbarGeneral() {
   };
 
   return (
-    <nav className="navbar-general">
-      <div className="navbar-general-container">
-        <Link to="/home" className="nav-logo">
-           VideogameStore 
-        </Link>
-
-        <button
-          className="menu-toggle"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          <span className="hamburger-icon">{isMenuOpen ? "✕" : "☰"}</span>
-        </button>
-
-        <div className={`nav-links ${isMenuOpen ? "open" : ""}`}>
-          <Link
-            to="/home"
-            className={location.pathname === "/home" ? "active" : ""}
-            onClick={handleLinkClick}
-          >
-            Inicio
-          </Link>
-          <Link
-            to="/order-history"
-            className={location.pathname === "/order-history" ? "active" : ""}
-            onClick={handleLinkClick}
-          >
-            Mis Compras
+    <>
+      <nav className="navbar-general">
+        <div className="navbar-general-container">
+          <Link to="/home" className="nav-logo">
+            VideogameStore
           </Link>
 
-          <Link
-            to="/cart"
-            className={location.pathname === "/cart" ? "active" : ""}
-            onClick={handleLinkClick}
+          <button
+            className="menu-toggle"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle menu"
           >
-            Carrito
-          </Link>
+            <span className={`hamburger-icon ${isMenuOpen ? "open" : ""}`}>
+              {isMenuOpen ? "✕" : "☰"}
+            </span>
+          </button>
 
-          <Link
-            to="/profile"
-            className={location.pathname === "/profile" ? "active" : ""}
-            onClick={handleLinkClick}
-          >
-            Mi Cuenta
-          </Link>
-          {isAdmin && (
-            <>
-              <Link
-                to="/account-managment"
-                className={
-                  location.pathname === "/account-managment" ? "active" : ""
-                }
-                onClick={handleLinkClick}
-              >
-                Manejo de cuentas
-              </Link>
-              <Link
-                to="/discount-managment"
-                className={
-                  location.pathname === "/discount-managment" ? "active" : ""
-                }
-                onClick={handleLinkClick}
-              >
-                Manejo de descuentos
-              </Link>
-            </>
-          )}
+          <div className={`nav-links ${isMenuOpen ? "open" : ""}`}>
+            <Link
+              to="/home"
+              className={location.pathname === "/home" ? "active" : ""}
+              onClick={handleLinkClick}
+            >
+              Inicio
+            </Link>
+
+            <Link
+              to="/order-history"
+              className={location.pathname === "/order-history" ? "active" : ""}
+              onClick={handleLinkClick}
+            >
+              Mis Compras
+            </Link>
+
+            <Link
+              to="/cart"
+              className={location.pathname === "/cart" ? "active" : ""}
+              onClick={handleLinkClick}
+            >
+              Carrito
+            </Link>
+
+            <Link
+              to="/profile"
+              className={location.pathname === "/profile" ? "active" : ""}
+              onClick={handleLinkClick}
+            >
+              Mi Cuenta
+            </Link>
+
+            {isAdmin && (
+              <>
+                <Link
+                  to="/account-managment"
+                  className={
+                    location.pathname === "/account-managment" ? "active" : ""
+                  }
+                  onClick={handleLinkClick}
+                >
+                  Manejo de cuentas
+                </Link>
+
+                <Link
+                  to="/discount-managment"
+                  className={
+                    location.pathname === "/discount-managment" ? "active" : ""
+                  }
+                  onClick={handleLinkClick}
+                >
+                  Manejo de descuentos
+                </Link>
+              </>
+            )}
+
+            {/* Sección móvil */}
+            <div className="nav-mobile-extra">
+              <span className="nav-mobile-username">
+                Bienvenido, {user?.username}
+              </span>
+
+              <Button
+                text="Cerrar sesión"
+                onClick={handleLogout}
+                variant="closesession"
+              />
+            </div>
+          </div>
         </div>
+      </nav>
 
-        <Button
-          text="Cerrar sesión"
-          onClick={handleLogout}
-          variant="closesession"
+      {isMenuOpen && (
+        <div
+          className="nav-overlay"
+          onClick={() => setIsMenuOpen(false)}
         />
-        <label className="nav-lbl-username">Bienvenido, {user?.username}</label>
-      </div>
-    </nav>
+      )}
+    </>
   );
 }
 

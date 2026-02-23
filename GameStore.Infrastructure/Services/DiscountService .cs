@@ -26,6 +26,7 @@ public class DiscountService : IDiscountService
         var discounts = await _discountRepository.GetActiveDiscountsAsync();
 
         var applicableDiscounts = discounts
+            .Where(d => d.Type == DiscountType.Seasonal)
             .Where(d => IsApplicable(d, videogame))
             .ToList();
 
@@ -35,28 +36,32 @@ public class DiscountService : IDiscountService
     // =========================
     // COUPON DISCOUNT
     // =========================
-    public async Task<decimal> ApplyCouponAsync(
-        Videogame videogame,
-        decimal originalPrice,
+    public async Task<decimal?> TryApplyCouponAsync(
+        decimal cartSubtotal,
         string couponCode)
     {
         var couponDiscount = await _couponValidator.ValidateAsync(couponCode);
 
         if (couponDiscount == null)
-            throw new InvalidOperationException("Cupón inválido o expirado");
+            return null;
 
-        if (!IsApplicable(couponDiscount, videogame))
-            throw new InvalidOperationException("El cupón no aplica a este producto");
+        decimal finalTotal = couponDiscount.ValueType switch
+        {
+            DiscountValueType.Percentage =>
+                cartSubtotal - (cartSubtotal * couponDiscount.Value / 100m),
 
-        await _couponValidator.RegisterUsageAsync(
-            couponDiscount.Coupon!.Id
-        );
+            DiscountValueType.Fixed =>
+                cartSubtotal - couponDiscount.Value,
 
-        return CalculateBestDiscount(
-            new List<Discount> { couponDiscount },
-            originalPrice
-        );
+            _ => cartSubtotal
+        };
+
+        if (finalTotal < 0)
+            finalTotal = 0;
+
+        return finalTotal;
     }
+
 
     // =========================
     // SHARED LOGIC

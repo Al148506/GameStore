@@ -4,16 +4,19 @@ using GameStore.Infrastructure.Persistence.Videogames;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace GameStore.Infrastructure.Migrations
+namespace GameStore.Infrastructure.Migrations.Videogames
 {
     [DbContext(typeof(VideogamesDbContext))]
-    partial class VideogamesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260217205433_SyncCartFinancialFields")]
+    partial class SyncCartFinancialFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -146,7 +149,7 @@ namespace GameStore.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
@@ -156,7 +159,7 @@ namespace GameStore.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("StartDate")
+                    b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Type")
@@ -169,9 +172,6 @@ namespace GameStore.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("StartDate", "EndDate")
-                        .HasDatabaseName("IX_Discounts_StartDate_EndDate");
 
                     b.ToTable("Discounts");
                 });

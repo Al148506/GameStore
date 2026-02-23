@@ -9,7 +9,7 @@
   width: 400px;
   height: calc(100vh - 75px);
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
-  z-index: 9998;
+  z-index: 1;
   overflow-y: auto;
   animation: slideIn 0.3s ease-out;
 }
@@ -126,7 +126,7 @@
   top: 60px;
   transition: all 0.3s ease;
   width: 48px;
-  z-index: 9999;
+  z-index: 1111;
   box-shadow: 0 4px 12px rgba(233, 69, 96, 0.4);
 }
 

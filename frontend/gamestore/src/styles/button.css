@@ -18,20 +18,23 @@
   align-items: center;
   justify-content: center;
   gap: 6px; /* Espacio para iconos */
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  text-align: center;
   position: relative;
   overflow: hidden;
-  box-shadow: 
+  max-width: 100%;
+  box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.1),
     0 1px 2px rgba(0, 0, 0, 0.06);
-  
+
   /* Accesibilidad y rendimiento */
   min-height: 36px; /* Touch target mínimo */
-  min-width: 44px;
+  min-width: 100px;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 
-  margin-bottom:12px;
+  margin-bottom: 12px;
 }
 
 /* Efecto ripple sutil */
@@ -39,10 +42,16 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.3) 0%,
+    transparent 70%
+  );
   opacity: 0;
   transform: scale(0);
-  transition: transform 0.6s ease, opacity 0.6s ease;
+  transition:
+    transform 0.6s ease,
+    opacity 0.6s ease;
 }
 
 .custom-btn:active::before {
@@ -54,12 +63,11 @@
 /* 🎯 Variantes de botones */
 .custom-btn.default {
   background-color: #6c757d;
-  
 }
 
 .custom-btn.default:hover {
   background-color: #5a6268;
-  box-shadow: 
+  box-shadow:
     0 4px 8px rgba(0, 0, 0, 0.15),
     0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -71,7 +79,7 @@
 .custom-btn.edit:hover {
   background: linear-gradient(135deg, #0069d9 0%, #004085 100%);
   transform: translateY(-2px);
-  box-shadow: 
+  box-shadow:
     0 6px 12px rgba(0, 123, 255, 0.3),
     0 3px 6px rgba(0, 0, 0, 0.1);
 }
@@ -83,7 +91,7 @@
 .custom-btn.delete:hover {
   background: linear-gradient(135deg, #c82333 0%, #a71d2a 100%);
   transform: translateY(-2px);
-  box-shadow: 
+  box-shadow:
     0 6px 12px rgba(220, 53, 69, 0.3),
     0 3px 6px rgba(0, 0, 0, 0.1);
 }
@@ -95,7 +103,7 @@
 .custom-btn.add:hover {
   background: linear-gradient(135deg, #218838 0%, #155724 100%);
   transform: translateY(-2px);
-  box-shadow: 
+  box-shadow:
     0 6px 12px rgba(40, 167, 69, 0.3),
     0 3px 6px rgba(0, 0, 0, 0.1);
 }
@@ -106,34 +114,31 @@
   font-size: 1rem;
   margin-top: -1rem;
   margin-bottom: 1rem;
-  box-shadow: 
+  box-shadow:
     0 4px 8px rgba(23, 162, 184, 0.3),
     0 2px 4px rgba(0, 0, 0, 0.1);
-
 }
 
 .custom-btn.closesession {
   background: linear-gradient(135deg, #f53f17 0%, #c70039 100%);
   padding: 10px 20px;
-  font-size: 1rem;
+  font-size: 0.8rem;
   margin-top: 0rem;
   margin-bottom: 0rem;
-  box-shadow: 
+  box-shadow:
     0 4px 8px rgba(255, 87, 51, 0.3),
     0 2px 4px rgba(0, 0, 0, 0.1);
-
 }
 
 .custom-btn.closesession:hover {
   background: linear-gradient(135deg, #e04e2c 0%, #a5002e 100%);
   transform: translateY(-2px);
- 
 }
 
 .custom-btn.create:hover {
   background: linear-gradient(135deg, #138496 0%, #0f6674 100%);
   transform: translateY(-2px);
-  box-shadow: 
+  box-shadow:
     0 8px 16px rgba(23, 162, 184, 0.4),
     0 4px 8px rgba(0, 0, 0, 0.15);
 }
@@ -141,7 +146,7 @@
 /* ⌨️ Estados de interacción */
 .custom-btn:active {
   transform: translateY(0) scale(0.98);
-  box-shadow: 
+  box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.1),
     inset 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--btn-transition-fast);
@@ -182,7 +187,9 @@
 }
 
 @keyframes button-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* 📱 Responsivo */
@@ -190,9 +197,9 @@
   .custom-btn {
     font-size: 0.85rem;
     padding: 8px 16px;
-    min-height: 40px; /* Touch target más grande en móvil */
+    min-height: 40px;
   }
-  
+
   .custom-btn.create {
     padding: 10px 20px;
     font-size: 0.95rem;
@@ -207,7 +214,7 @@
     transition-duration: 0.01ms !important;
     animation: none !important;
   }
-  
+
   .custom-btn:hover {
     transform: none !important;
   }

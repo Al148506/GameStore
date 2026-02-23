@@ -59,9 +59,6 @@ export function Home() {
     setShowModal(false);
     setSelectedGame(null);
   };
-
-  if (error) return <div className="error">Error: {error}</div>;
-
   return (
     <>
       <NavbarGeneral />
@@ -78,13 +75,32 @@ export function Home() {
         <CartButton onClick={() => setIsOpen(!isOpen)} />
         <Cart isOpen={isOpen} mode="sidebar" />
 
-        <VideogamesGrid
-          games={videogames}
-          onCardClick={handleOpenModal}
-          onEdit={setEditingGame}
-          onDelete={deleteVideogame}
-          loading={loading}
-        />
+        {error && (
+          <div className="error-state">
+            <div className="error-card">
+              <h2>Ups… algo salió mal 🎮</h2>
+              <p>
+                No pudimos cargar los videojuegos. Verifica tu conexión e
+                inténtalo nuevamente.
+              </p>
+
+              <Button
+                text="Reintentar"
+                variant="default"
+                onClick={() => window.location.reload()}
+              />
+            </div>
+          </div>
+        )}
+        {!error && (
+          <VideogamesGrid
+            games={videogames}
+            onCardClick={handleOpenModal}
+            onEdit={setEditingGame}
+            onDelete={deleteVideogame}
+            loading={loading}
+          />
+        )}
         <VideogameFormModal
           isOpen={showFormModal}
           mode="create"

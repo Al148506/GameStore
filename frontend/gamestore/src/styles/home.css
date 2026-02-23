@@ -167,3 +167,31 @@
   outline: 2px solid var(--color-primary);
   outline-offset: 4px;
 }
+
+.error-state {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;
+}
+
+.error-card {
+  max-width: 500px;
+  width: 100%;
+  padding: 40px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #1f2937, #111827);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.error-card h2 {
+  margin-bottom: 16px;
+  color: #f87171;
+}
+
+.error-card p {
+  margin-bottom: 24px;
+  color: rgba(255, 255, 255, 0.8);
+}

@@ -7,9 +7,8 @@ public interface IDiscountService
         decimal originalPrice
     );
 
-    Task<decimal> ApplyCouponAsync(
-        Videogame videogame,
-        decimal originalPrice,
+    Task<decimal?> TryApplyCouponAsync(
+        decimal subtotal,
         string couponCode
     );
 }

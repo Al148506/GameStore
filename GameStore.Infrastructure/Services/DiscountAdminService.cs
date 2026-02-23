@@ -24,8 +24,8 @@ namespace GameStore.Infrastructure.Services
             DiscountType type,
             DiscountValueType valueType,
             decimal value,
-            DateTime? start,
-            DateTime? end,
+            DateTime start,
+            DateTime end,
             bool isActive,
             List<DiscountScope> scopes,
             Coupon? coupon)
@@ -214,7 +214,6 @@ namespace GameStore.Infrastructure.Services
                 discount.Coupon.MaxUses = requestCoupon.MaxUses;
             }
         }
-
 
     }
 }

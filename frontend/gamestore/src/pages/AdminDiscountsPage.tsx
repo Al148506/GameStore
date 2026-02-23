@@ -79,91 +79,105 @@ export const AdminDiscountsPage = () => {
       <NavbarGeneral />
 
       <div className="admin-discounts-page">
-        {/* Header */}
-        <header className="admin-discounts-page__header">
-          <div className="admin-discounts-page__title-wrapper">
-            <h1 className="admin-discounts-page__title">
-              Gestión de Descuentos
-            </h1>
-          </div>
-          <p className="admin-discounts-page__subtitle">
-            Administra descuentos, cupones y promociones para tus productos
-          </p>
-        </header>
+        <div className="admin-discounts-page__container">
+          <div className="admin-discounts-page__inner">
+            {/* ── Header ── */}
+            <header className="admin-discounts-page__header">
+              <div className="admin-discounts-page__eyebrow">
+                <span className="admin-discounts-page__eyebrow-dot" />
+              </div>
+              <h1 className="admin-discounts-page__title">
+                Gestión de Descuentos
+              </h1>
+              <p className="admin-discounts-page__subtitle">
+                Administra descuentos, cupones y promociones para tus productos
+              </p>
+            </header>
 
-        {/* Actions */}
-        <div className="admin-discounts-page__actions">
-          <div className="admin-discounts-page__stats">
-            <div className="admin-discounts-page__stat">
-              <span className="admin-discounts-page__stat-label">Total</span>
-              <span className="admin-discounts-page__stat-value admin-discounts-page__stat-value--primary">
-                {listLoading ? "—" : stats.total}
-              </span>
+            {/* ── Actions ── */}
+            <div className="admin-discounts-page__actions">
+              <div className="admin-discounts-page__stats">
+                <div className="admin-discounts-page__stat">
+                  <span className="admin-discounts-page__stat-label">
+                    Total
+                  </span>
+                  <span className="admin-discounts-page__stat-value admin-discounts-page__stat-value--primary">
+                    {listLoading ? "—" : stats.total}
+                  </span>
+                </div>
+
+                <div className="admin-discounts-page__stat">
+                  <span className="admin-discounts-page__stat-label">
+                    Activos
+                  </span>
+                  <span className="admin-discounts-page__stat-value admin-discounts-page__stat-value--success">
+                    {listLoading ? "—" : stats.active}
+                  </span>
+                </div>
+              </div>
+              <div className="admin-discounts-page__cta">
+                <Button
+                  text="Nuevo Descuento"
+                  variant="create"
+                  onClick={() =>
+                    setModalState({
+                      open: true,
+                      mode: "create",
+                    })
+                  }
+                />
+              </div>
             </div>
-            <div className="admin-discounts-page__stat">
-              <span className="admin-discounts-page__stat-label">Activos</span>
-              <span className="admin-discounts-page__stat-value admin-discounts-page__stat-value--success">
-                {listLoading ? "—" : stats.active}
-              </span>
+
+            {/* ── Content ── */}
+            <div className="admin-discounts-page__content">
+              <DiscountList
+                data={data}
+                loading={listLoading}
+                onToggle={toggle}
+                onEdit={async (discount) => {
+                  try {
+                    const fullDiscount = await getDiscountById(discount.id);
+                    setModalState({
+                      open: true,
+                      mode: "edit",
+                      discount: fullDiscount,
+                    });
+                  } catch (error) {
+                    console.error("Error cargando descuento", error);
+                    Swal.fire({
+                      icon: "error",
+                      title: "Error",
+                      text: "No se pudo cargar el descuento para editar",
+                    });
+                  }
+                }}
+              />
             </div>
+
+            {/* ── Pagination ── */}
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
           </div>
-          <Button
-            text="Nuevo Descuento"
-            variant="create"
-            onClick={() =>
-              setModalState({
-                open: true,
-                mode: "create",
-              })
+          {/* /inner */}
+
+          {/* Modal fuera del inner para overlay full-screen sin recortes */}
+          <DiscountFormModal
+            isOpen={modalState.open}
+            mode={modalState.mode}
+            discountToEdit={modalState.discount}
+            onClose={() =>
+              setModalState((prevState) => ({ ...prevState, open: false }))
             }
+            onCreate={handleCreate}
+            onSave={handleSave}
+            errors={fieldErrors}
+            loading={submitLoading}
           />
         </div>
-
-        {/* List */}
-        <DiscountList
-          data={data}
-          loading={listLoading}
-          onToggle={toggle}
-          onEdit={async (discount) => {
-            try {
-              const fullDiscount = await getDiscountById(discount.id);
-
-              setModalState({
-                open: true,
-                mode: "edit",
-                discount: fullDiscount,
-              });
-            } catch (error) {
-              console.error("Error cargando descuento", error);
-              Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: "No se pudo cargar el descuento para editar",
-              });
-            }
-          }}
-        />
-
-        {/* Modal */}
-        <DiscountFormModal
-          isOpen={modalState.open}
-          mode={modalState.mode}
-          discountToEdit={modalState.discount}
-          onClose={() =>
-            setModalState((prevState) => ({ ...prevState, open: false }))
-          }
-          onCreate={handleCreate}
-          onSave={handleSave}
-          errors={fieldErrors}
-          loading={submitLoading}
-        />
-
-        {/* Pagination */}
-        <Pagination
-          currentPage={page}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
       </div>
     </>
   );

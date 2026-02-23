@@ -78,9 +78,11 @@ namespace GameStore.Api.Controllers
                 newItem.DiscountedUnitPrice = discountedPrice;
 
                 _context.CartItems.Add(newItem);
+
             }
 
             cart.UpdatedAt = DateTime.UtcNow;
+            await RecalculateCartAsync(cart);
             await _context.SaveChangesAsync();
 
             var cartReadDto = _mapper.Map<CartReadDto>(cart);
@@ -112,7 +114,7 @@ namespace GameStore.Api.Controllers
 
             cartItem.Quantity = dto.Quantity;
             cartItem.Cart.UpdatedAt = DateTime.UtcNow;
-
+            await RecalculateCartAsync(cartItem.Cart);
             await _context.SaveChangesAsync();
             return NoContent();
         }
@@ -147,6 +149,9 @@ namespace GameStore.Api.Controllers
             }
 
             cartItem.Cart.UpdatedAt = DateTime.UtcNow;
+            await RecalculateCartAsync(cartItem.Cart);
+
+
             await _context.SaveChangesAsync();
 
             return Ok(new
@@ -177,9 +182,42 @@ namespace GameStore.Api.Controllers
                 return NotFound("No se encontró el producto en el carrito.");
 
             _context.CartItems.Remove(item);
+            await RecalculateCartAsync(item.Cart);
+
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
+
+        private async Task RecalculateCartAsync(Cart cart)
+        {
+            cart.Subtotal = cart.Items
+                .Sum(i => i.DiscountedUnitPrice * i.Quantity);
+
+            if (!string.IsNullOrEmpty(cart.AppliedCouponCode))
+            {
+                var newTotal = await _discountService
+                    .TryApplyCouponAsync(cart.Subtotal, cart.AppliedCouponCode);
+
+                if (newTotal.HasValue)
+                {
+                    cart.Total = newTotal.Value;
+                    cart.DiscountAmount = cart.Subtotal - newTotal.Value;
+                }
+                else
+                {
+                    // Cupón expiró o ya no es válido
+                    cart.AppliedCouponCode = null;
+                    cart.DiscountAmount = 0;
+                    cart.Total = cart.Subtotal;
+                }
+            }
+            else
+            {
+                cart.DiscountAmount = 0;
+                cart.Total = cart.Subtotal;
+            }
+        }
+
     }
 }

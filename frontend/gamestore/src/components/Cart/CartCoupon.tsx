@@ -1,11 +1,12 @@
 import { useCart } from "@hooks/useCart";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../../styles/cartCoupon.css";
 
 const CartCoupon = () => {
   const [couponCode, setCouponCode] = useState("");
   const [couponSuccess, setCouponSuccess] = useState<string | null>(null);
-  const { isCouponLoading, applyCoupon, couponError , clearCouponError} = useCart();
+  const { isCouponLoading, applyCoupon, couponError, clearCouponError } =
+    useCart();
 
   const handleApplyCoupon = async () => {
     const code = couponCode.trim();
@@ -28,6 +29,16 @@ const CartCoupon = () => {
       handleApplyCoupon();
     }
   };
+
+  useEffect(() => {
+    if (couponError) {
+      const timer = setTimeout(() => {
+        clearCouponError();
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [couponError, clearCouponError]);
 
   return (
     <div className="coupon-section">

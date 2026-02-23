@@ -11,8 +11,14 @@ export interface CartCreateDto {
 export interface CartReadDto {
   id: number;
   userId: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string; // ⚠ mejor string, te explico abajo
+  updatedAt: string;
   isCheckedOut: boolean;
+
+  subtotal: number;
+  discountAmount: number;
+  total: number;
+  appliedCouponCode: string | null;
+
   items: CartItemReadDto[];
 }

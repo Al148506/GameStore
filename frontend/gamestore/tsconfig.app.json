@@ -10,10 +10,9 @@
     "skipLibCheck": true,
     "baseUrl": "src",
     "paths": {
-      "@hooks/*": ["hooks/*"],
-      "@components/*": ["components/*"],
-      "@types/*": ["types/*"],
-      "@utils/*": ["utils/*"]
+      "@app/*": ["app/*"],
+      "@features/*": ["features/*"],
+      "@shared/*": ["shared/*"]
     },
 
     /* Bundler mode */
